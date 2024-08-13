@@ -1,0 +1,11 @@
+0 /landscape_back.png 20.5 17 36 9 0
+0 /landscape_low.png 20.5 17 36 9 0.2
+0 /landscape_mid.png 20.5 17 36 9 0.1
+0 /landscape_top.png 22.5 19.5 34.5 11.5 0.05
+0 /bosspeek_low.png 10 11 26.5 -67 0.9
+0 /bosspeek_mid.png 10 11 26.5 -67 0.8
+0 /bosspeek_top.png 10 11 26.5 -67 0.75
+0 /chasm_low.png 30.35 25 15 -40 0.2
+0 /chasm_mid.png 30.35 25 15 -40 0.1
+0 /chasm_top.png 30.35 25 15 -40 0.0
+0 /mountain.png 22.3 20 -31 -226 0.9

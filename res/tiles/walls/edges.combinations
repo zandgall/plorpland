@@ -1,0 +1,15 @@
+/tiles/ground /tiles/walls/edge_bottom
+/tiles/ground /tiles/walls/edge_left
+/tiles/ground /tiles/walls/edge_bottom /tiles/walls/edge_left
+/tiles/ground /tiles/walls/edge_top
+/tiles/ground /tiles/walls/edge_bottom /tiles/walls/edge_top
+/tiles/ground /tiles/walls/edge_left /tiles/walls/edge_top
+/tiles/ground /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/edge_top
+/tiles/ground /tiles/walls/edge_right
+/tiles/ground /tiles/walls/edge_bottom /tiles/walls/edge_right
+/tiles/ground /tiles/walls/edge_left /tiles/walls/edge_right
+/tiles/ground /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/edge_right
+/tiles/ground /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/ground /tiles/walls/edge_bottom /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/ground /tiles/walls/edge_left /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/ground /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/edge_top /tiles/walls/edge_right

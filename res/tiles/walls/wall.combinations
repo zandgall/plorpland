@@ -1,0 +1,252 @@
+/tiles/solid /tiles/wall
+/tiles/solid /tiles/wall /tiles/walls/bottom
+/tiles/solid /tiles/wall /tiles/walls/top
+/tiles/solid /tiles/wall /tiles/walls/left
+/tiles/solid /tiles/wall /tiles/walls/right
+/tiles/solid /tiles/wall /tiles/walls/bottom /tiles/walls/top
+/tiles/solid /tiles/wall /tiles/walls/bottom /tiles/walls/left
+/tiles/solid /tiles/wall /tiles/walls/bottom /tiles/walls/right
+/tiles/solid /tiles/wall /tiles/walls/bottom /tiles/walls/top /tiles/walls/left
+/tiles/solid /tiles/wall /tiles/walls/bottom /tiles/walls/top /tiles/walls/right
+/tiles/solid /tiles/wall /tiles/walls/bottom /tiles/walls/left /tiles/walls/right
+/tiles/solid /tiles/wall /tiles/walls/bottom /tiles/walls/top /tiles/walls/left /tiles/walls/right
+/tiles/solid /tiles/wall /tiles/walls/top /tiles/walls/left
+/tiles/solid /tiles/wall /tiles/walls/top /tiles/walls/right
+/tiles/solid /tiles/wall /tiles/walls/top /tiles/walls/left /tiles/walls/right
+/tiles/solid /tiles/wall /tiles/walls/left /tiles/walls/right
+/tiles/wall /tiles/walls/bottom_left
+/tiles/wall /tiles/walls/bottom_right
+/tiles/wall /tiles/walls/top_left
+/tiles/wall /tiles/walls/top_right
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/bottom_right
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/top_left
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/top_right
+/tiles/wall /tiles/walls/top_left /tiles/walls/top_right
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_bottom
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_left
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/top
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/top
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_left /tiles/walls/top
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/top
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/right
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/right
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_left /tiles/walls/right
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/right
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/top /tiles/walls/right
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/top /tiles/walls/right
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_left /tiles/walls/top /tiles/walls/right
+/tiles/wall /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/top /tiles/walls/right
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/edge_bottom
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/left
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/top
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/top
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/left /tiles/walls/top
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left /tiles/walls/top
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/edge_right
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/edge_right
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/left /tiles/walls/edge_right
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left /tiles/walls/edge_right
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/top /tiles/walls/edge_right
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/top /tiles/walls/edge_right
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/left /tiles/walls/top /tiles/walls/edge_right
+/tiles/wall /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left /tiles/walls/top /tiles/walls/edge_right
+/tiles/wall /tiles/walls/top_left /tiles/walls/bottom
+/tiles/wall /tiles/walls/top_left /tiles/walls/edge_left
+/tiles/wall /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left
+/tiles/wall /tiles/walls/top_left /tiles/walls/edge_top
+/tiles/wall /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_top
+/tiles/wall /tiles/walls/top_left /tiles/walls/edge_left /tiles/walls/edge_top
+/tiles/wall /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left /tiles/walls/edge_top
+/tiles/wall /tiles/walls/top_left /tiles/walls/right
+/tiles/wall /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/right
+/tiles/wall /tiles/walls/top_left /tiles/walls/edge_left /tiles/walls/right
+/tiles/wall /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left /tiles/walls/right
+/tiles/wall /tiles/walls/top_left /tiles/walls/edge_top /tiles/walls/right
+/tiles/wall /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_top /tiles/walls/right
+/tiles/wall /tiles/walls/top_left /tiles/walls/edge_left /tiles/walls/edge_top /tiles/walls/right
+/tiles/wall /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left /tiles/walls/edge_top /tiles/walls/right
+/tiles/wall /tiles/walls/top_right /tiles/walls/bottom
+/tiles/wall /tiles/walls/top_right /tiles/walls/left
+/tiles/wall /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left
+/tiles/wall /tiles/walls/top_right /tiles/walls/edge_top
+/tiles/wall /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/edge_top
+/tiles/wall /tiles/walls/top_right /tiles/walls/left /tiles/walls/edge_top
+/tiles/wall /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left /tiles/walls/edge_top
+/tiles/wall /tiles/walls/top_right /tiles/walls/edge_right
+/tiles/wall /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/edge_right
+/tiles/wall /tiles/walls/top_right /tiles/walls/left /tiles/walls/edge_right
+/tiles/wall /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left /tiles/walls/edge_right
+/tiles/wall /tiles/walls/top_right /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/wall /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/wall /tiles/walls/top_right /tiles/walls/left /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/wall /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/solid /tiles/walls/light
+/tiles/solid /tiles/walls/light /tiles/walls/bottom
+/tiles/solid /tiles/walls/light /tiles/walls/top
+/tiles/solid /tiles/walls/light /tiles/walls/left
+/tiles/solid /tiles/walls/light /tiles/walls/right
+/tiles/solid /tiles/walls/light /tiles/walls/bottom /tiles/walls/top
+/tiles/solid /tiles/walls/light /tiles/walls/bottom /tiles/walls/left
+/tiles/solid /tiles/walls/light /tiles/walls/bottom /tiles/walls/right
+/tiles/solid /tiles/walls/light /tiles/walls/bottom /tiles/walls/top /tiles/walls/left
+/tiles/solid /tiles/walls/light /tiles/walls/bottom /tiles/walls/top /tiles/walls/right
+/tiles/solid /tiles/walls/light /tiles/walls/bottom /tiles/walls/left /tiles/walls/right
+/tiles/solid /tiles/walls/light /tiles/walls/bottom /tiles/walls/top /tiles/walls/left /tiles/walls/right
+/tiles/solid /tiles/walls/light /tiles/walls/top /tiles/walls/left
+/tiles/solid /tiles/walls/light /tiles/walls/top /tiles/walls/right
+/tiles/solid /tiles/walls/light /tiles/walls/top /tiles/walls/left /tiles/walls/right
+/tiles/solid /tiles/walls/light /tiles/walls/left /tiles/walls/right
+/tiles/walls/light /tiles/walls/bottom_left
+/tiles/walls/light /tiles/walls/bottom_right
+/tiles/walls/light /tiles/walls/top_left
+/tiles/walls/light /tiles/walls/top_right
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/bottom_right
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/top_left
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/top_right
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/top_right
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_bottom
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_left
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/top
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/top
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_left /tiles/walls/top
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/top
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/right
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/right
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_left /tiles/walls/right
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/right
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/top /tiles/walls/right
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/top /tiles/walls/right
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_left /tiles/walls/top /tiles/walls/right
+/tiles/walls/light /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/top /tiles/walls/right
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/edge_bottom
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/left
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/top
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/top
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/left /tiles/walls/top
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left /tiles/walls/top
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/left /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/top /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/top /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/left /tiles/walls/top /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left /tiles/walls/top /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/bottom
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/edge_left
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/edge_top
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_top
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/edge_left /tiles/walls/edge_top
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left /tiles/walls/edge_top
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/right
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/right
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/edge_left /tiles/walls/right
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left /tiles/walls/right
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/edge_top /tiles/walls/right
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_top /tiles/walls/right
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/edge_left /tiles/walls/edge_top /tiles/walls/right
+/tiles/walls/light /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left /tiles/walls/edge_top /tiles/walls/right
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/bottom
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/left
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/edge_top
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/edge_top
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/left /tiles/walls/edge_top
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left /tiles/walls/edge_top
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/left /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/left /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/walls/light /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/solid /tiles/walls/dark
+/tiles/solid /tiles/walls/dark /tiles/walls/bottom
+/tiles/solid /tiles/walls/dark /tiles/walls/top
+/tiles/solid /tiles/walls/dark /tiles/walls/left
+/tiles/solid /tiles/walls/dark /tiles/walls/right
+/tiles/solid /tiles/walls/dark /tiles/walls/bottom /tiles/walls/top
+/tiles/solid /tiles/walls/dark /tiles/walls/bottom /tiles/walls/left
+/tiles/solid /tiles/walls/dark /tiles/walls/bottom /tiles/walls/right
+/tiles/solid /tiles/walls/dark /tiles/walls/bottom /tiles/walls/top /tiles/walls/left
+/tiles/solid /tiles/walls/dark /tiles/walls/bottom /tiles/walls/top /tiles/walls/right
+/tiles/solid /tiles/walls/dark /tiles/walls/bottom /tiles/walls/left /tiles/walls/right
+/tiles/solid /tiles/walls/dark /tiles/walls/bottom /tiles/walls/top /tiles/walls/left /tiles/walls/right
+/tiles/solid /tiles/walls/dark /tiles/walls/top /tiles/walls/left
+/tiles/solid /tiles/walls/dark /tiles/walls/top /tiles/walls/right
+/tiles/solid /tiles/walls/dark /tiles/walls/top /tiles/walls/left /tiles/walls/right
+/tiles/solid /tiles/walls/dark /tiles/walls/left /tiles/walls/right
+/tiles/walls/dark /tiles/walls/bottom_left
+/tiles/walls/dark /tiles/walls/bottom_right
+/tiles/walls/dark /tiles/walls/top_left
+/tiles/walls/dark /tiles/walls/top_right
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/bottom_right
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/top_left
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/top_right
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/top_right
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_bottom
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_left
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/top
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/top
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_left /tiles/walls/top
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/top
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/right
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/right
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_left /tiles/walls/right
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/right
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/top /tiles/walls/right
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/top /tiles/walls/right
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_left /tiles/walls/top /tiles/walls/right
+/tiles/walls/dark /tiles/walls/bottom_left /tiles/walls/edge_bottom /tiles/walls/edge_left /tiles/walls/top /tiles/walls/right
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/edge_bottom
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/left
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/top
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/top
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/left /tiles/walls/top
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left /tiles/walls/top
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/left /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/top /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/top /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/left /tiles/walls/top /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/bottom_right /tiles/walls/edge_bottom /tiles/walls/left /tiles/walls/top /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/bottom
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/edge_left
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/edge_top
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_top
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/edge_left /tiles/walls/edge_top
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left /tiles/walls/edge_top
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/right
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/right
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/edge_left /tiles/walls/right
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left /tiles/walls/right
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/edge_top /tiles/walls/right
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_top /tiles/walls/right
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/edge_left /tiles/walls/edge_top /tiles/walls/right
+/tiles/walls/dark /tiles/walls/top_left /tiles/walls/bottom /tiles/walls/edge_left /tiles/walls/edge_top /tiles/walls/right
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/bottom
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/left
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/edge_top
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/edge_top
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/left /tiles/walls/edge_top
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left /tiles/walls/edge_top
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/left /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/left /tiles/walls/edge_top /tiles/walls/edge_right
+/tiles/walls/dark /tiles/walls/top_right /tiles/walls/bottom /tiles/walls/left /tiles/walls/edge_top /tiles/walls/edge_right

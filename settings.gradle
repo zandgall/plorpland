@@ -1,0 +1,8 @@
+plugins {
+
+}
+
+rootProject.name = 'finalproj'
+
+include 'leveleditor'
+include 'game'
