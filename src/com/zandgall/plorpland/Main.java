@@ -7,18 +7,6 @@
 
 package com.zandgall.plorpland;
 
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.event.EventHandler;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -28,13 +16,17 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL30.*;
+
 import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.EntityRegistry;
 import com.zandgall.plorpland.entity.Player;
 import com.zandgall.plorpland.staging.Cutscene;
 import com.zandgall.plorpland.level.Level;
 
-public class Main extends Application {
+public class Main {
 
 	public static long iteration = 0;
 
@@ -43,87 +35,54 @@ public class Main extends Application {
 
 	public static Main instance = null;
 
-	public static HashMap<KeyCode, Boolean> keys, pKeys;
-	public static KeyCode lastKey = KeyCode.A;
+	public static int WIDTH = 1280, HEIGHT = 720;
+	private static long window;
 
-	// JavaFX Elements
-	public static Scene scene;
-	public static Stage stage;
-	public static Pane root;
-
-	// Canvas and contexts for several layers.
-	public static Canvas layer_0, layer_1, shadow_0, layer_2, shadow_1, hudCanvas, throwawayCanvas;
-	public static GraphicsContext c0, c1, s0, c2, s1, hudContext, throwawayContext;
+	public static boolean[] keys = new boolean[GLFW_KEY_LAST], pKeys = new boolean[GLFW_KEY_LAST];
+	public static int lastKey = GLFW_KEY_LAST;
 
 	// Instances of elements included in the game
-	protected Player player;
-	protected Camera camera;
-	protected Level level;
-	protected Hud hud;
-	protected Cutscene cutscene = null;
+	protected static Player player;
+	protected static Camera camera;
+	protected static Level level;
+	protected static Hud hud;
+	protected static Cutscene cutscene = null;
+	
+	public static void main(String[] args) {
+		if(!glfwInit())
+			throw new IllegalStateException("Could not initialize GLFW");
 
-	@Override
-	public void start(Stage stage) {
+		glfwDefaultWindowHints();
+		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+
 		// Set up static elements
-		Main.instance = this;
-		Main.stage = stage;
+		window = glfwCreateWindow(1280, 720, "Plorpland", NULL, NULL);
+		if(window == NULL)
+			throw new RuntimeException("Could not create window");
 
 		EntityRegistry.registerClasses();
 
-		// Set up the scene and stage elements
-		setupScene();
-		stage.setTitle("Final");
-		stage.setScene(scene);
-		stage.show();
-		stage.toFront();
-		stage.requestFocus();
-
 		// Update canvas sizes when stage dimensions are changed
-		stage.widthProperty().addListener((obs, oldVal, newVal) -> {
-			layer_0.setWidth(newVal.doubleValue());
-			layer_1.setWidth(newVal.doubleValue());
-			layer_2.setWidth(newVal.doubleValue());
-			shadow_0.setWidth(newVal.doubleValue());
-			shadow_1.setWidth(newVal.doubleValue());
-			hudCanvas.setWidth(newVal.doubleValue());
-		});
-		stage.heightProperty().addListener((obs, oldVal, newVal) -> {
-			layer_0.setHeight(newVal.doubleValue());
-			layer_1.setHeight(newVal.doubleValue());
-			layer_2.setHeight(newVal.doubleValue());
-			shadow_0.setHeight(newVal.doubleValue());
-			shadow_1.setHeight(newVal.doubleValue());
-			hudCanvas.setHeight(newVal.doubleValue());
+		glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
+			Main.WIDTH = width;
+			Main.HEIGHT = height;
 		});
 
 		// Key input map and events
-		keys = new HashMap<KeyCode, Boolean>();
-		pKeys = new HashMap<KeyCode, Boolean>();
-		for (KeyCode a : KeyCode.values()) {
-			// Initialize all keys to false
-			keys.put(a, false);
-			pKeys.put(a, false);
+		for(int i = 0; i < GLFW_KEY_LAST; i++) {
+			keys[i] = false;
+			pKeys[i] = false;
 		}
 
-		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				Main.keys.put(event.getCode(), true);
-				lastKey = event.getCode();
-			}
-		});
-		scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				Main.keys.put(event.getCode(), false);	
-			}
-		});
-		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(WindowEvent event) {
-				Sound.kill();
-			}
-		});
+		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+			keys[key] = action != GLFW_RELEASE;
+		});	
+
+		glfwMakeContextCurrent(window);
+
+		// TODO: VSYNC option?
+		glfwSwapInterval(1);
 
 		player = new Player();
 		camera = new Camera();
@@ -145,73 +104,28 @@ public class Main extends Application {
 
 		// The main loop. As this scene animation plays, the game is updated and
 		// rendered
-		new AnimationTimer() {
-			private long lastTime = System.nanoTime();
-			double delta = 0;
+		
+		long lastTime = System.nanoTime();
+		double delta = 0;
 
-			@Override
-			public void handle(long currentNanoTime) {
-				delta += (currentNanoTime - lastTime) * 0.000000001;
-				lastTime = currentNanoTime;
-				// We tick in 1/100 second increments in order to ensure game
-				// physics/interaction consistency
-				while (delta >= TIMESTEP) {
-					iteration++;
-					tick();
-					delta -= TIMESTEP;
-				}
-				render();
-			}
-		}.start();	
-	}
-
-	// Pulled to it's own function so that it can be overridden in LevelEditor
-	public void setupScene() {
-		root = new Pane();
-		root.setStyle("-fx-background-color: #8fc9fc;");
-		layer_0 = new Canvas(1280, 720);
-		c0 = layer_0.getGraphicsContext2D();
-		c0.setImageSmoothing(false);
-		layer_1 = new Canvas(1280, 720);
-		c1 = layer_1.getGraphicsContext2D();
-		c1.setImageSmoothing(false);
-
-		shadow_0 = new Canvas(1280, 720);
-		s0 = shadow_0.getGraphicsContext2D();
-		s0.setImageSmoothing(true);
-
-		layer_2 = new Canvas(1280, 720);
-		c2 = layer_2.getGraphicsContext2D();
-		c2.setImageSmoothing(false);
-
-		shadow_1 = new Canvas(1280, 720);
-		s1 = shadow_1.getGraphicsContext2D();
-		s1.setImageSmoothing(true);
-
-		hudCanvas = new Canvas(1280, 720);
-		hudContext = hudCanvas.getGraphicsContext2D();
-		hudContext.setImageSmoothing(false);
-
-		throwawayCanvas = new Canvas(0, 0);
-		throwawayContext = throwawayCanvas.getGraphicsContext2D();
-
-		root.getChildren().add(layer_0);
-		root.getChildren().add(layer_1);
-		root.getChildren().add(shadow_0);
-		root.getChildren().add(layer_2);
-		root.getChildren().add(shadow_1);
-		root.getChildren().add(hudCanvas);
-
-		scene = new Scene(root, 1280, 720);
-	}
-
-	// Backup main function
-	public static void main(String[] args) {
-		Application.launch(args);
+		while(!glfwWindowShouldClose(window)) {
+			delta += (System.nanoTime() - lastTime) * 0.000000001;
+			lastTime = System.nanoTime();
+			// We tick in 1/100 second increments in order to ensure game
+			// physics/interaction consistency
+			while (delta >= TIMESTEP) {
+				iteration++;
+				tick();
+				delta -= TIMESTEP;
+			}	
+			render();
+			
+			glfwPollEvents();
+		}
 	}
 
 	// Update scene. If there is a cutscene, run cutscene until it's over
-	public void tick() {
+	public static void tick() {
 		if (cutscene == null) {
 			level.tick();
 			camera.target(player.getX() + player.getXVel() * 1.5, player.getY() + player.getYVel() * 1.5);
@@ -221,67 +135,48 @@ public class Main extends Application {
 		}
 		hud.tick();
 		Sound.update();
-		for(Entry<KeyCode, Boolean> a : keys.entrySet())
-			pKeys.put(a.getKey(), a.getValue());
+		for(int i = 0; i < GLFW_KEY_LAST; i++)
+			pKeys[i] = keys[i];
 	}
 
-	public void render() {
+	public static void render() {
 		// Clear all canvases
-		c0.clearRect(0, 0, layer_0.getWidth(), layer_0.getHeight());
-		c1.clearRect(0, 0, layer_1.getWidth(), layer_1.getHeight());
-		s0.clearRect(0, 0, shadow_0.getWidth(), shadow_0.getHeight());
-		c2.clearRect(0, 0, layer_2.getWidth(), layer_2.getHeight());
-		s1.clearRect(0, 0, shadow_1.getWidth(), shadow_1.getHeight());
-		hudContext.clearRect(0, 0, hudCanvas.getWidth(), hudCanvas.getHeight());
+		glClearColor(0.55f, 0.8f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Save all context states
-		c0.save();
-		c1.save();
-		s0.save();
-		c2.save();
-		s1.save();
-		hudContext.save();
-
 		// Transform all (except hud) with camera
-		camera.transform(c0);
-		camera.transform(c1);
-		camera.transform(s0);
-		camera.transform(c2);
-		camera.transform(s1);
+		camera.transform();
+
 		// Don't transform hudContext
 
 		// Draw!
-		level.render(c0, c1, s0, c2, s1);
-		hud.render(hudContext);
+		level.render();
+		hud.render();
 
-		// Restore context states
-		c0.restore();
-		c1.restore();
-		s0.restore();
-		c2.restore();
-		s1.restore();
-		hudContext.restore();
+		// Swap buffers
+		glfwSwapBuffers(window);
 	}
 
 	// Global accessers
 	public static Level getLevel() {
-		return instance.level;
+		return level;
 	}
 
 	public static Camera getCamera() {
-		return instance.camera;
+		return camera;
 	}
 
 	public static Player getPlayer() {
-		return instance.player;
+		return player;
 	}
 
 	public static Hud getHud() {
-		return instance.hud;
+		return hud;
 	}
 
 	public static void playCutscene(Cutscene cutscene) {
-		instance.cutscene = cutscene;
+		Main.cutscene = cutscene;
 	}
 
 	public static void quicksave() throws IOException {
