@@ -4,6 +4,8 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class GLHelper {
 
+	public static final float LAYER_0_DEPTH = 1, LAYER_1_SHADOW_DEPTH = 0.8f, LAYER_1_DEPTH = 0.6f, LAYER_2_SHADOW_DEPTH = 0.4f, LAYER_2_DEPTH = 0.2f;
+
 	// Square VAO, VBO, EBO
 	private static int sqVAO, sqVBO, sqEBO;
 

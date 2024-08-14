@@ -123,8 +123,8 @@ public class Shader {
 			s.setMatrix("model", matrix);
 		}
 
-		public void setModel(float x, float y, float w, float h) {
-			setModel(new Matrix4f().translate(x + w * 0.5f, y + h * 0.5f, 0).scale(w, h, 1));
+		public void setModel(float x, float y, float w, float h, float layer) {
+			setModel(new Matrix4f().translate(x + w * 0.5f, y + h * 0.5f, layer).scale(w, h, 1));
 		}
 
 		public void setCrop(float x, float y, float w, float h) {
