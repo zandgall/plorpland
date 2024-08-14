@@ -30,4 +30,12 @@ public class Image {
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, texture);
 	}
+
+	public void draw(float cX, float cY, float cW, float cH, float x, float y, float w, float h) {
+		Shader.image.use();
+		Shader.image.setCrop(cX, cY, cW, cH);
+		Shader.image.setModel(x, y, w, h);
+		Shader.image.setTexture(texture);
+		GLHelper.drawRect();
+	}
 }

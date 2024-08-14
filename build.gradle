@@ -19,7 +19,7 @@ java {
 import org.gradle.internal.os.OperatingSystem
 
 project.ext.lwjglVersion = "3.3.4"
-
+project.ext.jomlVersion = "1.10.8"
 
 switch (OperatingSystem.current()) {
 	case OperatingSystem.LINUX:
@@ -45,6 +45,8 @@ switch (OperatingSystem.current()) {
 }
 
 dependencies {
+	implementation "org.joml:joml:$jomlVersion"
+
 	implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
 	implementation "org.lwjgl:lwjgl"
