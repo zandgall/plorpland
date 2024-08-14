@@ -10,8 +10,6 @@ import java.util.Scanner;
 import org.lwjgl.system.MemoryStack;
 
 public class Shader {
-
-	public static Shader.Image image;
 	
 	private int v, f, program;
 
@@ -88,6 +86,10 @@ public class Shader {
 		}
 	}
 
+	public void setFloat(String name, float f) {
+		glUniform1f(uniformLocation(name), f);
+	}
+
 	public void setVec4(String name, float x, float y, float z, float w) {
 		glUniform4f(uniformLocation(name), x, y, z, w);
 	}
@@ -97,42 +99,42 @@ public class Shader {
 	}
 
 	public static void init() {
-		image = new Shader.Image();
+		Image.s = new Shader("shaders/image.vs", "shaders/image.fs");
 	}
 
 	public static class Image {
-		private Shader s;
-		
-		public Image() {
-			s = new Shader("shaders/image.vs", "shaders/image.fs");
-		}
+		private static Shader s;
 
-		public void use() {
+		public static void use() {
 			s.use();
 		}
 	
-		public void setProjection(Matrix4f matrix) {
+		public static void setProjection(Matrix4f matrix) {
 			s.setMatrix("projection", matrix);
 		}
 
-		public void setView(Matrix4f matrix) {
+		public static void setView(Matrix4f matrix) {
 			s.setMatrix("view", matrix);
 		}
 
-		public void setModel(Matrix4f matrix) {
+		public static void setModel(Matrix4f matrix) {
 			s.setMatrix("model", matrix);
 		}
 
-		public void setModel(float x, float y, float w, float h, float layer) {
+		public static void setModel(float x, float y, float w, float h, float layer) {
 			setModel(new Matrix4f().translate(x + w * 0.5f, y + h * 0.5f, layer).scale(w, h, 1));
 		}
 
-		public void setCrop(float x, float y, float w, float h) {
+		public static void setCrop(float x, float y, float w, float h) {
 			s.setVec4("crop", x, y, w, h);
 		}
 
-		public void setTexture(int texture) {
+		public static void setTexture(int texture) {
 			s.setInt("texture", texture);
+		}
+
+		public static void setAlpha(float alpha) {
+			s.setFloat("alpha", alpha);
 		}
 
 	}

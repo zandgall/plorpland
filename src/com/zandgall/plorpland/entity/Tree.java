@@ -7,11 +7,11 @@
 
 package com.zandgall.plorpland.entity;
 
-import javafx.scene.image.Image;
-import javafx.scene.canvas.GraphicsContext;
-
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
 import com.zandgall.plorpland.util.Hitrect;
@@ -44,7 +44,7 @@ public class Tree extends Entity {
 	}
 
 	@Override
-	public void render(GraphicsContext g1, GraphicsContext gs, GraphicsContext g2) {
+	public void render() {
 		Hitbox treebox = new Hitrect(getX() - 1.0, getY() - 2.5, 2, 1.6);
 		// if the player is behind the leaves, slowly shift "peekTransparency" to 0.75
 		// opacity, otherwise shift it to full opacity
@@ -59,12 +59,11 @@ public class Tree extends Entity {
 		shadow.render(gs, getX() - 1.5, getY() - 2.5, 3, 4);
 
 		if (peekTransparency != 1.0) {
-			g2.save();
-			g2.setGlobalAlpha(peekTransparency);
-			g2.drawImage(leaves, getX() - 1.5, getY() - 3.5, 3, 4);
-			g2.restore();
+			Shader.Image.setAlpha((float)peekTransparency);
+			leaves.draw(getX() - 1.5, getY() - 3.5, 3, 4, GLHelper.LAYER_2_DEPTH);
+			Shader.Image.setAlpha(1.f);
 		} else
-			g2.drawImage(leaves, getX() - 1.5, getY() - 3.5, 3, 4);
+			leaves.draw(getX() - 1.5, getY() - 3.5, 3, 4, GLHelper.LAYER_2_DEPTH);
 	}
 
 	public Hitbox getRenderBounds() {

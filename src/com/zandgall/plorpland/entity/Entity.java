@@ -7,8 +7,6 @@
 
 package com.zandgall.plorpland.entity;
 
-import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
 
 import com.zandgall.plorpland.Main;
@@ -31,16 +29,9 @@ public abstract class Entity implements Serializable{
 	public abstract void tick();
 
 	/*
-	 * A method to define how to draw each type of entity
-	 * It is provided with different context layers
-	 * 
-	 * @param context_1 A context for layer 1
-	 * 
-	 * @param context_shadow A context specifically for shadows
-	 * 
-	 * @param context_2 A context for layer 2
+	 * A method to define how to draw each type of entity 
 	 */
-	public abstract void render(GraphicsContext context_1, GraphicsContext context_shadow, GraphicsContext context_2);
+	public abstract void render();
 
 	public double getX() {
 		return position.x;

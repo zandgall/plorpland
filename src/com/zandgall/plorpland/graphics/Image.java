@@ -32,10 +32,10 @@ public class Image {
 	}
 
 	public void draw(float cX, float cY, float cW, float cH, float x, float y, float w, float h, float depth) {
-		Shader.image.use();
-		Shader.image.setCrop(cX, cY, cW, cH);
-		Shader.image.setModel(x, y, w, h, depth);
-		Shader.image.setTexture(texture);
+		Shader.Image.use();
+		Shader.Image.setCrop(cX, cY, cW, cH);
+		Shader.Image.setModel(x, y, w, h, depth);
+		Shader.Image.setTexture(texture);
 		GLHelper.drawRect();
 	}
 
