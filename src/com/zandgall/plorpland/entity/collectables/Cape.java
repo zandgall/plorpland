@@ -7,7 +7,7 @@
 
 package com.zandgall.plorpland.entity.collectables;
 
-import javafx.scene.image.Image;
+import com.zandgall.plorpland.graphics.Image;
 
 public class Cape extends Collectable {
 	public static final Image texture = new Image("/entity/cape.png");

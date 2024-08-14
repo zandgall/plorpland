@@ -9,12 +9,11 @@ package com.zandgall.plorpland.entity.collectables;
 
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.entity.Entity;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
 import com.zandgall.plorpland.util.Hitrect;
-
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 
 public abstract class Collectable extends Entity {
 
@@ -32,8 +31,8 @@ public abstract class Collectable extends Entity {
 		}
 	}
 
-	public void render(GraphicsContext g, GraphicsContext shadow, GraphicsContext g2) {
-		g.drawImage(getTexture(), position.x - 0.5, position.y - 0.5, 1, 1);
+	public void render() {
+		getTexture().draw(position.x - 0.5, position.y - 0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 	}
 
 	public Hitbox getRenderBounds() {

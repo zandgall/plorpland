@@ -8,12 +8,18 @@
 
 package com.zandgall.plorpland.entity.octoplorp;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_COMMA;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_PERIOD;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.zandgall.plorpland.Camera;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.entity.Entity;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.staging.Cutscene;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitboxes;
@@ -23,11 +29,6 @@ import com.zandgall.plorpland.util.Path;
 import com.zandgall.plorpland.util.Point;
 import com.zandgall.plorpland.util.Util;
 import com.zandgall.plorpland.util.Vector;
-
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 
 public class Tentacle extends Entity {
 	protected static final Image sheet = new Image("/entity/octoplorp/tentacles.png");
@@ -135,7 +136,7 @@ public class Tentacle extends Entity {
 			// When chasing, update path every 2 seconds (or when empty) and check if touching player
 			case CHASING:
 				timer += Main.TIMESTEP;
-				if ((timer >= 2 || path.size() == 1) && (!TENTACLE_DEBUG || (Main.keys.get(KeyCode.COMMA)&&!Main.pKeys.get(KeyCode.COMMA)))) {
+				if ((timer >= 2 || path.size() == 1) && (!TENTACLE_DEBUG || (Main.keys[GLFW_KEY_COMMA] && !Main.pKeys[GLFW_KEY_COMMA]))) {
 					timer = 0;
 					pathfindTo(Main.getPlayer().tileX(), Main.getPlayer().tileY(), false);
 					if(path.empty())
@@ -295,7 +296,7 @@ public class Tentacle extends Entity {
 		// Hit indicates whether we need to progress the path
 		boolean hit = false;
 		if(TENTACLE_DEBUG){
-			if(Main.keys.get(KeyCode.PERIOD) && !Main.pKeys.get(KeyCode.PERIOD))
+			if(Main.keys[GLFW_KEY_PERIOD] && !Main.pKeys[GLFW_KEY_PERIOD])
 				hit = true;
 		} else
 			switch (orientation) {
@@ -414,17 +415,19 @@ public class Tentacle extends Entity {
 		};
 	}
 
-	public void render(GraphicsContext g, GraphicsContext shadow, GraphicsContext g2) {
+	public void render() {
 		// Draw dirt mound
-		g.drawImage(sheet, 48, 32, 48, 16, start.x - 1.5, start.y - 0.5, 3, 1);
+		sheet.draw(48, 32, 48, 16, start.x - 1.5, start.y - 0.5, 3, 1, GLHelper.LAYER_1_DEPTH);
 
 		for (Point p : traveled) {
-			g.drawImage(sheet, 96 + segments.get(p)*16, 
+			sheet.draw(96 + segments.get(p)*16, 
 						segtypes.get(p) == SegType.STRAIGHT ? 0 : segtypes.get(p) == SegType.TURN_LEFT ? 16 : 32,
-						16, 16, p.x, p.y, 1, 1);
+						16, 16, p.x, p.y, 1, 1, GLHelper.LAYER_1_DEPTH);
 		}
 	
 		if (health < 100 && (state == State.GRABBING || state == State.GRABBED)) {
+			// TODO: Tentacle health bar
+			/*
 			g.setLineWidth(0.05);
 			g.setStroke(Color.BLACK);
 			g.setFill(Color.RED);
@@ -433,56 +436,54 @@ public class Tentacle extends Entity {
 			g.setFill(Color.GREEN);
 			g.fillRect(getX() - (orientation == 1 ? 1.75 : 0.75), getY() - (orientation == 3 ? 1.75 : 0.75),
 					health * 0.015, 0.2);
+			*/
 		}
 
-		g.save();
-		g.translate(getX(), getY());
+		Shader.Image.use();
+		Matrix4f model = new Matrix4f().translate(-0.5, -0.5, GLHelper.LAYER_1_DEPTH)
+			.rotateZ(Math.PI * 0.5 * orientation).translate(getX(), getY(), 0);
+
 		if(state == State.WINDUP)
-			g.translate((Math.random()-0.5)*timer*0.1, (Math.random()-0.5)*timer*0.1);
-		g.rotate(90 * orientation);
-		if (state == State.GRABBING || state == State.GRABBED)
-			g.drawImage(sheet, 48, 0, 48, 16, -0.5, -0.5, 3, 1);
-		else if (state == State.INJURED)
-			g.drawImage(sheet, 0, 32, 48, 16, -0.5, -0.5, 3, 1);
-		else if (state == State.DEAD || state == State.DYING || state == State.RETRACTING) {
-			g.drawImage(sheet, 32, 16, 16, 16, -0.5, -0.5, 1, 1);
-			g.restore();
-			g.save();
-			g.translate(corpse.x, corpse.y);
-			g.rotate(180 * corpseRotation / Math.PI);
-			g.drawImage(sheet, 64, 16, 32, 16, -1.6, -0.5, 2, 1);
-		} else if (state == State.SWINGING) {
-			g.drawImage(sheet, 32, 16, 16, 16, -0.5, -0.5, 1, 1);
-			g.restore();
-			g.save();
-			g.translate(corpse.x, corpse.y);
-			g.rotate(180 * corpseRotation / Math.PI);
-			g.drawImage(sheet, 64, 16, 32, 16, -0.1, -0.5, 2, 1);
-		} else {
-			// Create clip rect to draw the end of the tentacle protruding into
+			model.translate((Math.random()-0.5)*timer*0.1, (Math.random()-0.5)*timer*0.1, 0);
+
+		if(state == State.GRABBING || state == State.GRABBED) {
+			Shader.Image.setCrop(48.f / sheet.getWidth(), 0, 48.f / sheet.getWidth(), 16.f / sheet.getHeight());
+			model.scale(3, 1, 1);
+		} else if(state == State.INJURED) {
+			Shader.Image.setCrop(0, 32.f / sheet.getHeight(), 48.f / sheet.getWidth(), 16.f / sheet.getHeight());
+			model.scale(3, 1, 1);
+		} else if(state == State.DEAD || state == State.DYING || state == State.RETRACTING || state == State.SWINGING)
+			Shader.Image.setCrop(32.f / sheet.getWidth(), 16.f / sheet.getHeight(), 16.f / sheet.getWidth(), 16.f / sheet.getHeight());
+		else {
 			double gX = getX() - 0.5, tX = Math.floor(gX);
 			double gY = getY() - 0.5, tY = Math.floor(gY);
-			double clipset = -0.5 + switch(orientation) {
+			double clipset = switch(orientation) {
 			case 0 -> 1 + tX - gX;
 			case 1 -> 1 + tY - gY;
 			case 2 -> gX - tX;
 			case 3 -> gY - tY;
 			default -> 0;
 			};
-			g.save();
-			g.beginPath();
-			g.rect(clipset, -0.5, 3, 1);
-			g.clip();
-			g.drawImage(sheet, 0, 0, 48, 16, -0.5, -0.5, 3, 1);
-			g.restore();
+			Shader.Image.setCrop((float)clipset, 0.f, 48.f / sheet.getWidth(), 16.f / sheet.getHeight());
+			model.scale(3 - clipset, 1, 1);
 		}
-		g.restore();
+
+		Shader.Image.setTexture(sheet.getTexture());
+		Shader.Image.setModel(model);
+		GLHelper.drawRect();
+
+		if(state == State.DEAD || state == State.DYING || state == State.RETRACTING || state == State.SWINGING) {
+			Shader.Image.setCrop(64.f / sheet.getWidth(), 16.f / sheet.getHeight(), 32.f / sheet.getWidth(), 16.f / sheet.getHeight());
+			Shader.Image.setModel(new Matrix4f().translate(-1.6 + (state == State.SWINGING ? 1.5 : 0))
+				.rotateZ(corpseRotation).translate(corpse.x, corpse.y, GLHelper.LAYER_1_DEPTH).scale(2, 1));
+			GLHelper.drawRect();
+		}
 
 		// Draw dirt mound cover
 		if(state == State.DEAD || state == State.DYING)
-			g.drawImage(sheet, 48, 16, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1);
+			sheet.draw(48, 16, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 		else
-			g.drawImage(sheet, 64, 32, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1);
+			sheet.draw(64, 32, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 	}
 
 	public Hitbox getRenderBounds() {

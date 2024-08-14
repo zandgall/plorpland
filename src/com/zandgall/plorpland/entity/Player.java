@@ -14,15 +14,14 @@
 
 package com.zandgall.plorpland.entity;
 
-import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
-import javafx.scene.image.Image;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
+import static org.lwjgl.glfw.GLFW.*;
 
 import com.zandgall.plorpland.Camera;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitboxes;
 import com.zandgall.plorpland.util.Hitnull;
@@ -81,18 +80,18 @@ public class Player extends Entity {
 
 		// Arrow keys to move
 		if (specialMove == Special.NONE) {
-			if (Main.keys.get(KeyCode.RIGHT))
+			if (Main.keys[GLFW_KEY_RIGHT])
 				velocity.x += MOVE_SPEED;
-			if (Main.keys.get(KeyCode.LEFT))
+			if (Main.keys[GLFW_KEY_LEFT])
 				velocity.x -= MOVE_SPEED;
-			if (Main.keys.get(KeyCode.DOWN))
+			if (Main.keys[GLFW_KEY_DOWN])
 				velocity.y += MOVE_SPEED;
-			if (Main.keys.get(KeyCode.UP))
+			if (Main.keys[GLFW_KEY_UP])
 				velocity.y -= MOVE_SPEED;
 			swordTargetDirection = Math.atan2(velocity.y, velocity.x);
 
 			// If player presses Z and ready to dash, dash in direction we're moving
-			if (Main.keys.get(KeyCode.Z) && dashTimer <= 0) {
+			if (Main.keys[GLFW_KEY_Z] && dashTimer <= 0) {
 				velocity = velocity.unit();
 				velocity.scale(DASH_SPEED);
 
@@ -142,8 +141,8 @@ public class Player extends Entity {
 			doStab();
 		// If X and any of the arrow keys are pressed (player is moving), swing sword in
 		// direction player is moving
-		else if (Main.keys.get(KeyCode.X) && (Main.keys.get(KeyCode.LEFT) || Main.keys.get(KeyCode.RIGHT)
-				|| Main.keys.get(KeyCode.UP) || Main.keys.get(KeyCode.DOWN))) {
+		else if (Main.keys[GLFW_KEY_X] && (Main.keys[GLFW_KEY_LEFT] || Main.keys[GLFW_KEY_RIGHT]
+				|| Main.keys[GLFW_KEY_UP] || Main.keys[GLFW_KEY_DOWN])) {
 
 			// Find out how far (and in which direction) the swordDirection is from the
 			// swordTargetDirection, and swing towards the target
@@ -157,7 +156,7 @@ public class Player extends Entity {
 				swordRotationalVelocity *= 0.95;
 
 			// If the player is dashing, perform a special move if applicable
-			else if (Main.keys.get(KeyCode.Z) && dashTimer <= 0 && specialTimer <= 0) {
+			else if (Main.keys[GLFW_KEY_Z] && dashTimer <= 0 && specialTimer <= 0) {
 
 				// If swinging sword fast enough, do charged special
 				if (Math.abs(swordRotationalVelocity) > 15) {
@@ -282,18 +281,20 @@ public class Player extends Entity {
 	}
 
 	@Override
-	public void render(GraphicsContext g, GraphicsContext ignore_shadow, GraphicsContext ignore_2) {
-		g.save();
+	public void render() {
+		// TODO: Bye bye player!
+		/* g.save();
 		g.setFill(Color.RED);
-		g.fillRect(getX() - 0.5, getY() - 0.5, 1.0, 1.0);
+		g.fillRect(getX() - 0.5, getY() - 0.5, 1.0, 1.0); */
 
 		// If player was hit recently, or a special move was used recently, draw
 		// transparent
+		float alpha = 1.f;
 		if (System.currentTimeMillis() - lastHit < 1000)
 			if ((System.currentTimeMillis() / 100) % 2 == 0) // Every other frame on damage
-				g.setGlobalAlpha(0.5);
+				alpha = 0.5f;
 		if (previousMove != Special.NONE)
-			g.setGlobalAlpha(0.5);
+			alpha = 0.5f;
 
 		// Sword drawing
 		if (hasSword) {
@@ -306,12 +307,17 @@ public class Player extends Entity {
 			g.drawImage(indicator, -1.5, -1.5, 3, 3);
 			g.restore();
 
-			if (specialMove == Special.NONE) {
+			Shader.Image.setModel(new Matrix4f().translate(-1.5, -1.5, GLHelper.LAYER_1_DEPTH).rotateZ(swordTargetDirection).translate(getX(), getY(), 0));
+			Shader.Image.setAlpha((float)dashTimer * 2);
+			Shader.Image.setTexture(indicator.getTexture());
+			GLHelper.drawRect();
+
+			/* if (specialMove == Special.NONE) {
 				g.setStroke(Color.LIGHTBLUE);
 				g.setLineWidth(0.1);
 				g.setGlobalAlpha(specialTimer);
 				g.strokeArc(-1.7, -1.7, 3.4, 3.4, 90, -360 * (5 - specialTimer) / 5, ArcType.OPEN);
-			}
+			} */
 
 			// Draw fully opaque only when sword is swinging fast enough to do damage
 			if (Math.abs(swordRotationalVelocity) > 2.0 || specialMove != Special.NONE)

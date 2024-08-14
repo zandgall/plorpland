@@ -9,12 +9,11 @@ package com.zandgall.plorpland.entity;
 
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
 import com.zandgall.plorpland.util.Hitrect;
-
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 
 public class HealthFlower extends Entity {
 
@@ -41,9 +40,9 @@ public class HealthFlower extends Entity {
 		timer += Main.TIMESTEP;
 	}
 
-	public void render(GraphicsContext g, GraphicsContext shadow, GraphicsContext g2) {
+	public void render() {
 		int frame = (int) Math.max((timer * 8) % 8 - 4, 0);
-		g.drawImage(texture, 0, frame * 16, 16, 16, position.x - 0.5, position.y - 0.5, 1, 1);
+		texture.draw(0, frame * 16, 16, 16, position.x - 0.5, position.y - 0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 	}
 
 	public Hitbox getRenderBounds() {

@@ -8,24 +8,24 @@
 package com.zandgall.plorpland.entity;
 
 import com.zandgall.plorpland.Main;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitrect;
 import com.zandgall.plorpland.util.ShadowImage;
 
 import java.util.Random;
 
-import javafx.scene.canvas.GraphicsContext;
-
 public class Cloud {
-	public static ShadowImage textures[] = new ShadowImage[] {
-			new ShadowImage("/entity/cloud_0.png", 10, 0.7),
-			new ShadowImage("/entity/cloud_1.png", 10, 0.7),
-			new ShadowImage("/entity/cloud_2.png", 10, 0.7),
-			new ShadowImage("/entity/cloud_3.png", 10, 0.7),
-			new ShadowImage("/entity/cloud_4.png", 10, 0.7),
-			new ShadowImage("/entity/cloud_5.png", 10, 0.7),
-			new ShadowImage("/entity/cloud_6.png", 10, 0.7),
-			new ShadowImage("/entity/cloud_7.png", 10, 0.7)
+	public static Image textures[] = new Image[] {
+			new Image("/entity/cloud_0.png", 10, 0.7),
+			new Image("/entity/cloud_1.png", 10, 0.7),
+			new Image("/entity/cloud_2.png", 10, 0.7),
+			new Image("/entity/cloud_3.png", 10, 0.7),
+			new Image("/entity/cloud_4.png", 10, 0.7),
+			new Image("/entity/cloud_5.png", 10, 0.7),
+			new Image("/entity/cloud_6.png", 10, 0.7),
+			new Image("/entity/cloud_7.png", 10, 0.7)
 	};
 
 	private int type;
@@ -57,8 +57,8 @@ public class Cloud {
 		bounds.set(x, y, 16, 16);
 	}
 
-	public void render(GraphicsContext g) {
-		textures[type].render(g, x, y, 16, 16);
+	public void render() {
+		textures[type].draw(x, y, 16, 16, GLHelper.LAYER_2_SHADOW_DEPTH);
 	}
 
 	public Hitbox getRenderBounds() {

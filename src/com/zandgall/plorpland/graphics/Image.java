@@ -8,7 +8,7 @@ import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.stb.STBImage;
 
 public class Image {
-	private int texture;
+	private int texture, width, height;
 
 	public Image(String path) {
 		ByteArrayInputStream fileByteInput = (ByteArrayInputStream)Image.class.getResourceAsStream(path);
@@ -19,10 +19,12 @@ public class Image {
 		fileBuffer.rewind();
 		int[] x = {0}, y = {0}, c = {0};
 		ByteBuffer imageBuffer = STBImage.stbi_load_from_memory(fileBuffer, x, y, c, STBImage.STBI_rgb_alpha);
+		width = x[0];
+		height = y[0];
 		
 		texture = glGenTextures();
 		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x[0], y[0], 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
@@ -33,13 +35,33 @@ public class Image {
 
 	public void draw(float cX, float cY, float cW, float cH, float x, float y, float w, float h, float depth) {
 		Shader.Image.use();
-		Shader.Image.setCrop(cX, cY, cW, cH);
+		Shader.Image.setCrop(cX/width, cY/height, cW/width, cH/height);
 		Shader.Image.setModel(x, y, w, h, depth);
 		Shader.Image.setTexture(texture);
 		GLHelper.drawRect();
 	}
 
 	public void draw(float x, float y, float w, float h, float depth) {
-		draw(0, 0, 1, 1, x, y, w, h, depth);
+		draw(0, 0, width, height, x, y, w, h, depth);
+	}
+
+	public void draw(double cX, double cY, double cW, double cH, double x, double y, double w, double h, double depth) {
+		draw((float)cX, (float)cY, (float)cW, (float)cH, (float)x, (float)y, (float)w, (float)h, (float)depth);
+	}
+
+	public void draw(double x, double y, double w, double h, double depth) {
+		draw(0.0, 0.0, width, height, x, y, w, h, depth);
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public int getTexture() {
+		return texture;
 	}
 }

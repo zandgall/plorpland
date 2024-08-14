@@ -7,11 +7,10 @@
 
 package com.zandgall.plorpland.entity;
 
-import javafx.scene.image.Image;
-import javafx.scene.canvas.GraphicsContext;
-
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
 import com.zandgall.plorpland.util.Hitrect;
@@ -49,8 +48,8 @@ public class PlantedSword extends Entity {
 	}
 
 	@Override
-	public void render(GraphicsContext g1, GraphicsContext gs, GraphicsContext g2) {
-		g1.drawImage(texture, position.x - 1, position.y - 1.8, 2, 2);
+	public void render() {
+		texture.draw(position.x - 1, position.y - 1.8, 2, 2, GLHelper.LAYER_1_DEPTH);
 	}
 
 	public Hitbox getRenderBounds() {

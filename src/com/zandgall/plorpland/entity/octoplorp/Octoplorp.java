@@ -13,16 +13,16 @@ package com.zandgall.plorpland.entity.octoplorp;
 
 import java.io.IOException;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
+
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
 import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.Player;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.staging.Cutscene;
 import com.zandgall.plorpland.util.*;
-
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 
 public class Octoplorp extends Entity{
 
@@ -255,12 +255,12 @@ public class Octoplorp extends Entity{
 	}
 
 	// Draw the body and eye with given frame and position
-	public void render(GraphicsContext g, GraphicsContext shadow, GraphicsContext g2) {
-		g.drawImage(body, getX() - 3, getY() - 3, 6, 6);
+	public void render() {
+		body.draw(getX() - 3, getY() - 3, 6, 6, GLHelper.LAYER_1_DEPTH);
 		if(eyeFrame.x == -1)
-			g.drawImage(eye, 256, 32, 64, 64, getX() - 2 + eyePos.x, getY() - 4 + eyePos.y, 4, 4);
+			eye.draw(256, 32, 64, 64, getX() - 2 + eyePos.x, getY() - 4 + eyePos.y, 4, 4, GLHelper.LAYER_1_DEPTH);
 		else
-			g.drawImage(eye, eyeFrame.x * 64, eyeFrame.y * 32, 64, 32, getX() - 2 + eyePos.x, getY() - 2 + eyePos.y, 4, 2);
+			eye.draw(eyeFrame.x * 64, eyeFrame.y * 32, 64, 32, getX() - 2 + eyePos.x, getY() - 2 + eyePos.y, 4, 2, GLHelper.LAYER_1_DEPTH);
 	}
 
 	public Hitbox getRenderBounds() {	
@@ -323,7 +323,7 @@ public class Octoplorp extends Entity{
 					Main.getPlayer().setY(y);
 					Main.getPlayer().cutsceneSword(0.5 * Math.PI, 4 + t, 0, Player.Special.NONE);
 				} else if (!stabbing) { // Then wait until the 'Z' key is hit
-					if(Main.keys.get(KeyCode.Z)) {
+					if(Main.keys[GLFW_KEY_Z]) {
 						Main.getPlayer().cutsceneSword(0.5 * Math.PI, 0, 0, Player.Special.STAB);
 						stabbing = true;
 						t = 1;

@@ -10,14 +10,14 @@ package	com.zandgall.plorpland.entity.octoplorp;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.PlantedSword;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
 import com.zandgall.plorpland.util.Hitrect;
 import com.zandgall.plorpland.util.Util;
 import com.zandgall.plorpland.util.Vector;
-
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 
 public class ThrownSword extends Entity {
 
@@ -47,17 +47,11 @@ public class ThrownSword extends Entity {
 		}
 	}
 
-	public void render(GraphicsContext g, GraphicsContext shadow, GraphicsContext g2) {
-		g.save();
-
-		g.translate(getX(), getY());
-		g.rotate(180 * rotation / Math.PI);
-
-		g.drawImage(image, -1, -0.5, 2, 1);
-
-		g.restore();
-
-		g.drawImage(plaque, target.x-1, target.y-1.8, 2, 2);
+	public void render() {
+		Shader.Image.use();
+		Shader.Image.setTexture(image.getTexture());
+		Shader.Image.setModel(new Matrix4f().translate(-1, -0.5, GLHelper.LAYER_1_DEPTH).rotateZ(rotation).translate(getX(), getY(), 0).scale(2, 1, 0));
+		plaque.draw(target.x-1, target.y-1.8, 2, 2, GLHelper.LAYER_1_DEPTH);
 	}
 
 	@Override
