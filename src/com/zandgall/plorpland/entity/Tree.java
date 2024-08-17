@@ -15,12 +15,11 @@ import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
 import com.zandgall.plorpland.util.Hitrect;
-import com.zandgall.plorpland.util.ShadowImage;
 
 public class Tree extends Entity {
 
 	private static Image trunk = new Image("/entity/tree_trunk.png"), leaves = new Image("/entity/tree_leaves.png");
-	private static ShadowImage shadow = new ShadowImage("/entity/tree_shadow.png", 5, 0.6);
+	private static Image shadow = new Image("/entity/tree_shadow.png");
 	private double peekTransparency = 1;
 
 	private Hitbox renderBounds, solidBounds;
@@ -54,16 +53,13 @@ public class Tree extends Entity {
 			peekTransparency = peekTransparency * 0.95 + 1.0 * 0.05;
 
 		// Tree texture is 3 x 4 tiles in dimensions. offset by -1.5, -3.5
-		g1.drawImage(trunk, getX() - 1.5, getY() - 3.5, 3, 4);
+		trunk.draw((float)getX() - 1.5f, (float)getY() - 3.5f, 3, 4, GLHelper.LAYER_1_DEPTH);
 		// Shadow is 1 tile lower
-		shadow.render(gs, getX() - 1.5, getY() - 2.5, 3, 4);
+		shadow.draw((float)getX() - 1.5f, (float)getY() - 2.5f, 3, 4, GLHelper.LAYER_1_DEPTH);
 
-		if (peekTransparency != 1.0) {
-			Shader.Image.setAlpha((float)peekTransparency);
-			leaves.draw(getX() - 1.5, getY() - 3.5, 3, 4, GLHelper.LAYER_2_DEPTH);
-			Shader.Image.setAlpha(1.f);
-		} else
-			leaves.draw(getX() - 1.5, getY() - 3.5, 3, 4, GLHelper.LAYER_2_DEPTH);
+		Shader.Image.setAlpha((float)peekTransparency);
+		leaves.draw(getX() - 1.5, getY() - 3.5, 3, 4, GLHelper.LAYER_2_DEPTH);
+		Shader.Image.setAlpha(1.f);
 	}
 
 	public Hitbox getRenderBounds() {

@@ -77,6 +77,8 @@ jar {
 		attributes 'Main-Class': 'com.zandgall.plorpland.Main'
 	}
 
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE;
+
 	from {
 		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
 	}

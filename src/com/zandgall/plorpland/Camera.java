@@ -7,7 +7,9 @@
 
 package com.zandgall.plorpland;
 
-import javafx.scene.canvas.GraphicsContext;
+import org.joml.Matrix4f;
+
+import com.zandgall.plorpland.graphics.Shader;
 
 public class Camera {
 	public static final double DEFAULT_SMOOTHING = 0.01, DEFAULT_ZOOM = 64;
@@ -56,10 +58,13 @@ public class Camera {
 	}
 
 	// Create the transformation with the given x, y and zoom
-	public void transform(GraphicsContext gc) {
+	public void transform() {
 		// Clamp translation to nearest pixel to avoid gaps between tiles
-		gc.transform(zoom, 0, 0, zoom, (int) (-x * zoom + Main.layer_0.getWidth() * 0.5),
-				(int) (-y * zoom + Main.layer_0.getHeight() * 0.5));
+		// gc.transform(zoom, 0, 0, zoom, (int) (-x * zoom + Main.layer_0.getWidth() * 0.5),
+				// (int) (-y * zoom + Main.layer_0.getHeight() * 0.5));
+		Matrix4f m = new Matrix4f().scale((float)zoom, (float)zoom, 1).translate((float)-x, (float)-y, 0);
+		Shader.Image.setView(m);
+		// System.out.println("View matrix: " + m.toString());
 	}
 
 	public double getX() {

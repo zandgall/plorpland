@@ -16,6 +16,8 @@ package com.zandgall.plorpland.entity;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import org.joml.Matrix4f;
+
 import com.zandgall.plorpland.Camera;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
@@ -298,16 +300,18 @@ public class Player extends Entity {
 
 		// Sword drawing
 		if (hasSword) {
-			g.translate(getX(), getY());
+			//g.translate(getX(), getY());
 
 			// Draw sword special indicator
-			g.save();
-			g.rotate(180 * swordTargetDirection / Math.PI);
-			g.setGlobalAlpha(dashTimer * 2);
-			g.drawImage(indicator, -1.5, -1.5, 3, 3);
-			g.restore();
+			//g.save();
+			//g.rotate(180 * swordTargetDirection / Math.PI);
+			//g.setGlobalAlpha(dashTimer * 2);
+			//g.drawImage(indicator, -1.5, -1.5, 3, 3);
+			//g.restore();
 
-			Shader.Image.setModel(new Matrix4f().translate(-1.5, -1.5, GLHelper.LAYER_1_DEPTH).rotateZ(swordTargetDirection).translate(getX(), getY(), 0));
+
+
+			Shader.Image.setModel(new Matrix4f().translate(-1.5f, -1.5f, GLHelper.LAYER_1_DEPTH).rotateZ((float)swordTargetDirection).translate((float)getX(), (float)getY(), 0));
 			Shader.Image.setAlpha((float)dashTimer * 2);
 			Shader.Image.setTexture(indicator.getTexture());
 			GLHelper.drawRect();
@@ -321,34 +325,49 @@ public class Player extends Entity {
 
 			// Draw fully opaque only when sword is swinging fast enough to do damage
 			if (Math.abs(swordRotationalVelocity) > 2.0 || specialMove != Special.NONE)
-				g.setGlobalAlpha(1.0);
+				Shader.Image.setAlpha(1.f);
 			else
-				g.setGlobalAlpha(0.5);
-			g.rotate(180 * swordDirection / Math.PI);
-			g.drawImage(sword, 0, -0.5, 2, 1);
+				Shader.Image.setAlpha(0.5f);
+			Matrix4f m = new Matrix4f().translate(0, -0.5f, GLHelper.LAYER_1_DEPTH).rotateZ((float)swordDirection).translate((float)getX(), (float)getY(), 0).scale(2, 1, 1);
+			Shader.Image.setModel(m);
+			Shader.Image.setTexture(sword.getTexture());
+			GLHelper.drawRect();
 
 			// Draw special move related sprites, or fade outs
-			if (specialMove == Special.STAB)
-				g.drawImage(stab, 0, -0.5, 2.25, 1);
-			else if (specialMove == Special.SLASH) {
+			if (specialMove == Special.STAB) {
+				m.scale(2.25f / 2.f, 1, 1);
+				Shader.Image.setModel(m);
+				Shader.Image.setTexture(stab.getTexture());
+				GLHelper.drawRect();
+			} else if (specialMove == Special.SLASH) {
 				if (Util.signedAngularDistance(swordDirection, swordTargetDirection) > 0)
-					g.drawImage(slash, 0, -0.5, 2, 2);
+					m.scale(1, 2, 1);
 				else
-					g.drawImage(slash, 0, 0.5, 2, -2);
+					m.scale(1, -2, 1);
+				Shader.Image.setModel(m);
+				Shader.Image.setTexture(slash.getTexture());
+				GLHelper.drawRect();
 			} else if (previousMove == Special.STAB) {
-				g.setGlobalAlpha(specialTimer - 4);
-				g.drawImage(stab, 0, -0.5, 2.25, 1);
+				Shader.Image.setAlpha((float)specialTimer - 4.f);
+				m.scale(2.25f / 2.f, 1, 1);
+				Shader.Image.setModel(m);
+				Shader.Image.setTexture(stab.getTexture());
 			} else if (previousMove == Special.SLASH) {
-				g.setGlobalAlpha(specialTimer - 4);
-				if (swordRotationalVelocity < 0)
-					g.drawImage(slash, 0, -0.5, 2, 2);
+				Shader.Image.setAlpha((float)specialTimer - 4.f);
+				if (Util.signedAngularDistance(swordDirection, swordTargetDirection) > 0)
+					m.scale(1, 2, 1);
 				else
-					g.drawImage(slash, 0, 0.5, 2, -2);
-			} else if (Math.abs(swordRotationalVelocity) > 15.0 && specialTimer <= 0)
-				g.drawImage(charged, 0, -0.5, 2.5, 1);
+					m.scale(1, -2, 1);
+				Shader.Image.setModel(m);
+				Shader.Image.setTexture(slash.getTexture());
+				GLHelper.drawRect();
+			} else if (Math.abs(swordRotationalVelocity) > 15.0 && specialTimer <= 0) {
+				m.scale(2.5f / 2.f, 1, 1);
+				Shader.Image.setModel(m);
+				Shader.Image.setTexture(charged.getTexture());
+				GLHelper.drawRect();
+			}
 		}
-
-		g.restore();
 	}
 
 	public Hitbox getRenderBounds() {
@@ -442,14 +461,12 @@ public class Player extends Entity {
 				Main.getLevel().removeEntity(this);
 		}
 
-		public void render(GraphicsContext g, GraphicsContext ignore, GraphicsContext ignore2) {
-			g.save();
+		public void render() {
 			if(timer < 0.5)
-				g.setGlobalAlpha(timer*2);
-			g.translate(getX(), getY());
-			g.rotate(180 * direction / Math.PI);
-			g.drawImage(texture, -1, -1.5, 1.625, 3);
-			g.restore();
+				Shader.Image.setAlpha((float)timer * 2);
+			Shader.Image.setModel(new Matrix4f().translate(-1, -1.5f, GLHelper.LAYER_1_DEPTH).rotateZ((float)direction).scale(1.625f, 3, 1));
+			Shader.Image.setTexture(texture.getTexture());
+			GLHelper.drawRect();
 		}
 
 		public Hitbox getRenderBounds() {
@@ -498,12 +515,10 @@ public class Player extends Entity {
 				Main.getLevel().removeEntity(this);
 		}
 
-		public void render(GraphicsContext g, GraphicsContext ignore, GraphicsContext ignore2) {
-			g.save();
-			g.translate(getX(), getY());
-			g.rotate(180 * direction / Math.PI);
-			g.drawImage(texture, -0.375, -0.75, 0.75, 1.5);
-			g.restore();
+		public void render() {
+			Shader.Image.setModel(new Matrix4f().translate(-0.375f, -0.75f, GLHelper.LAYER_1_DEPTH).rotateZ((float)direction).translate((float)getX(), (float)getY(), 0).scale(0.75f, 1.5f, 1.f));
+			Shader.Image.setTexture(texture.getTexture());
+			GLHelper.drawRect();
 		}
 
 		public Hitbox getRenderBounds() {

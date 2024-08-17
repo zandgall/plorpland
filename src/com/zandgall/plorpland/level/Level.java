@@ -8,6 +8,7 @@
 package com.zandgall.plorpland.level;
 
 import com.zandgall.plorpland.entity.EntityRegistry;
+import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.Cloud;
 import com.zandgall.plorpland.util.Hitbox;
@@ -16,24 +17,12 @@ import com.zandgall.plorpland.util.Rect;
 import com.zandgall.plorpland.Camera;
 import com.zandgall.plorpland.Main;
 
-import javafx.scene.transform.Affine;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.image.Image;
-
 import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-import javax.imageio.ImageIO;
-import javafx.embed.swing.SwingFXUtils;
-
 import java.io.ObjectInputStream;
-import java.io.File;
 import java.io.IOException;
 
 public class Level {
@@ -141,12 +130,13 @@ public class Level {
 
 	}
 
+	// TODO: Do level graphics again
 	public void loadGraphics() {
 		// Objects to crop the loaded images
-		Canvas cropper = new Canvas(CHUNK_SIZE, CHUNK_SIZE);
+		/*Canvas cropper = new Canvas(CHUNK_SIZE, CHUNK_SIZE);
 		SnapshotParameters p = new SnapshotParameters();
 		p.setFill(Color.TRANSPARENT);
-		GraphicsContext g = cropper.getGraphicsContext2D();
+		GraphicsContext g = cropper.getGraphicsContext2D();*/
 
 		// Load images and create output array
 		Image l0 = new Image("/level_0.png");
@@ -159,7 +149,7 @@ public class Level {
 		shadow_1 = new Image[(int)Math.ceil(l0.getWidth()/CHUNK_SIZE)][(int)Math.ceil(l0.getHeight()/CHUNK_SIZE)];
 
 		// Loop through every chunk, cropping each image and putting it in the images arrays
-		for(int i = 0; i < l0.getWidth() / CHUNK_SIZE; i++) {
+		/*for(int i = 0; i < l0.getWidth() / CHUNK_SIZE; i++) {
 			for(int j = 0; j < l0.getHeight() / CHUNK_SIZE; j++) {
 				g.clearRect(0, 0, CHUNK_SIZE, CHUNK_SIZE);
 				g.drawImage(l0, -i*CHUNK_SIZE, -j*CHUNK_SIZE);
@@ -174,7 +164,7 @@ public class Level {
 				g.drawImage(s1, -i*CHUNK_SIZE, -j*CHUNK_SIZE);
 				shadow_1[i][j] = cropper.snapshot(p, null);
 			}
-		}
+		}*/
 
 	}
 
@@ -187,9 +177,9 @@ public class Level {
 
 	public void flushEntityQueues() {
 		Camera c = Main.getCamera();
-		Hitbox screen = new Hitrect(c.getX() - 0.5 * Main.layer_0.getWidth() / c.getZoom(),
-			c.getY() - 0.5 * Main.layer_0.getHeight() / c.getZoom(), Main.layer_0.getWidth() / c.getZoom(),
-			Main.layer_0.getHeight() / c.getZoom());
+		Hitbox screen = new Hitrect(c.getX() - 0.5 * Main.WIDTH / c.getZoom(),
+			c.getY() - 0.5 * Main.HEIGHT / c.getZoom(), Main.WIDTH / c.getZoom(),
+			Main.HEIGHT / c.getZoom());
 
 		for (Entity e : addQueue)
 			if (!entities.add(e))
@@ -207,76 +197,66 @@ public class Level {
 	}
 
 	/**
-	 * A level render method provided with several graphical layers
-	 * 
-	 * @param context_0 A context for layer 0 - usually reserved for tiles
-	 * @param context_1 A context for layer 1
-	 * @param shadow_0  A context specifically for shadows (applies to layers 1
-	 *                  and 0)
-	 * @param context_2 A context for layer 2
-	 * @param shadow_1  A context specifically for shadows (applies to all layers
-	 *                  below)
+	 * A level render method
 	 */
-	public void render(GraphicsContext context_0, GraphicsContext context_1, GraphicsContext shadow_0,
-			GraphicsContext context_2, GraphicsContext shadow_1) {
-		// All contexts should use the same transform at this time
-		Affine af = context_0.getTransform();
-		int xMin = (int) Math.floor(-af.getTx() / af.getMxx());
-		int xMax = (int) (-af.getTx() / af.getMxx() + (1 / af.getMxx()) * Main.layer_0.getWidth());
-		int yMin = (int) Math.floor(-af.getTy() / af.getMyy());
-		int yMax = (int) (-af.getTy() / af.getMyy() + (1 / af.getMyy()) * Main.layer_0.getHeight());
-	
-		Rect screenBounds = new Rect(-af.getTx() / af.getMxx(), -af.getTy() / af.getMyy(),
-				Main.layer_0.getWidth() / af.getMxx(), Main.layer_0.getHeight() / af.getMyy());
+	public void render() {
+		Camera c = Main.getCamera();
+		Hitbox screen = new Hitrect(c.getX() - 0.5 * Main.WIDTH / c.getZoom(),
+			c.getY() - 0.5 * Main.HEIGHT / c.getZoom(), Main.WIDTH / c.getZoom(),
+			Main.HEIGHT / c.getZoom());
+		int xMin = (int) screen.getBounds().x;
+		int xMax = (int) (screen.getBounds().x + screen.getBounds().w);
+		int yMin = (int) screen.getBounds().y;	
+		int yMax = (int) (screen.getBounds().y + screen.getBounds().h);
 
 		for(SpecialImage i : specialImages.get(0))
-			if(screenBounds.intersects(i.getRenderBox()))
-				i.render(context_0);
+			if(screen.intersects(i.getRenderBox()))
+				i.render();
 
-		if(USE_TILES)
-			for (int x = xMin; x <= xMax; x++)
+		// if(USE_TILES)
+			/* for (int x = xMin; x <= xMax; x++)
 				for (int y = yMin; y <= yMax; y++) {
 					if (level.get(x) == null || level.get(x).get(y) == null)
 						continue;
-					context_0.save();
-					context_0.translate(x, y);
 					level.get(x).get(y).render(context_0);
-					context_0.restore();
-				}
-		else {
+				} */
+		// else {
 			xMin = Math.max((int)(xMin - bounds.x) / (CHUNK_SIZE / 16), 0);
 			yMin = Math.max((int)(yMin - bounds.y) / (CHUNK_SIZE / 16), 0);
 			xMax = (int)(xMax - bounds.x) / (CHUNK_SIZE / 16);
 			yMax = (int)(yMax - bounds.y) / (CHUNK_SIZE / 16);
 			for (int x = xMin; x <= xMax && x < images_0.length; x++) {
 				for (int y = yMin; y <= yMax && y < images_0[x].length; y++) {
-					context_0.drawImage(images_0[x][y], x*CHUNK_SIZE / 16 + bounds.x, y * CHUNK_SIZE / 16 + bounds.y, CHUNK_SIZE/16, CHUNK_SIZE / 16);
+					/* context_0.drawImage(images_0[x][y], x*CHUNK_SIZE / 16 + bounds.x, y * CHUNK_SIZE / 16 + bounds.y, CHUNK_SIZE/16, CHUNK_SIZE / 16);
 					context_2.drawImage(images_1[x][y], x*CHUNK_SIZE / 16 + bounds.x, y * CHUNK_SIZE / 16 + bounds.y, CHUNK_SIZE/16, CHUNK_SIZE / 16);
 					shadow_0.drawImage(this.shadow_0[x][y], x*CHUNK_SIZE / 16 + bounds.x, y * CHUNK_SIZE / 16 + bounds.y, CHUNK_SIZE/16, CHUNK_SIZE / 16);
-					shadow_1.drawImage(this.shadow_1[x][y], x*CHUNK_SIZE / 16 + bounds.x, y * CHUNK_SIZE / 16 + bounds.y, CHUNK_SIZE/16, CHUNK_SIZE / 16);
+					shadow_1.drawImage(this.shadow_1[x][y], x*CHUNK_SIZE / 16 + bounds.x, y * CHUNK_SIZE / 16 + bounds.y, CHUNK_SIZE/16, CHUNK_SIZE / 16); */
 				}
 			}
-		}
+		// }
 
 		// Sort and draw all entities and then clouds if they intersect the screen
 		ArrayList<Entity> sorted = new ArrayList<>(entities.size());
 		for (Entity e : entities)
-			if (e.getRenderBounds().intersects(screenBounds))
+			if (e.getRenderBounds().intersects(screen)) {
 				sorted.add(e);
+			}
 		sorted.sort((a, b) -> {
 			return (int) Math.signum(a.getRenderLayer() - b.getRenderLayer());
 		});
-		for(Entity e : sorted)
-			e.render(context_1, shadow_0, context_2);
-		for (Cloud c : clouds) {
-			if (c.getRenderBounds().intersects(screenBounds))
-				c.render(shadow_1);
+		for(Entity e : sorted) {
+			// System.out.println(e);
+			e.render();
 		}
+		/* for (Cloud cl : clouds) {
+			if (cl.getRenderBounds().intersects(screen))
+				cl.render();
+		} */
 	}
 
 	// Used by LevelEditor to write a reference image
 	public void writeImage() {
-		Canvas c = new Canvas(bounds.w * 16, bounds.h * 16);
+		/* Canvas c = new Canvas(bounds.w * 16, bounds.h * 16);
 		GraphicsContext g = c.getGraphicsContext2D();
 		for(Map.Entry<Integer, HashMap<Integer, Tile>> xT : level.entrySet())
 			for(Map.Entry<Integer, Tile> yT : xT.getValue().entrySet()) {
@@ -288,7 +268,7 @@ public class Level {
 		} catch (IOException io) {
 			System.err.println("Couldn't write level image");
 			io.printStackTrace();
-		}
+		} */
 	}
 
 	public void put(int x, int y, Tile tile) {

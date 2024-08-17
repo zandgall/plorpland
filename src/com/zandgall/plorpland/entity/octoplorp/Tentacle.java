@@ -14,6 +14,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_PERIOD;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.joml.Matrix4f;
+
 import com.zandgall.plorpland.Camera;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.entity.Entity;
@@ -440,11 +442,11 @@ public class Tentacle extends Entity {
 		}
 
 		Shader.Image.use();
-		Matrix4f model = new Matrix4f().translate(-0.5, -0.5, GLHelper.LAYER_1_DEPTH)
-			.rotateZ(Math.PI * 0.5 * orientation).translate(getX(), getY(), 0);
+		Matrix4f model = new Matrix4f().translate(-0.5f, -0.5f, GLHelper.LAYER_1_DEPTH)
+			.rotateZ((float)(Math.PI * 0.5 * orientation)).translate((float)getX(), (float)getY(), 0);
 
 		if(state == State.WINDUP)
-			model.translate((Math.random()-0.5)*timer*0.1, (Math.random()-0.5)*timer*0.1, 0);
+			model.translate((float)((Math.random()-0.5)*timer*0.1), (float)((Math.random()-0.5)*timer*0.1), 0);
 
 		if(state == State.GRABBING || state == State.GRABBED) {
 			Shader.Image.setCrop(48.f / sheet.getWidth(), 0, 48.f / sheet.getWidth(), 16.f / sheet.getHeight());
@@ -465,7 +467,7 @@ public class Tentacle extends Entity {
 			default -> 0;
 			};
 			Shader.Image.setCrop((float)clipset, 0.f, 48.f / sheet.getWidth(), 16.f / sheet.getHeight());
-			model.scale(3 - clipset, 1, 1);
+			model.scale(3 - (float)clipset, 1, 1);
 		}
 
 		Shader.Image.setTexture(sheet.getTexture());
@@ -474,8 +476,8 @@ public class Tentacle extends Entity {
 
 		if(state == State.DEAD || state == State.DYING || state == State.RETRACTING || state == State.SWINGING) {
 			Shader.Image.setCrop(64.f / sheet.getWidth(), 16.f / sheet.getHeight(), 32.f / sheet.getWidth(), 16.f / sheet.getHeight());
-			Shader.Image.setModel(new Matrix4f().translate(-1.6 + (state == State.SWINGING ? 1.5 : 0))
-				.rotateZ(corpseRotation).translate(corpse.x, corpse.y, GLHelper.LAYER_1_DEPTH).scale(2, 1));
+			Shader.Image.setModel(new Matrix4f().translate(-1.6f + (state == State.SWINGING ? 1.5f : 0), 0, 0)
+				.rotateZ((float)corpseRotation).translate((float)corpse.x, (float)corpse.y, GLHelper.LAYER_1_DEPTH).scale(2, 1, 1));
 			GLHelper.drawRect();
 		}
 

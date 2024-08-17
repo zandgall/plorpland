@@ -7,22 +7,27 @@
 
 package com.zandgall.plorpland;
 
+import java.util.ArrayList;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL30.*;
 
+import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL;
+
 import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.EntityRegistry;
 import com.zandgall.plorpland.entity.Player;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.staging.Cutscene;
 import com.zandgall.plorpland.level.Level;
 
@@ -41,6 +46,8 @@ public class Main {
 	public static boolean[] keys = new boolean[GLFW_KEY_LAST], pKeys = new boolean[GLFW_KEY_LAST];
 	public static int lastKey = GLFW_KEY_LAST;
 
+	private static ArrayList<Runnable> postGLFW = new ArrayList<>();
+
 	// Instances of elements included in the game
 	protected static Player player;
 	protected static Camera camera;
@@ -49,11 +56,14 @@ public class Main {
 	protected static Cutscene cutscene = null;
 	
 	public static void main(String[] args) {
+		GLFWErrorCallback.createPrint(System.err).set();
 		if(!glfwInit())
 			throw new IllegalStateException("Could not initialize GLFW");
 
 		glfwDefaultWindowHints();
-		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 		// Set up static elements
@@ -77,19 +87,26 @@ public class Main {
 
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			keys[key] = action != GLFW_RELEASE;
-		});	
+		});
 
 		glfwMakeContextCurrent(window);
 
 		// TODO: VSYNC option?
 		glfwSwapInterval(1);
+		glfwShowWindow(window);
+		GL.createCapabilities();
+
+		Shader.init();
+		GLHelper.init();
 
 		player = new Player();
 		camera = new Camera();
 		level = new Level();
+
 		hud = new Hud();
 		try {
 			level.load("/level.bin");
+
 			level.addEntity(player);
 			// 'addEntity' operates on a queue, flush it to put all entities in the main list
 			level.flushEntityQueues();
@@ -117,11 +134,14 @@ public class Main {
 				iteration++;
 				tick();
 				delta -= TIMESTEP;
-			}	
+			}
+
 			render();
-			
+
 			glfwPollEvents();
 		}
+
+		close();
 	}
 
 	// Update scene. If there is a cutscene, run cutscene until it's over
@@ -141,18 +161,23 @@ public class Main {
 
 	public static void render() {
 		// Clear all canvases
+		glViewport(0, 0, WIDTH, HEIGHT);
 		glClearColor(0.55f, 0.8f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Save all context states
 		// Transform all (except hud) with camera
+		Shader.Image.use();
+		Shader.Image.setProjection(new Matrix4f().ortho(-WIDTH * 0.5f, WIDTH * 0.5f, HEIGHT * 0.5f, -HEIGHT * 0.5f, -1.f, 1.f));
 		camera.transform();
 
 		// Don't transform hudContext
-
+		
 		// Draw!
 		level.render();
 		hud.render();
+
+		GLHelper.drawRect();
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -221,8 +246,8 @@ public class Main {
 		l.getEntities().clear();
 		int num = i.readInt();
 		try {
-			instance.player = (Player)i.readObject();
-			instance.camera.snapTo(instance.player.getX(), instance.player.getY(), Camera.DEFAULT_ZOOM);
+			player = (Player)i.readObject();
+			camera.snapTo(player.getX(), player.getY(), Camera.DEFAULT_ZOOM);
 		} catch(ClassNotFoundException e) {
 			System.err.println("FATAL!! COULD NOT LOAD PLAYER CLASS");
 			i.close();
@@ -237,14 +262,17 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
-		l.addEntity(instance.player);
+		l.addEntity(player);
 		Sound.load(i);
 		i.close();
 	}
 
 	public static void close() {
-		stage.close();
 		Sound.kill();
+	}
+
+	public static void doAfterGLFW(Runnable r) {
+		postGLFW.add(r);
 	}
 
 }

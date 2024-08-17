@@ -7,14 +7,13 @@
 
 package com.zandgall.plorpland.entity;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-
 import java.util.Random;
 
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
 import com.zandgall.plorpland.util.Hitrect;
@@ -313,62 +312,61 @@ public class Plorp extends Entity {
 	}
 
 	@Override
-	public void render(GraphicsContext g1, GraphicsContext gs, GraphicsContext g2) {
-		g1.save();
+	public void render() {
 
 		// Half transparent if hit recently
 		if (state != State.DEAD && System.currentTimeMillis() - lastHit < 100
 				&& (System.currentTimeMillis() / 50) % 2 == 0)
-			g1.setGlobalAlpha(0.5);
+			Shader.Image.setAlpha(0.5f);
 
-		g1.translate(getX(), getY());
-		g1.scale(horizontalFlip, 1);
+		float fX = 8 + horizontalFlip * 8;
+		float fW = 16 * horizontalFlip;
 		switch (state) {
 			case SLEEPING:
-				g1.drawImage(sheet, 0, 64, 16, 16, -0.5, -0.5, 1, 1);
+				sheet.draw(fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 				// TODO: "zzz" particles
 				break;
 			case FALLING_ASLEEP:
-				g1.drawImage(sheet, frame * 16, 32, 16, 16, -0.5, -0.5, 1, 1);
+				sheet.draw(frame * 16 + fX, 32, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 				break;
 			case RESTING:
 				if ((int) (timer * 10) % 20 == 0) { // 1 out of 20 frames are a blink
 					if (frame >= 2) // Looking back
-						g1.drawImage(sheet, 16, 48, 16, 16, -0.5, -0.5, 1, 1);
+						sheet.draw(16+fX, 48, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 					else
-						g1.drawImage(sheet, 0, 48, 16, 16, -0.5, -0.5, 1, 1);
+						sheet.draw(fX, 48, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 				} else {
 					int xoff[] = { 0, 16, 0, 16 }, yoff[] = { 0, 0, 16, 16 };
-					g1.drawImage(sheet, xoff[frame], yoff[frame], 16, 16, -0.5, -0.5, 1, 1);
+					sheet.draw(xoff[frame]+fX, yoff[frame], fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 				}
 				break;
 			case STANDING:
-				g1.drawImage(sheet, 32 + 16 * frame, 0, 16, 16, -0.5, -0.5, 1, 1);
+				sheet.draw(32 + 16 * frame+fX, 0, 16, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 				break;
 			case WALKING:
 			case WALKING_HOME:
 			case CHASING:
 				int up = (target.y < getY()) ? 16 : 0;
-				g1.drawImage(sheet, 32 + up, frame * 16, 16, 16, -0.5, -0.5, 1, 1);
+				sheet.draw(32 + up + fX, frame * 16, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 				break;
 			case SURPRISED:
-				g1.drawImage(sheet, 16, 64, 16, 16, -0.5, -0.5, 1, 1);
+				sheet.draw(16 + fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 				break;
 			case DEAD:
-				g1.drawImage(sheet, 32 + frame * 16, 64, 16, 16, -0.5, -0.5, 1, 1);
+				sheet.draw(32 + frame * 16 + fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
 				break;
 			default:
 				break;
 		}
-		g1.restore();
 
 		// Draw a health bar if applicable
-		if (state != State.DEAD && health < 5) {
+		// TODO: Do health bar
+		/* if (state != State.DEAD && health < 5) {
 			g2.setFill(Color.RED);
 			g2.fillRect(getX() - 0.5, getY() - 1.0, 1.0, 0.25);
 			g2.setFill(Color.GREEN);
 			g2.fillRect(getX() - 0.5, getY() - 1.0, health / 5.0, 0.25);
-		}
+		} */
 	}
 
 	public Hitbox getRenderBounds() {

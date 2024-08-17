@@ -10,16 +10,11 @@ package com.zandgall.plorpland;
 import java.io.IOException;
 
 import com.zandgall.plorpland.entity.collectables.Collectable;
-
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
+import com.zandgall.plorpland.graphics.Image;
 
 public class Hud {
-	private static final Image popup = new Image("/popup.png");
-	private static final Font FONT32 = Font.font(32), FONT16 = Font.font(16);
+	// private static final Image popup = new Image("/popup.png");
+	// private static final Font FONT32 = Font.font(32), FONT16 = Font.font(16);
 
 	private double healthOpacity = 0, deathOpacity = 0, respawnOpacity = 0, closeOpacity = 0;
 	private boolean respawning = false, closing = false;
@@ -49,7 +44,7 @@ public class Hud {
 			respawnOpacity = respawnOpacity * 0.95;
 
 
-		if(!respawning && deathOpacity > 0.05 && respawnOpacity < 0.001 && Main.keys.get(Main.lastKey)) {
+		if(!respawning && deathOpacity > 0.05 && respawnOpacity < 0.001 && Main.keys[Main.lastKey]) {
 			respawning = true;
 		}
 
@@ -78,7 +73,9 @@ public class Hud {
 		}
 	}
 
-	public void render(GraphicsContext g) {
+	public void render() {
+		// TODO: HUD + Text
+		/*
 		g.setGlobalAlpha(healthOpacity);
 		g.setFill(Color.RED);
 		g.fillRect(20, 20, 200, 20);
@@ -119,6 +116,7 @@ public class Hud {
 			g.setFont(FONT16);
 			g.fillText(collected.getDescription(), 96, Main.scene.getHeight() - 16, Main.scene.getWidth() - 192);
 		}
+		*/
 	}
 
 	public void closeOut() {

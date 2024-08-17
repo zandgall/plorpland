@@ -8,16 +8,15 @@
 package com.zandgall.plorpland.level;
 
 import com.zandgall.plorpland.Main;
+import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.util.Rect;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-
 public class SpecialImage {
-	private Image image;	
+	private Image image;
 	private double x, y, xOff, yOff, damping;
 	public SpecialImage(String path, double xOff, double yOff, double x, double y, double damping) {
-		image = new Image(path);	
+		image = new Image(path);
 		this.xOff = xOff;
 		this.yOff = yOff;
 		this.x = x;
@@ -25,7 +24,7 @@ public class SpecialImage {
 		this.damping = damping;
 	}
 
-	public void render(GraphicsContext g) {
+	public void render() {
 		double w = image.getWidth() / 16;
 		double h = image.getHeight() / 16;
 		double x = this.x * (1 - damping) + Main.getCamera().getX() * damping - xOff;
@@ -33,7 +32,7 @@ public class SpecialImage {
 
 		// Reminder that each unit is a 16x16 tile
 		// So scale image down by 1/16 to match
-		g.drawImage(image, x, y, w, h);
+		image.draw(x, y, w, h, GLHelper.LAYER_1_DEPTH);
 	}
 
 	public Rect getRenderBox() {

@@ -4,8 +4,10 @@ import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL30.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.FloatBuffer;
-import java.util.Scanner;
 
 import org.lwjgl.system.MemoryStack;
 
@@ -13,19 +15,19 @@ public class Shader {
 	
 	private int v, f, program;
 
-	public Shader(String vPath, String fPath) {	
+	public Shader(String vPath, String fPath) throws IOException {
 		// Gather all vertex shader code
-		Scanner vScanner = new Scanner(Shader.class.getResourceAsStream(vPath));
+		BufferedReader vScanner = new BufferedReader(new InputStreamReader(Shader.class.getResourceAsStream(vPath)));
 		StringBuilder vCode = new StringBuilder();
-		while(vScanner.hasNextLine())
-			vCode.append(vScanner.nextLine() + System.lineSeparator());
+		while(vScanner.ready())
+			vCode.append(vScanner.readLine() + System.lineSeparator());
 		vScanner.close();
 
 		// Gather all fragment shader code
-		Scanner fScanner = new Scanner(Shader.class.getResourceAsStream(fPath));
+		BufferedReader fScanner = new BufferedReader(new InputStreamReader(Shader.class.getResourceAsStream(fPath)));
 		StringBuilder fCode = new StringBuilder();
-		while(fScanner.hasNextLine())
-			fCode.append(fScanner.nextLine() + System.lineSeparator());
+		while(fScanner.ready())
+			fCode.append(fScanner.readLine() + System.lineSeparator());
 		fScanner.close();
 
 		// Generate program and shaders with provided code
@@ -39,8 +41,8 @@ public class Shader {
 		glCompileShader(v);
 		glGetShaderiv(v, GL_COMPILE_STATUS, result);
 		if(result[0] == GL_FALSE) {
+			System.err.println("Log: " + glGetShaderInfoLog(v));
 			glDeleteShader(v);
-			System.err.println(glGetShaderInfoLog(v));
 			throw new RuntimeException("Failed to compile vertex shader! \"" + vPath + "\"");
 		}
 
@@ -50,8 +52,8 @@ public class Shader {
 		glCompileShader(f);
 		glGetShaderiv(f, GL_COMPILE_STATUS, result);
 		if(result[0] == GL_FALSE) {
+			System.err.println("Log: " + glGetShaderInfoLog(f));
 			glDeleteShader(f);
-			System.err.println(glGetShaderInfoLog(f));
 			throw new RuntimeException("Failed to compile fragment shader! \"" + fPath + "\"");
 		}
 
@@ -99,7 +101,14 @@ public class Shader {
 	}
 
 	public static void init() {
-		Image.s = new Shader("shaders/image.vs", "shaders/image.fs");
+		try {
+			Image.s = new Shader("/shaders/image.vs", "/shaders/image.fs");
+			Image.s.use();
+			Image.s.setInt("text", 0);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("Could not initiate one or more shaders!");
+		}
 	}
 
 	public static class Image {
@@ -122,7 +131,7 @@ public class Shader {
 		}
 
 		public static void setModel(float x, float y, float w, float h, float layer) {
-			setModel(new Matrix4f().translate(x + w * 0.5f, y + h * 0.5f, layer).scale(w, h, 1));
+			setModel(new Matrix4f().translate(x + w * 0.5f, y + h * 0.5f, layer).scale(w*0.5f, h*0.5f, 1));
 		}
 
 		public static void setCrop(float x, float y, float w, float h) {
@@ -130,7 +139,8 @@ public class Shader {
 		}
 
 		public static void setTexture(int texture) {
-			s.setInt("texture", texture);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture);
 		}
 
 		public static void setAlpha(float alpha) {

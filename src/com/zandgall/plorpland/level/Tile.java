@@ -11,11 +11,6 @@ package com.zandgall.plorpland.level;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import javafx.scene.paint.Color;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.scene.canvas.GraphicsContext;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitboxes;
 import com.zandgall.plorpland.util.Hitrect;
@@ -26,7 +21,7 @@ public abstract class Tile {
 
 	// Define all game tiles
 	public static final Tile empty = new EmptyTile();
-	public static final Tile ground = new ColorTile(Color.web("#369c6c"));
+	public static final Tile ground = new ColorTile();
 	public static final Tile grass = new ImageTile("/tiles/grass.png");
 	public static final Tile grass_tl = new ImageTile("/tiles/grass_tl.png");
 	public static final Tile grass_tr = new ImageTile("/tiles/grass_tr.png");
@@ -117,22 +112,11 @@ public abstract class Tile {
 	public abstract Hitbox solidBounds(int x, int y);
 
 	/**
-	 * Draw a 1x1 size tile. The transformation is set beforehand, including
-	 * positioning.
-	 * Additional transformations can be applied however, just be sure to save and
-	 * restore before and after drawing!
-	 */
-	public abstract void render(GraphicsContext g);
-
-	/**
 	 * A tile type that does not render
 	 */
 	private static class EmptyTile extends Tile {
 		public EmptyTile() {
 			super();
-		}
-
-		public void render(GraphicsContext g) {
 		}
 
 		public Hitbox solidBounds(int x, int y) {
@@ -144,12 +128,10 @@ public abstract class Tile {
 	 * A tile type that draws a solid color
 	 */
 	private static class ColorTile extends Tile {
-		private Color color;
 		private Hitbox solid;
 
-		public ColorTile(Color color) {
+		public ColorTile() {
 			super();
-			this.color = color;
 			this.solid = null;
 		}
 
@@ -158,29 +140,19 @@ public abstract class Tile {
 				return null;
 			return solid.translate(x, y);
 		}
-
-		public void render(GraphicsContext g) {
-			g.setFill(color);
-			double dx = 1 / g.getTransform().getMxx();
-			double dy = 1 / g.getTransform().getMyy();
-			g.fillRect(-dx, -dy, 1.0 + dx*2, 1.0 + dy*2);
-		}
 	}
 
 	/**
 	 * A tile that displays as an image
 	 */
 	private static class ImageTile extends Tile {
-		private Image image;
 		private Hitbox solid = null;
 
 		public ImageTile(String path) {
 			super();
-			image = new Image(path);
 		}
 
-		public ImageTile(Image image, Hitbox solid) {
-			this.image = image;
+		public ImageTile(Hitbox solid) {
 			this.solid = solid;
 		}
 
@@ -188,25 +160,6 @@ public abstract class Tile {
 			if (solid == null)
 				return null;
 			return solid.translate(x, y);
-		}
-
-		public void render(GraphicsContext g) {
-			if (image == null)
-				return;
-			g.drawImage(image, 0.0, 0.0, 1.0, 1.0);
-		}
-
-		// Creates an image that overlays several input images
-		public static Image overlay(String... paths) {
-			// Create a pane to hold imageviews holding every input image (given by paths)
-			StackPane combiner = new StackPane();
-			ImageView views[] = new ImageView[paths.length];
-			for (int i = 0; i < paths.length; i++) {
-				views[i] = new ImageView(new Image(paths[i]));
-				combiner.getChildren().add(views[i]);
-			}
-			// Take a 'snapshot' which returns an image of everything overlayed
-			return combiner.snapshot(null, null);
 		}
 
 		public static ImageTile[] loadCombinations(String path) {
@@ -233,7 +186,7 @@ public abstract class Tile {
 					if (Tile.class.getResource(tags[i] + ".png") != null)
 						paths.add(tags[i] + ".png");
 				}
-				output.add(new ImageTile(overlay(paths.toArray(new String[paths.size()])), box));
+				output.add(new ImageTile(box));
 			}
 			s.close();
 			return output.toArray(new ImageTile[output.size()]);

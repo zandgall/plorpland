@@ -16,9 +16,6 @@ import java.util.HashMap;
 
 import com.zandgall.plorpland.Main;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
 public class Path implements Serializable {
 	private ArrayList<Point> path = new ArrayList<>();
 
@@ -51,7 +48,7 @@ public class Path implements Serializable {
 		return path.size();
 	}
 
-	public void debugRender(GraphicsContext g) {
+	/* public void debugRender(GraphicsContext g) {
 		if (path.isEmpty())
 			return;
 		g.setLineWidth(0.2);
@@ -60,7 +57,7 @@ public class Path implements Serializable {
 			g.strokeLine(path.get(i - 1).x + 0.5, path.get(i - 1).y + 0.5,
 					path.get(i).x + 0.5, path.get(i).y + 0.5);
 		}
-	}
+	} */
 
 	private static Path reconstruct(Node endPoint) {
 		ArrayList<Point> check = new ArrayList<>();

@@ -12,20 +12,19 @@ import com.zandgall.plorpland.graphics.GLHelper;
 import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitrect;
-import com.zandgall.plorpland.util.ShadowImage;
 
 import java.util.Random;
 
 public class Cloud {
 	public static Image textures[] = new Image[] {
-			new Image("/entity/cloud_0.png", 10, 0.7),
-			new Image("/entity/cloud_1.png", 10, 0.7),
-			new Image("/entity/cloud_2.png", 10, 0.7),
-			new Image("/entity/cloud_3.png", 10, 0.7),
-			new Image("/entity/cloud_4.png", 10, 0.7),
-			new Image("/entity/cloud_5.png", 10, 0.7),
-			new Image("/entity/cloud_6.png", 10, 0.7),
-			new Image("/entity/cloud_7.png", 10, 0.7)
+			new Image("/entity/cloud_0.png"),
+			new Image("/entity/cloud_1.png"),
+			new Image("/entity/cloud_2.png"),
+			new Image("/entity/cloud_3.png"),
+			new Image("/entity/cloud_4.png"),
+			new Image("/entity/cloud_5.png"),
+			new Image("/entity/cloud_6.png"),
+			new Image("/entity/cloud_7.png")
 	};
 
 	private int type;
