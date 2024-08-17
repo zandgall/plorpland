@@ -16,8 +16,6 @@ package com.zandgall.plorpland.entity;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-import org.joml.Matrix4f;
-
 import com.zandgall.plorpland.Camera;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
@@ -300,7 +298,7 @@ public class Player extends Entity {
 
 		// Sword drawing
 		if (hasSword) {
-			Shader.Image.reset().layer(G.LAYER_1).at(getX(), getY()).rotate(swordTargetDirection).scale(3).alpha(dashTimer*2).image(indicator).use();
+			Shader.Image.reset().layer(G.LAYER_1).at(getX(), getY()).rotate(swordTargetDirection).scale(1.5).alpha(dashTimer*2).image(indicator).use();
 			G.drawSquare();
 
 			/* if (specialMove == Special.NONE) {
@@ -315,12 +313,12 @@ public class Player extends Entity {
 				Shader.Image.alpha(1.0);
 			else
 				Shader.Image.alpha(0.5);
-			Shader.Image.reset().at(getX(), getY()).rotate(swordDirection).at(1, 0).scale(2, 1).layer(G.LAYER_1).image(sword).use();
+			Shader.Image.reset().at(getX(), getY()).rotate(swordDirection).at(1, 0).scale(1, 0.5).layer(G.LAYER_1).image(sword).use();
 			G.drawSquare();
 
 			// Draw special move related sprites, or fade outs
 			if (specialMove == Special.STAB) {
-				Shader.Image.scale(2.25 / 2.0, 1).image(stab).use().reset();
+				Shader.Image.scale(1.125, 1).image(stab).use().reset();
 				G.drawSquare();
 			} else if (specialMove == Special.SLASH) {
 				if (Util.signedAngularDistance(swordDirection, swordTargetDirection) > 0)
@@ -329,7 +327,7 @@ public class Player extends Entity {
 					Shader.Image.scale(1, -2).image(slash).use().reset();
 				G.drawSquare();
 			} else if (previousMove == Special.STAB) {
-				Shader.Image.alpha(specialTimer - 4).scale(2.25 / 2.0, 1).image(stab).use().reset();
+				Shader.Image.alpha(specialTimer - 4).scale(1.125, 1).image(stab).use().reset();
 				Shader.Image.setTexture(stab.getTexture());
 			} else if (previousMove == Special.SLASH) {
 				if (Util.signedAngularDistance(swordDirection, swordTargetDirection) > 0)
@@ -338,7 +336,7 @@ public class Player extends Entity {
 					Shader.Image.scale(1, -2).image(slash).alpha(specialTimer-4).use().reset();
 				G.drawSquare();
 			} else if (Math.abs(swordRotationalVelocity) > 15.0 && specialTimer <= 0) {
-				Shader.Image.scale(2.5 / 2.0, 1).image(charged).use().reset();
+				Shader.Image.scale(1.25, 1).image(charged).use().reset();
 				G.drawSquare();
 			}
 		}
