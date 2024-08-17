@@ -7,6 +7,7 @@
 
 package com.zandgall.plorpland;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,6 +16,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
@@ -23,7 +25,7 @@ import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.ALC10.*;
-import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_filename;
+import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_memory;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.libc.LibCStdlib.free;
 
@@ -45,22 +47,22 @@ public class Sound implements Serializable {
 	}
 
 	public static Sound
-		Noise = new Sound("sound/noise.ogg"), // Constant
-		Wind = new Sound("sound/wind.ogg"), // Used for trees
-		Piano = new Sound("sound/piano.ogg"),
-		EPiano = new Sound("sound/epiano.ogg"),
-		Drums = new Sound("sound/drums.ogg"),
-		Plorp = new Sound("sound/plorp.ogg"),
-		BossDrums = new Sound("sound/bossDrums.ogg"),
-		BossEPiano = new Sound("sound/bossEPiano.ogg"),
-		BossBass = new Sound("sound/bossBass.ogg"),
-		BossGuitar = new Sound("sound/bossGuitar.ogg"),
-		BossCymbals = new Sound("sound/bossCymbals.ogg"),
-		EndIt = new Sound("sound/endit.ogg"),
-		TheKill = new Sound("sound/thekill.ogg"),
-		Heaven = new Sound("sound/heaven.ogg"),
-		EffectPluck = new Sound("sound/pluck.ogg"),
-		EffectBonk = new Sound("sound/bonk.ogg");
+		Noise = new Sound("/sound/noise.ogg"), // Constant
+		Wind = new Sound("/sound/wind.ogg"), // Used for trees
+		Piano = new Sound("/sound/piano.ogg"),
+		EPiano = new Sound("/sound/epiano.ogg"),
+		Drums = new Sound("/sound/drums.ogg"),
+		Plorp = new Sound("/sound/plorp.ogg"),
+		BossDrums = new Sound("/sound/bossDrums.ogg"),
+		BossEPiano = new Sound("/sound/bossEPiano.ogg"),
+		BossBass = new Sound("/sound/bossBass.ogg"),
+		BossGuitar = new Sound("/sound/bossGuitar.ogg"),
+		BossCymbals = new Sound("/sound/bossCymbals.ogg"),
+		EndIt = new Sound("/sound/endit.ogg"),
+		TheKill = new Sound("/sound/thekill.ogg"),
+		Heaven = new Sound("/sound/heaven.ogg"),
+		EffectPluck = new Sound("/sound/pluck.ogg"),
+		EffectBonk = new Sound("/sound/bonk.ogg");
 
 	private static double Timer = 0;
 
@@ -70,10 +72,16 @@ public class Sound implements Serializable {
 	protected float smoothing = DEFAULT_SMOOTHING;
 
 	public Sound(String filepath) {
+		BufferedInputStream fileByteInput = new BufferedInputStream(Sound.class.getResourceAsStream(filepath));
 		try (MemoryStack stack = stackPush()) {
+			byte[] fileBytes = fileByteInput.readAllBytes();
+			ByteBuffer fileBuffer = BufferUtils.createByteBuffer(fileBytes.length);
+			fileBuffer.put(fileBytes);
+			fileBuffer.flip();
+			fileBuffer.rewind();
 			IntBuffer channels = stack.mallocInt(1);
 			IntBuffer sampleRate = stack.mallocInt(1);
-			ShortBuffer rawAudio = stb_vorbis_decode_filename(filepath, channels, sampleRate);
+			ShortBuffer rawAudio = stb_vorbis_decode_memory(fileBuffer, channels, sampleRate);
 			buffer = alGenBuffers();
 			alBufferData(buffer, AL_FORMAT_STEREO16, rawAudio, sampleRate.get());
 			free(rawAudio);	
@@ -82,6 +90,8 @@ public class Sound implements Serializable {
 			alSourcei(source, AL_BUFFER, buffer);
 			alSourcei(source, AL_LOOPING, 1);
 			alSourcef(source, AL_GAIN, 0.0f);
+		} catch(IOException e) {
+			System.err.println("Could not load sound \"" + filepath + "\"");
 		}
 	}
 
