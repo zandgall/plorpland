@@ -54,25 +54,15 @@ public class Image {
 		pong = true;
 	}
 
-	public void draw(float cX, float cY, float cW, float cH, float x, float y, float w, float h, float depth) {
-		ping();
-		Shader.Image.use();
-		Shader.Image.setCrop(cX/width, cY/height, cW/width, cH/height);
-		Shader.Image.setModel(x, y, w, h, depth);
-		Shader.Image.setTexture(texture);
-		GLHelper.drawRect();
-	}
-
-	public void draw(float x, float y, float w, float h, float depth) {
-		draw(0, 0, width, height, x, y, w, h, depth);
-	}
-
 	public void draw(double cX, double cY, double cW, double cH, double x, double y, double w, double h, double depth) {
-		draw((float)cX, (float)cY, (float)cW, (float)cH, (float)x, (float)y, (float)w, (float)h, (float)depth);
+		ping();
+		Shader.Image.reset().at(x+w*0.5, y+h*0.5).scale(w*0.5,h*0.5).texture(texture).layer(depth).use().crop(cX / width, cY / height, cW / width, cH / height);	
+		G.drawSquare();
+		Shader.Image.crop(0, 0, 1, 1);
 	}
 
 	public void draw(double x, double y, double w, double h, double depth) {
-		draw(0.0, 0.0, width, height, x, y, w, h, depth);
+		draw(0, 0, width, height, x, y, w, h, depth);
 	}
 
 	public int getWidth() {

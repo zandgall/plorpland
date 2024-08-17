@@ -19,7 +19,7 @@ import org.joml.Matrix4f;
 import com.zandgall.plorpland.Camera;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.entity.Entity;
-import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.staging.Cutscene;
@@ -419,12 +419,12 @@ public class Tentacle extends Entity {
 
 	public void render() {
 		// Draw dirt mound
-		sheet.draw(48, 32, 48, 16, start.x - 1.5, start.y - 0.5, 3, 1, GLHelper.LAYER_1_DEPTH);
+		sheet.draw(48, 32, 48, 16, start.x - 1.5, start.y - 0.5, 3, 1, G.LAYER_1);
 
 		for (Point p : traveled) {
 			sheet.draw(96 + segments.get(p)*16, 
 						segtypes.get(p) == SegType.STRAIGHT ? 0 : segtypes.get(p) == SegType.TURN_LEFT ? 16 : 32,
-						16, 16, p.x, p.y, 1, 1, GLHelper.LAYER_1_DEPTH);
+						16, 16, p.x, p.y, 1, 1, G.LAYER_1);
 		}
 	
 		if (health < 100 && (state == State.GRABBING || state == State.GRABBED)) {
@@ -441,21 +441,17 @@ public class Tentacle extends Entity {
 			*/
 		}
 
-		Shader.Image.use();
-		Matrix4f model = new Matrix4f().translate(-0.5f, -0.5f, GLHelper.LAYER_1_DEPTH)
-			.rotateZ((float)(Math.PI * 0.5 * orientation)).translate((float)getX(), (float)getY(), 0);
+		Shader.Image.reset().at(getX(), getY()).rotate(Math.PI * 0.5 * orientation);
 
 		if(state == State.WINDUP)
-			model.translate((float)((Math.random()-0.5)*timer*0.1), (float)((Math.random()-0.5)*timer*0.1), 0);
+			Shader.Image.at((Math.random()-0.5)*timer*0.1, (Math.random()-0.5)*timer*0.1);
 
-		if(state == State.GRABBING || state == State.GRABBED) {
-			Shader.Image.setCrop(48.f / sheet.getWidth(), 0, 48.f / sheet.getWidth(), 16.f / sheet.getHeight());
-			model.scale(3, 1, 1);
-		} else if(state == State.INJURED) {
-			Shader.Image.setCrop(0, 32.f / sheet.getHeight(), 48.f / sheet.getWidth(), 16.f / sheet.getHeight());
-			model.scale(3, 1, 1);
-		} else if(state == State.DEAD || state == State.DYING || state == State.RETRACTING || state == State.SWINGING)
-			Shader.Image.setCrop(32.f / sheet.getWidth(), 16.f / sheet.getHeight(), 16.f / sheet.getWidth(), 16.f / sheet.getHeight());
+		if(state == State.GRABBING || state == State.GRABBED)
+			Shader.Image.crop(48.f / sheet.getWidth(), 0, 48.f / sheet.getWidth(), 16.f / sheet.getHeight()).scale(1.5, 0.5);
+		else if(state == State.INJURED)
+			Shader.Image.crop(0, 32.f / sheet.getHeight(), 48.f / sheet.getWidth(), 16.f / sheet.getHeight()).scale(1.5, 0.5);	
+		else if(state == State.DEAD || state == State.DYING || state == State.RETRACTING || state == State.SWINGING)
+			Shader.Image.crop(32.f / sheet.getWidth(), 16.f / sheet.getHeight(), 16.f / sheet.getWidth(), 16.f / sheet.getHeight());
 		else {
 			double gX = getX() - 0.5, tX = Math.floor(gX);
 			double gY = getY() - 0.5, tY = Math.floor(gY);
@@ -466,26 +462,23 @@ public class Tentacle extends Entity {
 			case 3 -> gY - tY;
 			default -> 0;
 			};
-			Shader.Image.setCrop((float)clipset, 0.f, 48.f / sheet.getWidth(), 16.f / sheet.getHeight());
-			model.scale(3 - (float)clipset, 1, 1);
+			// TODO: Most certainly wrong
+			Shader.Image.crop(clipset, 0.f, 48.f / sheet.getWidth(), 16.f / sheet.getHeight()).scale(1.5 - clipset, 1).at(clipset*0.5, 0);
 		}
 
-		Shader.Image.setTexture(sheet.getTexture());
-		Shader.Image.setModel(model);
-		GLHelper.drawRect();
+		Shader.Image.image(sheet).use();
+		G.drawSquare();
 
 		if(state == State.DEAD || state == State.DYING || state == State.RETRACTING || state == State.SWINGING) {
-			Shader.Image.setCrop(64.f / sheet.getWidth(), 16.f / sheet.getHeight(), 32.f / sheet.getWidth(), 16.f / sheet.getHeight());
-			Shader.Image.setModel(new Matrix4f().translate(-1.6f + (state == State.SWINGING ? 1.5f : 0), 0, 0)
-				.rotateZ((float)corpseRotation).translate((float)corpse.x, (float)corpse.y, GLHelper.LAYER_1_DEPTH).scale(2, 1, 1));
-			GLHelper.drawRect();
+			Shader.Image.reset().at(corpse.x, corpse.y).rotate(corpseRotation).at(-1.6 + (state == State.SWINGING ? 1.5 : 0), 0).layer(G.LAYER_1).scale(2, 1).crop(64.f / sheet.getWidth(), 16.f / sheet.getHeight(), 32.f / sheet.getWidth(), 16.f / sheet.getHeight()).use();
+			G.drawSquare();
 		}
 
 		// Draw dirt mound cover
 		if(state == State.DEAD || state == State.DYING)
-			sheet.draw(48, 16, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+			sheet.draw(48, 16, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1, G.LAYER_1);
 		else
-			sheet.draw(64, 32, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+			sheet.draw(64, 32, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1, G.LAYER_1);
 	}
 
 	public Hitbox getRenderBounds() {

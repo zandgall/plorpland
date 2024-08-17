@@ -8,7 +8,7 @@
 package com.zandgall.plorpland.entity;
 
 import com.zandgall.plorpland.Main;
-import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitrect;
@@ -57,7 +57,7 @@ public class Cloud {
 	}
 
 	public void render() {
-		textures[type].draw(x, y, 16, 16, GLHelper.LAYER_2_SHADOW_DEPTH);
+		textures[type].draw(x, y, 16, 16, G.LAYER_2_SHADOW);
 	}
 
 	public Hitbox getRenderBounds() {

@@ -9,7 +9,7 @@ package com.zandgall.plorpland.entity.collectables;
 
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.entity.Entity;
-import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
@@ -32,7 +32,7 @@ public abstract class Collectable extends Entity {
 	}
 
 	public void render() {
-		getTexture().draw(position.x - 0.5, position.y - 0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+		getTexture().draw(position.x - 0.5, position.y - 0.5, 1, 1, G.LAYER_1);
 	}
 
 	public Hitbox getRenderBounds() {

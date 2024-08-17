@@ -9,7 +9,7 @@ package com.zandgall.plorpland.entity;
 
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
-import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
@@ -42,7 +42,7 @@ public class HealthFlower extends Entity {
 
 	public void render() {
 		int frame = (int) Math.max((timer * 8) % 8 - 4, 0);
-		texture.draw(0, frame * 16, 16, 16, position.x - 0.5, position.y - 0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+		texture.draw(0, frame * 16, 16, 16, position.x - 0.5, position.y - 0.5, 1, 1, G.LAYER_1);
 	}
 
 	public Hitbox getRenderBounds() {

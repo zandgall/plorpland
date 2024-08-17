@@ -26,7 +26,7 @@ import org.lwjgl.opengl.GL;
 import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.EntityRegistry;
 import com.zandgall.plorpland.entity.Player;
-import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.staging.Cutscene;
 import com.zandgall.plorpland.level.Level;
@@ -97,7 +97,7 @@ public class Main {
 		GL.createCapabilities();
 
 		Shader.init();
-		GLHelper.init();
+		G.init();
 
 		player = new Player();
 		camera = new Camera();
@@ -176,8 +176,6 @@ public class Main {
 		// Draw!
 		level.render();
 		hud.render();
-
-		GLHelper.drawRect();
 
 		// Swap buffers
 		glfwSwapBuffers(window);

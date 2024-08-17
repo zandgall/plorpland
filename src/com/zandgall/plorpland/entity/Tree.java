@@ -9,7 +9,7 @@ package com.zandgall.plorpland.entity;
 
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
-import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
@@ -53,13 +53,13 @@ public class Tree extends Entity {
 			peekTransparency = peekTransparency * 0.95 + 1.0 * 0.05;
 
 		// Tree texture is 3 x 4 tiles in dimensions. offset by -1.5, -3.5
-		trunk.draw((float)getX() - 1.5f, (float)getY() - 3.5f, 3, 4, GLHelper.LAYER_1_DEPTH);
+		trunk.draw(getX() - 1.5, getY() - 3.5, 3, 4, G.LAYER_1);
 		// Shadow is 1 tile lower
-		shadow.draw((float)getX() - 1.5f, (float)getY() - 2.5f, 3, 4, GLHelper.LAYER_1_DEPTH);
+		shadow.draw(getX() - 1.5, getY() - 2.5, 3, 4, G.LAYER_2_SHADOW);
 
-		Shader.Image.setAlpha((float)peekTransparency);
-		leaves.draw(getX() - 1.5, getY() - 3.5, 3, 4, GLHelper.LAYER_2_DEPTH);
-		Shader.Image.setAlpha(1.f);
+		Shader.Image.alpha(peekTransparency);
+		leaves.draw(getX() - 1.5, getY() - 3.5, 3, 4, G.LAYER_2);
+		Shader.Image.alpha(1.0);
 	}
 
 	public Hitbox getRenderBounds() {

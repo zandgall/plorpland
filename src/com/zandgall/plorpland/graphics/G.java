@@ -2,9 +2,9 @@ package com.zandgall.plorpland.graphics;
 
 import static org.lwjgl.opengl.GL30.*;
 
-public class GLHelper {
+public class G {
 
-	public static final float LAYER_0_DEPTH = 1, LAYER_1_SHADOW_DEPTH = 0.8f, LAYER_1_DEPTH = 0.6f, LAYER_2_SHADOW_DEPTH = 0.4f, LAYER_2_DEPTH = 0.2f;
+	public static final double LAYER_0 = 0.8, LAYER_1_SHADOW = 0.6, LAYER_1 = 0.4, LAYER_2_SHADOW = 0.2, LAYER_2 = 0.0, LAYER_3_SHADOW = -0.2, LAYER_3 = -0.4;
 
 	// Square VAO, VBO, EBO
 	private static int sqVAO, sqVBO, sqEBO;
@@ -34,7 +34,7 @@ public class GLHelper {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	public static void drawRect() {
+	public static void drawSquare() {
 		glBindVertexArray(sqVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}

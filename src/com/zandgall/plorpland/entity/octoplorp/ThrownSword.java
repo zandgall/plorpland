@@ -7,12 +7,10 @@
 
 package	com.zandgall.plorpland.entity.octoplorp;
 
-import org.joml.Matrix4f;
-
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.PlantedSword;
-import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
@@ -50,10 +48,9 @@ public class ThrownSword extends Entity {
 	}
 
 	public void render() {
-		Shader.Image.use();
-		Shader.Image.setTexture(image.getTexture());
-		Shader.Image.setModel(new Matrix4f().translate(-1, -0.5f, GLHelper.LAYER_1_DEPTH).rotateZ((float)rotation).translate((float)getX(), (float)getY(), 0).scale(2, 1, 0));
-		plaque.draw(target.x-1, target.y-1.8, 2, 2, GLHelper.LAYER_1_DEPTH);
+		Shader.Image.reset().at(getX(), getY()).rotate(rotation).scale(1, 0.5).layer(G.LAYER_1).image(image).use();
+		G.drawSquare();
+		plaque.draw(target.x-1, target.y-1.8, 2, 2, G.LAYER_1);
 	}
 
 	@Override

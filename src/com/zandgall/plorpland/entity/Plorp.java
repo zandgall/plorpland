@@ -11,7 +11,7 @@ import java.util.Random;
 
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
-import com.zandgall.plorpland.graphics.GLHelper;
+import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
@@ -317,43 +317,43 @@ public class Plorp extends Entity {
 		// Half transparent if hit recently
 		if (state != State.DEAD && System.currentTimeMillis() - lastHit < 100
 				&& (System.currentTimeMillis() / 50) % 2 == 0)
-			Shader.Image.setAlpha(0.5f);
+			Shader.Image.alpha(0.5);
 
 		float fX = 8 + horizontalFlip * 8;
 		float fW = 16 * horizontalFlip;
 		switch (state) {
 			case SLEEPING:
-				sheet.draw(fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+				sheet.draw(fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
 				// TODO: "zzz" particles
 				break;
 			case FALLING_ASLEEP:
-				sheet.draw(frame * 16 + fX, 32, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+				sheet.draw(frame * 16 + fX, 32, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
 				break;
 			case RESTING:
 				if ((int) (timer * 10) % 20 == 0) { // 1 out of 20 frames are a blink
 					if (frame >= 2) // Looking back
-						sheet.draw(16+fX, 48, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+						sheet.draw(16+fX, 48, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
 					else
-						sheet.draw(fX, 48, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+						sheet.draw(fX, 48, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
 				} else {
 					int xoff[] = { 0, 16, 0, 16 }, yoff[] = { 0, 0, 16, 16 };
-					sheet.draw(xoff[frame]+fX, yoff[frame], fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+					sheet.draw(xoff[frame]+fX, yoff[frame], fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
 				}
 				break;
 			case STANDING:
-				sheet.draw(32 + 16 * frame+fX, 0, 16, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+				sheet.draw(32 + 16 * frame+fX, 0, 16, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
 				break;
 			case WALKING:
 			case WALKING_HOME:
 			case CHASING:
 				int up = (target.y < getY()) ? 16 : 0;
-				sheet.draw(32 + up + fX, frame * 16, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+				sheet.draw(32 + up + fX, frame * 16, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
 				break;
 			case SURPRISED:
-				sheet.draw(16 + fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+				sheet.draw(16 + fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
 				break;
 			case DEAD:
-				sheet.draw(32 + frame * 16 + fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, GLHelper.LAYER_1_DEPTH);
+				sheet.draw(32 + frame * 16 + fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
 				break;
 			default:
 				break;
