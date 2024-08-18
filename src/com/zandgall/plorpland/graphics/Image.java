@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.stb.STBImage;
@@ -19,6 +18,16 @@ public class Image {
 		this.path = path;
 		// if(GL.getCapabilities() == null)
 			// System.err.println("Woo!");
+	}
+
+	public Image(int texture) {
+		this.texture = texture;
+		glBindTexture(GL_TEXTURE_2D, texture);
+		this.width = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
+		this.height = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		this.path = "";
+		this.pong = true;
 	}
 
 	private void ping() {

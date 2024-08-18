@@ -8,7 +8,10 @@
 package com.zandgall.plorpland.level;
 
 import com.zandgall.plorpland.entity.EntityRegistry;
+import com.zandgall.plorpland.graphics.FbSingle;
+import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.Cloud;
 import com.zandgall.plorpland.util.Hitbox;
@@ -21,6 +24,10 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+
+import org.joml.Matrix4f;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.io.ObjectInputStream;
 import java.io.IOException;
@@ -132,12 +139,6 @@ public class Level {
 
 	// TODO: Do level graphics again
 	public void loadGraphics() {
-		// Objects to crop the loaded images
-		/*Canvas cropper = new Canvas(CHUNK_SIZE, CHUNK_SIZE);
-		SnapshotParameters p = new SnapshotParameters();
-		p.setFill(Color.TRANSPARENT);
-		GraphicsContext g = cropper.getGraphicsContext2D();*/
-
 		// Load images and create output array
 		Image l0 = new Image("/level_0.png");
 		Image l1 = new Image("/level_1.png");
@@ -148,24 +149,49 @@ public class Level {
 		shadow_0 = new Image[(int)Math.ceil(l0.getWidth()/CHUNK_SIZE)][(int)Math.ceil(l0.getHeight()/CHUNK_SIZE)];
 		shadow_1 = new Image[(int)Math.ceil(l0.getWidth()/CHUNK_SIZE)][(int)Math.ceil(l0.getHeight()/CHUNK_SIZE)];
 
-		// Loop through every chunk, cropping each image and putting it in the images arrays
-		/*for(int i = 0; i < l0.getWidth() / CHUNK_SIZE; i++) {
-			for(int j = 0; j < l0.getHeight() / CHUNK_SIZE; j++) {
-				g.clearRect(0, 0, CHUNK_SIZE, CHUNK_SIZE);
-				g.drawImage(l0, -i*CHUNK_SIZE, -j*CHUNK_SIZE);
-				images_0[i][j] = cropper.snapshot(p, null);
-				g.clearRect(0, 0, CHUNK_SIZE, CHUNK_SIZE);
-				g.drawImage(l1, -i*CHUNK_SIZE, -j*CHUNK_SIZE);
-				images_1[i][j] = cropper.snapshot(p, null);
-				g.clearRect(0, 0, CHUNK_SIZE, CHUNK_SIZE);
-				g.drawImage(s0, -i*CHUNK_SIZE, -j*CHUNK_SIZE);
-				shadow_0[i][j] = cropper.snapshot(p, null);
-				g.clearRect(0, 0, CHUNK_SIZE, CHUNK_SIZE);
-				g.drawImage(s1, -i*CHUNK_SIZE, -j*CHUNK_SIZE);
-				shadow_1[i][j] = cropper.snapshot(p, null);
-			}
-		}*/
+		// Cropping and shader info
+		FbSingle f = new FbSingle();
+		Shader.Image.reset().setModel(0, 0, 1, 1, 0);
+		Shader.Image.setView(new Matrix4f());
+		Shader.Image.setProjection(new Matrix4f().ortho(0, 1, 0, 1, -1, 1));
+		glViewport(0, 0, CHUNK_SIZE, CHUNK_SIZE);
 
+		// Get crop value
+		float w = (float)CHUNK_SIZE / l0.getWidth(), h = (float)CHUNK_SIZE / l0.getHeight();
+		for(int i = 0; i < l0.getWidth() / CHUNK_SIZE; i++) {
+			for(int j = 0; j < l0.getHeight() / CHUNK_SIZE; j++) {
+				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
+				f.drawToThis();
+				glClear(GL_COLOR_BUFFER_BIT);
+				Shader.Image.image(l0).crop(w * i, h * j, w, h).use();
+				G.drawSquare();
+				images_0[i][j] = new Image(f.getTexture());
+				
+				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
+				f.drawToThis();
+				glClear(GL_COLOR_BUFFER_BIT);
+				Shader.Image.image(l1).crop(w*i, h*j, w, h);
+				G.drawSquare();
+				images_1[i][j] = new Image(f.getTexture());
+				
+				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
+				f.drawToThis();
+				glClear(GL_COLOR_BUFFER_BIT);
+				Shader.Image.image(s0).crop(w*i, h*j, w, h);
+				G.drawSquare();
+				shadow_0[i][j] = new Image(f.getTexture());
+				
+				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
+				f.drawToThis();
+				glClear(GL_COLOR_BUFFER_BIT);
+				Shader.Image.image(s1).crop(w*i, h*j, w, h);
+				G.drawSquare();
+				shadow_1[i][j] = new Image(f.getTexture());
+			}
+		}
+		FbSingle.drawToScreen();
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	public void tick() {
@@ -221,18 +247,19 @@ public class Level {
 					level.get(x).get(y).render(context_0);
 				} */
 		// else {
-			xMin = Math.max((int)(xMin - bounds.x) / (CHUNK_SIZE / 16), 0);
-			yMin = Math.max((int)(yMin - bounds.y) / (CHUNK_SIZE / 16), 0);
-			xMax = (int)(xMax - bounds.x) / (CHUNK_SIZE / 16);
-			yMax = (int)(yMax - bounds.y) / (CHUNK_SIZE / 16);
-			for (int x = xMin; x <= xMax && x < images_0.length; x++) {
-				for (int y = yMin; y <= yMax && y < images_0[x].length; y++) {
-					/* context_0.drawImage(images_0[x][y], x*CHUNK_SIZE / 16 + bounds.x, y * CHUNK_SIZE / 16 + bounds.y, CHUNK_SIZE/16, CHUNK_SIZE / 16);
-					context_2.drawImage(images_1[x][y], x*CHUNK_SIZE / 16 + bounds.x, y * CHUNK_SIZE / 16 + bounds.y, CHUNK_SIZE/16, CHUNK_SIZE / 16);
-					shadow_0.drawImage(this.shadow_0[x][y], x*CHUNK_SIZE / 16 + bounds.x, y * CHUNK_SIZE / 16 + bounds.y, CHUNK_SIZE/16, CHUNK_SIZE / 16);
-					shadow_1.drawImage(this.shadow_1[x][y], x*CHUNK_SIZE / 16 + bounds.x, y * CHUNK_SIZE / 16 + bounds.y, CHUNK_SIZE/16, CHUNK_SIZE / 16); */
-				}
+		xMin = Math.max((int)(xMin - bounds.x) / (CHUNK_SIZE / 16), 0);
+		yMin = Math.max((int)(yMin - bounds.y) / (CHUNK_SIZE / 16), 0);
+		xMax = (int)(xMax - bounds.x) / (CHUNK_SIZE / 16);
+		yMax = (int)(yMax - bounds.y) / (CHUNK_SIZE / 16);
+		for (int x = xMin; x <= xMax && x < images_0.length; x++) {
+			for (int y = yMin; y <= yMax && y < images_0[x].length; y++) {
+				// System.out.printf("Drawing %d %d%n", x, y);
+				images_0[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0, G.LAYER_0);
+				images_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0, G.LAYER_1);
+				shadow_0[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0, G.LAYER_1_SHADOW);
+				shadow_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0, G.LAYER_2_SHADOW);
 			}
+		}
 		// }
 
 		// Sort and draw all entities and then clouds if they intersect the screen

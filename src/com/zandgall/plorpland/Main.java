@@ -95,6 +95,7 @@ public class Main {
 		glfwSwapInterval(1);
 		glfwShowWindow(window);
 		GL.createCapabilities();
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 		Shader.init();
 		G.init();
@@ -162,7 +163,7 @@ public class Main {
 	public static void render() {
 		// Clear all canvases
 		glViewport(0, 0, WIDTH, HEIGHT);
-		glClearColor(0.55f, 0.8f, 1.0f, 1.0f);
+		// glClearColor(0.55f, 0.8f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Save all context states
