@@ -314,25 +314,25 @@ public class Player extends Entity {
 
 			// Draw special move related sprites, or fade outs
 			if (specialMove == Special.STAB) {
-				Shader.Image.scale(1.125, 1).image(stab).use().reset();
+				Shader.Image.at(0.25, 0).scale(1.125, 1).image(stab).use().reset();
 				G.drawSquare();
 			} else if (specialMove == Special.SLASH) {
 				if (Util.signedAngularDistance(swordDirection, swordTargetDirection) > 0)
-					Shader.Image.scale(1, 2).image(slash).use().reset();
+					Shader.Image.at(0, 1).scale(1, 2).image(slash).use().reset();
 				else
-					Shader.Image.scale(1, -2).image(slash).use().reset();
+					Shader.Image.at(0, -1).scale(1, -2).image(slash).use().reset();
 				G.drawSquare();
 			} else if (previousMove == Special.STAB) {
-				Shader.Image.alpha(specialTimer - 4).scale(1.125, 1).image(stab).use().reset();
+				Shader.Image.at(0.25, 0).alpha(specialTimer - 4).scale(1.125, 1).image(stab).use().reset();
 				Shader.Image.setTexture(stab.getTexture());
 			} else if (previousMove == Special.SLASH) {
 				if (Util.signedAngularDistance(swordDirection, swordTargetDirection) > 0)
-					Shader.Image.scale(1, 2).image(slash).alpha(specialTimer - 4).use().reset();
+					Shader.Image.at(0, 1).scale(1, 2).image(slash).alpha(specialTimer - 4).use().reset();
 				else
-					Shader.Image.scale(1, -2).image(slash).alpha(specialTimer-4).use().reset();
+					Shader.Image.at(0, -1).scale(1, -2).image(slash).alpha(specialTimer-4).use().reset();
 				G.drawSquare();
 			} else if (Math.abs(swordRotationalVelocity) > 15.0 && specialTimer <= 0) {
-				Shader.Image.scale(1.25, 1).image(charged).use().reset();
+				Shader.Image.at(0.25, 0).scale(1.25, 1).image(charged).use().reset();
 				G.drawSquare();
 			}
 		}
