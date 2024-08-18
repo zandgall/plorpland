@@ -319,7 +319,7 @@ public class Plorp extends Entity {
 				&& (System.currentTimeMillis() / 50) % 2 == 0)
 			Shader.Image.alpha(0.5);
 
-		float fX = 8 + horizontalFlip * 8;
+		float fX = 8 - horizontalFlip * 8;
 		float fW = 16 * horizontalFlip;
 		switch (state) {
 			case SLEEPING:
