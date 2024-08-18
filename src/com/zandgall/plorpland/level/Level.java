@@ -232,7 +232,7 @@ public class Level {
 			Main.HEIGHT / c.getZoom());
 		int xMin = (int) screen.getBounds().x;
 		int xMax = (int) (screen.getBounds().x + screen.getBounds().w);
-		int yMin = (int) screen.getBounds().y;	
+		int yMin = (int) screen.getBounds().y;
 		int yMax = (int) (screen.getBounds().y + screen.getBounds().h);
 
 		for(SpecialImage i : specialImages.get(0))
@@ -247,10 +247,10 @@ public class Level {
 					level.get(x).get(y).render(context_0);
 				} */
 		// else {
-		xMin = Math.max((int)(xMin - bounds.x) / (CHUNK_SIZE / 16), 0);
-		yMin = Math.max((int)(yMin - bounds.y) / (CHUNK_SIZE / 16), 0);
-		xMax = (int)(xMax - bounds.x) / (CHUNK_SIZE / 16);
-		yMax = (int)(yMax - bounds.y) / (CHUNK_SIZE / 16);
+		xMin = Math.max((int)((xMin - bounds.x - 0.5) / (CHUNK_SIZE / 16.0)), 0);
+		yMin = Math.max((int)((yMin - bounds.y - 0.5) / (CHUNK_SIZE / 16.0)), 0);
+		xMax = (int)((xMax - bounds.x) / (CHUNK_SIZE / 16.0));
+		yMax = (int)((yMax - bounds.y) / (CHUNK_SIZE / 16.0));
 		for (int x = xMin; x <= xMax && x < images_0.length; x++) {
 			for (int y = yMin; y <= yMax && y < images_0[x].length; y++) {
 				// System.out.printf("Drawing %d %d%n", x, y);
