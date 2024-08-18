@@ -282,19 +282,15 @@ public class Player extends Entity {
 
 	@Override
 	public void render() {
-		// TODO: Bye bye player!
-		/* g.save();
-		g.setFill(Color.RED);
-		g.fillRect(getX() - 0.5, getY() - 0.5, 1.0, 1.0); */
-
 		// If player was hit recently, or a special move was used recently, draw
 		// transparent
-		float alpha = 1.f;
+		Shader.Color.reset().at(getX(), getY()).scale(0.5).color(1, 0, 0).layer(G.LAYER_1).use();
 		if (System.currentTimeMillis() - lastHit < 1000)
 			if ((System.currentTimeMillis() / 100) % 2 == 0) // Every other frame on damage
-				alpha = 0.5f;
+				Shader.Color.alpha(0.5);
 		if (previousMove != Special.NONE)
-			alpha = 0.5f;
+			Shader.Color.alpha(0.5);
+		G.drawSquare();
 
 		// Sword drawing
 		if (hasSword) {
