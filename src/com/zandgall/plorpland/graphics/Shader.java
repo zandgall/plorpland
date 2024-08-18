@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.system.MemoryStack;
 
@@ -16,7 +17,10 @@ public class Shader {
 	
 	private int v, f, program;
 
-	public static ImageShader Image = new ImageShader();
+	public static ArrayList<MVPShader> MVPs = new ArrayList<>();
+
+	public static ImageShader Image;
+	public static ColorShader Color;
 
 	public Shader(String vPath, String fPath) throws IOException {
 		// Gather all vertex shader code
@@ -111,30 +115,32 @@ public class Shader {
 		glUniform4f(uniformLocation(name), (float)x, (float)y, (float)z, (float)w);
 	}
 
+	public void setVec3(String name, float x, float y, float z) {
+		glUniform3f(uniformLocation(name), x, y, z);
+	}
+
+	public void setVec3(String name, double x, double y, double z) {
+		glUniform3f(uniformLocation(name), (float)x, (float)y, (float)z);
+	}
+
+
 	public void setInt(String name, int i) {
 		glUniform1i(uniformLocation(name), i);
 	}
 
 	public static void init() {
-		try {
-			Image.s = new Shader("/shaders/image.vs", "/shaders/image.fs");
-			Image.s.use();
-			Image.s.setInt("text", 0);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.err.println("Could not initiate one or more shaders!");
-		}
+		Image = new ImageShader();
+		Color = new ColorShader();
 	}
 
-	public static class ImageShader {
-		private Shader s;
+	// A shader class blueprint that provides transformation modification
+	public static abstract class MVPShader {
+		protected Shader s;
 
-		private Matrix4d model = new Matrix4d();
+		protected Matrix4d model = new Matrix4d();
 
-		public ImageShader use() {
-			s.use();
-			s.setMatrix("model", model);
-			return this;
+		public MVPShader() {
+			Shader.MVPs.add(this);
 		}
 	
 		public void setProjection(Matrix4f matrix) {
@@ -160,34 +166,65 @@ public class Shader {
 			glBindTexture(GL_TEXTURE_2D, texture);
 		}
 
-		public ImageShader reset() {
+		public MVPShader use() {
+			s.use();
+			s.setMatrix("model", model);
+			return this;
+		}
+
+
+		public MVPShader reset() {
 			model.identity();
 			return this;
 		}
 
-		public ImageShader at(double x, double y) {
+		public MVPShader at(double x, double y) {
 			model.translate(x, y, 0);
 			return this;
 		}
 
-		public ImageShader layer(double l) {
+		public MVPShader layer(double l) {
 			model.translate(0, 0, l);
 			return this;
 		}
 
-		public ImageShader rotate(double rotation) {
+		public MVPShader rotate(double rotation) {
 			model.rotateZ(rotation);
 			return this;
 		}
 
-		public ImageShader scale(double w, double h) {
+		public MVPShader scale(double w, double h) {
 			model.scale(w, h, 1);
 			return this;
 		}
 
-		public ImageShader scale(double scale) {
+		public MVPShader scale(double scale) {
 			return scale(scale, scale);
 		}
+	}
+
+	// Shader state and interfacing class for image.vs/fs
+	public static class ImageShader extends MVPShader {
+		public ImageShader() {
+			super();
+			try {
+				s = new Shader("/shaders/image.vs", "/shaders/image.fs");
+				s.use();
+				s.setInt("text", 0);
+			} catch(IOException e) {
+				System.err.println("Couldn't load Image Shader!");
+				e.printStackTrace();
+			}
+		}
+
+		// Chainable parent interaction
+		public ImageShader use() { return (ImageShader)super.use(); }
+		public ImageShader reset() { return (ImageShader)super.reset(); }
+		public ImageShader at(double x, double y) { return (ImageShader)super.at(x, y); }
+		public ImageShader layer(double l) { return (ImageShader)super.layer(l); }
+		public ImageShader rotate(double rotation) { return (ImageShader)super.rotate(rotation); }
+		public ImageShader scale(double w, double h) { return (ImageShader)super.scale(w, h); }
+		public ImageShader scale(double scale) { return (ImageShader)super.scale(scale); }
 
 		public ImageShader alpha(double alpha) {
 			s.use();
@@ -209,7 +246,45 @@ public class Shader {
 			s.setVec4("crop", x, y, w, h);
 			return this;
 		}
-
 	}
 
+	// Shader state and interfacing class for color.vs/fs
+	// Draws a solid color with the given transformation
+	public static class ColorShader extends MVPShader {
+		public ColorShader() {
+			super();
+			try {
+				s = new Shader("/shaders/color.vs", "/shaders/color.fs");
+			} catch (IOException e) {
+				System.err.println("Couldn't load color shader!");
+				e.printStackTrace();
+			}
+		}
+
+		public ColorShader reset() {
+			super.reset();
+			return alpha(1);
+		}
+
+		// Chainable parent interaction
+		public ColorShader use() { return (ColorShader)super.use(); }
+		public ColorShader at(double x, double y) { return (ColorShader)super.at(x, y); }
+		public ColorShader layer(double l) { return (ColorShader)super.layer(l); }
+		public ColorShader rotate(double rotation) { return (ColorShader)super.rotate(rotation); }
+		public ColorShader scale(double w, double h) { return (ColorShader)super.scale(w, h); }
+		public ColorShader scale(double scale) { return (ColorShader)super.scale(scale); }
+
+		public ColorShader color(double r, double g, double b) {
+			s.use();
+			s.setVec3("color", r, g, b);
+			return this;
+		}
+
+		public ColorShader alpha(double alpha) {
+			s.use();
+			s.setFloat("alpha", (float)alpha);
+			return this;
+		}
+
+	}
 }
