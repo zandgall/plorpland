@@ -14,8 +14,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_PERIOD;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.joml.Matrix4f;
-
 import com.zandgall.plorpland.Camera;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.entity.Entity;
@@ -447,11 +445,11 @@ public class Tentacle extends Entity {
 			Shader.Image.at((Math.random()-0.5)*timer*0.1, (Math.random()-0.5)*timer*0.1);
 
 		if(state == State.GRABBING || state == State.GRABBED)
-			Shader.Image.crop(48.f / sheet.getWidth(), 0, 48.f / sheet.getWidth(), 16.f / sheet.getHeight()).scale(1.5, 0.5);
+			Shader.Image.crop(48.f / sheet.getWidth(), 0, 48.f / sheet.getWidth(), 16.f / sheet.getHeight()).at(1, 0).scale(1.5, 0.5);
 		else if(state == State.INJURED)
-			Shader.Image.crop(0, 32.f / sheet.getHeight(), 48.f / sheet.getWidth(), 16.f / sheet.getHeight()).scale(1.5, 0.5);	
+			Shader.Image.crop(0, 32.f / sheet.getHeight(), 48.f / sheet.getWidth(), 16.f / sheet.getHeight()).at(1, 0).scale(1.5, 0.5);
 		else if(state == State.DEAD || state == State.DYING || state == State.RETRACTING || state == State.SWINGING)
-			Shader.Image.crop(32.f / sheet.getWidth(), 16.f / sheet.getHeight(), 16.f / sheet.getWidth(), 16.f / sheet.getHeight());
+			Shader.Image.crop(32.f / sheet.getWidth(), 16.f / sheet.getHeight(), 16.f / sheet.getWidth(), 16.f / sheet.getHeight()).scale(0.5);
 		else {
 			double gX = getX() - 0.5, tX = Math.floor(gX);
 			double gY = getY() - 0.5, tY = Math.floor(gY);
@@ -462,15 +460,14 @@ public class Tentacle extends Entity {
 			case 3 -> gY - tY;
 			default -> 0;
 			};
-			// TODO: Most certainly wrong
-			Shader.Image.crop(clipset, 0.f, 48.f / sheet.getWidth(), 16.f / sheet.getHeight()).scale(1.5 - clipset, 1).at(clipset*0.5, 0);
+			Shader.Image.crop(clipset * 16.f / sheet.getWidth(), 0, (48.f - clipset * 16.f) / sheet.getWidth(), 16.f / sheet.getHeight()).at(1+clipset*0.5, 0).scale(1.5-clipset*0.5, 0.5);
 		}
 
 		Shader.Image.image(sheet).use();
 		G.drawSquare();
 
 		if(state == State.DEAD || state == State.DYING || state == State.RETRACTING || state == State.SWINGING) {
-			Shader.Image.reset().at(corpse.x, corpse.y).rotate(corpseRotation).at(-1.6 + (state == State.SWINGING ? 1.5 : 0), 0).layer(G.LAYER_1).scale(2, 1).crop(64.f / sheet.getWidth(), 16.f / sheet.getHeight(), 32.f / sheet.getWidth(), 16.f / sheet.getHeight()).use();
+			Shader.Image.reset().at(corpse.x, corpse.y).rotate(corpseRotation).at(0.9 + (state == State.SWINGING ? 0 : -0.9), 0).layer(G.LAYER_1).scale(1, 0.5).crop(64.f / sheet.getWidth(), 16.f / sheet.getHeight(), 32.f / sheet.getWidth(), 16.f / sheet.getHeight()).use();
 			G.drawSquare();
 		}
 
