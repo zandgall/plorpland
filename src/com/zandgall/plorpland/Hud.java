@@ -10,11 +10,15 @@ package com.zandgall.plorpland;
 import java.io.IOException;
 
 import com.zandgall.plorpland.entity.collectables.Collectable;
+import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Shader;
 
 public class Hud {
 	// private static final Image popup = new Image("/popup.png");
 	// private static final Font FONT32 = Font.font(32), FONT16 = Font.font(16);
+
+	private static final Image healthRed = new Image("/health_red.png"), healthGreen = new Image("/health_green.png"), healthShadow = new Image("/health_shadow.png");
 
 	private double healthOpacity = 0, deathOpacity = 0, respawnOpacity = 0, closeOpacity = 0;
 	private boolean respawning = false, closing = false;
@@ -74,6 +78,17 @@ public class Hud {
 	}
 
 	public void render() {
+		Shader.TintedImage.alpha(healthOpacity);
+		Shader.TintedImage.reset().crop(0, 0, 1, 1).image(healthShadow).at(4, 4).scale(healthShadow.getWidth()*4, healthShadow.getHeight()*4).tint(1, 1, 1).use();
+		G.draw01Square();
+		Shader.TintedImage.image(healthRed).reset().at(4, 4).scale(healthRed.getWidth()*4, healthRed.getHeight()*4).use();
+		G.draw01Square();
+		Shader.TintedImage.crop(0, 0, Main.getPlayer().getHealth() / 20.0, 1).scale(Main.getPlayer().getHealth()/20.0, 1).image(healthGreen).use();
+		G.draw01Square();
+
+		// Shader.Image.reset().image(healthBar).at(0, 0).layer(G.LAYER_2).scale(4, 1).use();
+		// G.drawSquare();
+
 		// TODO: HUD + Text
 		/*
 		g.setGlobalAlpha(healthOpacity);
