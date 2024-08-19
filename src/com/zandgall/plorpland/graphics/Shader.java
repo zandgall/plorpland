@@ -18,9 +18,11 @@ public class Shader {
 	private int v, f, program;
 
 	public static ArrayList<MVPShader> MVPs = new ArrayList<>();
+	public static ArrayList<ScreenShader> Screens = new ArrayList<>();
 
 	public static ImageShader Image;
 	public static ColorShader Color;
+	public static TintedImageShader TintedImage;
 
 	public Shader(String vPath, String fPath) throws IOException {
 		// Gather all vertex shader code
@@ -131,6 +133,7 @@ public class Shader {
 	public static void init() {
 		Image = new ImageShader();
 		Color = new ColorShader();
+		TintedImage = new TintedImageShader();
 	}
 
 	// A shader class blueprint that provides transformation modification
@@ -203,14 +206,83 @@ public class Shader {
 		}
 	}
 
-	// Shader state and interfacing class for image.vs/fs
+	public static abstract class ScreenShader {
+		protected Shader s;
+
+		protected Matrix4d model = new Matrix4d();
+
+		public ScreenShader() {
+			Shader.Screens.add(this);
+		}
+	
+		public void setScreen(Matrix4f matrix) {
+			s.use();
+			s.setMatrix("screen", matrix);
+		}
+
+		public void setScreen(double width, double height) {
+			setScreen(new Matrix4f().ortho(0, (float)width, (float)height, 0, -1.f, 1.f));
+		}
+
+		public void setModel(Matrix4d matrix) {
+			model = matrix;
+		}
+
+		public void setModel(double x, double y, double w, double h, double layer) {
+			setModel(new Matrix4d().translate(x + w * 0.5f, y + h * 0.5f, layer).scale(w*0.5f, h*0.5f, 1));
+		}
+
+		public void setTexture(int texture) {
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture);
+		}
+
+		public ScreenShader use() {
+			s.use();
+			s.setMatrix("model", model);
+			return this;
+		}
+
+
+		public ScreenShader reset() {
+			model.identity();
+			return this;
+		}
+
+		public ScreenShader at(double x, double y) {
+			model.translate(x, y, 0);
+			return this;
+		}
+
+		public ScreenShader layer(double l) {
+			model.translate(0, 0, l);
+			return this;
+		}
+
+		public ScreenShader rotate(double rotation) {
+			model.rotateZ(rotation);
+			return this;
+		}
+
+		public ScreenShader scale(double w, double h) {
+			model.scale(w, h, 1);
+			return this;
+		}
+
+		public ScreenShader scale(double scale) {
+			return scale(scale, scale);
+		}
+	}
+
+	// Shader state and interfacing class for mvp.vs/image.fs
 	public static class ImageShader extends MVPShader {
 		public ImageShader() {
 			super();
 			try {
-				s = new Shader("/shaders/image.vs", "/shaders/image.fs");
+				s = new Shader("/shaders/mvp.vs", "/shaders/image.fs");
 				s.use();
 				s.setInt("text", 0);
+				crop(0, 0, 1, 1);
 			} catch(IOException e) {
 				System.err.println("Couldn't load Image Shader!");
 				e.printStackTrace();
@@ -248,13 +320,13 @@ public class Shader {
 		}
 	}
 
-	// Shader state and interfacing class for color.vs/fs
+	// Shader state and interfacing class for mvp.vs/color.fs
 	// Draws a solid color with the given transformation
 	public static class ColorShader extends MVPShader {
 		public ColorShader() {
 			super();
 			try {
-				s = new Shader("/shaders/color.vs", "/shaders/color.fs");
+				s = new Shader("/shaders/mvp.vs", "/shaders/color.fs");
 			} catch (IOException e) {
 				System.err.println("Couldn't load color shader!");
 				e.printStackTrace();
@@ -285,6 +357,61 @@ public class Shader {
 			s.setFloat("alpha", (float)alpha);
 			return this;
 		}
-
 	}
+
+	// Shader state and interfacing with screen.vs/tintedimage.fs
+	// Draws an image multiplied with a color	
+	// TODO: Collapse interfaces, (inb4 rename to TintedImageScreenShader)
+	public static class TintedImageShader extends ScreenShader {
+		public TintedImageShader() {
+			super();
+			try {
+				s = new Shader("/shaders/screen.vs", "/shaders/tintedimage.fs");
+				s.use();
+				s.setInt("text", 0);
+				crop(0, 0, 1, 1);
+			} catch(IOException e) {
+				System.err.println("Couldn't load Image Shader!");
+				e.printStackTrace();
+			}
+		}
+
+		// Chainable parent interaction
+		public TintedImageShader use() { return (TintedImageShader)super.use(); }
+		public TintedImageShader reset() { return (TintedImageShader)super.reset(); }
+		public TintedImageShader at(double x, double y) { return (TintedImageShader)super.at(x, y); }
+		public TintedImageShader layer(double l) { return (TintedImageShader)super.layer(l); }
+		public TintedImageShader rotate(double rotation) { return (TintedImageShader)super.rotate(rotation); }
+		public TintedImageShader scale(double w, double h) { return (TintedImageShader)super.scale(w, h); }
+		public TintedImageShader scale(double scale) { return (TintedImageShader)super.scale(scale); }
+
+		public TintedImageShader alpha(double alpha) {
+			s.use();
+			s.setFloat("alpha", (float)alpha);
+			return this;
+		}
+
+		public TintedImageShader tint(double r, double g, double b) {
+			s.use();
+			s.setVec3("tint", r, g, b);
+			return this;
+		}
+
+
+		public TintedImageShader texture(int texture) {
+			setTexture(texture);
+			return this;
+		}
+
+		public TintedImageShader image(Image i) {
+			return texture(i.getTexture());
+		}
+
+		public TintedImageShader crop(double x, double y, double w, double h) {
+			s.use();
+			s.setVec4("crop", x, y, w, h);
+			return this;
+		}
+	}
+
 }
