@@ -172,6 +172,9 @@ public class Main {
 		Matrix4f proj = new Matrix4f().ortho(-WIDTH * 0.5f, WIDTH * 0.5f, HEIGHT * 0.5f, -HEIGHT * 0.5f, -1.f, 1.f);
 		for(Shader.MVPShader mvp : Shader.MVPs)
 			mvp.setProjection(proj);
+		proj = new Matrix4f().ortho(0, WIDTH, HEIGHT, 0, -1.f, 1.f);
+		for(Shader.ScreenShader screen : Shader.Screens)
+			screen.setScreen(proj);
 		camera.transform();
 
 		// Don't transform hudContext
