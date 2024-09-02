@@ -30,7 +30,7 @@ public class Shader {
 	private static HashMap<Integer, ArrayList<ShaderState>> States = new HashMap<>();
 	private static HashMap<Integer, ShaderState> CurrentStates = new HashMap<>();
 
-	public static Shader Image, Color, TintedImage;
+	public static Shader Image, Color, TintedImage, Circle;
 	
 	public static ShaderProperties Properties = new ShaderProperties();
 
@@ -182,7 +182,7 @@ public class Shader {
 			Color.use().drawToWorld().setModel(new Matrix4f().identity());
 			Color.setAsInitialState();
 		} catch (IOException e) {
-			System.err.println("Could not initialize image shader");
+			System.err.println("Could not initialize color shader");
 			e.printStackTrace();
 		}
 		try {
@@ -191,7 +191,16 @@ public class Shader {
 			TintedImage.use().drawToWorld().setModel(new Matrix4f().identity());
 			TintedImage.setAsInitialState();
 		} catch (IOException e) {
-			System.err.println("Could not initialize image shader");
+			System.err.println("Could not initialize tinted image shader");
+			e.printStackTrace();
+		}
+		try {
+			Circle = new Shader("/shaders/mvp.vs", "/shaders/circle.fs");
+			ProgramNames.put(Circle.program, "Circle");
+			Circle.use().drawToWorld().setModel(new Matrix4f().identity());
+			Circle.setAsInitialState();
+		} catch (IOException e) {
+			System.err.println("Could not initialize circle shader");
 			e.printStackTrace();
 		}
 	}
@@ -401,5 +410,11 @@ public class Shader {
 		public ShaderProperties color(double r, double g, double b) { return setVec3("color", r, g, b); }
 		
 		public ShaderProperties tint(double r, double g, double b) { return setVec3("tint", r, g, b); }
+
+		public ShaderProperties angleLength(double a) { return setFloat("angle_length", (float)Math.min(Math.max(a, 0.0), 2 * Math.PI)); }
+
+		public ShaderProperties radius(double a) { return setFloat("radius", (float)a); }
+
+		public ShaderProperties innerRadius(double a) { return setFloat("inner_radius", (float)a); }
 	}
 }
