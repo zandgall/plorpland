@@ -307,12 +307,21 @@ public class Player extends Entity {
 				.image(indicator);	
 			G.drawSquare();
 
-			/* if (specialMove == Special.NONE) {
-				g.setStroke(Color.LIGHTBLUE);
-				g.setLineWidth(0.1);
-				g.setGlobalAlpha(specialTimer);
-				g.strokeArc(-1.7, -1.7, 3.4, 3.4, 90, -360 * (5 - specialTimer) / 5, ArcType.OPEN);
-			} */
+			if (specialMove == Special.NONE) {
+				Shader.Circle.use().push().drawToWorld().setModel(new Matrix4f().identity())
+					.move(getX(), getY())
+					.scale(1.7, 1.7)
+					.layer(G.LAYER_1)
+					.alpha(1.0)
+					.radius(1.0)
+					.innerRadius(0.9)
+					.alpha(specialTimer)
+					.angleLength(Math.PI*2*(5-specialTimer)/5.0)
+					.rotate(Math.PI * 0.5)
+					.color(0.6, 0.6, 0.9);
+				G.drawSquare();
+				Shader.Circle.use().pop();
+			}
 
 			Shader.Image.use().pop();
 
