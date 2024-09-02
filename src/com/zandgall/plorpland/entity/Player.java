@@ -344,7 +344,7 @@ public class Player extends Entity {
 				Shader.Image.use().move(0.125, 0).alpha(specialTimer - 4).scale(1.125, 1).image(stab);
 				G.drawSquare();
 			} else if (previousMove == Special.SLASH) {
-				if (Util.signedAngularDistance(swordDirection, swordTargetDirection) > 0)
+				if (swordRotationalVelocity < 0)
 					Shader.Image.use().move(0, 1).scale(1, 2).image(slash).alpha(specialTimer - 4);
 				else
 					Shader.Image.use().move(0, -1).scale(1, -2).image(slash).alpha(specialTimer-4);
