@@ -58,14 +58,8 @@ public class Camera {
 	}
 
 	// Create the transformation with the given x, y and zoom
-	public void transform() {
-		// Clamp translation to nearest pixel to avoid gaps between tiles
-		// gc.transform(zoom, 0, 0, zoom, (int) (-x * zoom + Main.layer_0.getWidth() * 0.5),
-				// (int) (-y * zoom + Main.layer_0.getHeight() * 0.5));
-		Matrix4f m = new Matrix4f().scale((float)zoom, (float)zoom, 1).translate((float)-x, (float)-y, 0);
-		for(Shader.MVPShader mvp : Shader.MVPs)
-			mvp.setView(m);
-		// System.out.println("View matrix: " + m.toString());
+	public Matrix4f getTransform() {
+		return new Matrix4f().scale((float)zoom, (float)zoom, 1).translate((float)-x, (float)-y, 0);
 	}
 
 	public double getX() {

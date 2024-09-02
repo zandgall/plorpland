@@ -98,11 +98,12 @@ public class Main {
 		GL.createCapabilities();
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+		camera = new Camera();
+
 		Shader.init();
 		G.init();
 
 		player = new Player();
-		camera = new Camera();
 		level = new Level();
 
 		hud = new Hud();
@@ -169,19 +170,19 @@ public class Main {
 
 		// Save all context states
 		// Transform all (except hud) with camera
-		Matrix4f proj = new Matrix4f().ortho(-WIDTH * 0.5f, WIDTH * 0.5f, HEIGHT * 0.5f, -HEIGHT * 0.5f, -1.f, 1.f);
+		/* Matrix4f proj = new Matrix4f().ortho(-WIDTH * 0.5f, WIDTH * 0.5f, HEIGHT * 0.5f, -HEIGHT * 0.5f, -1.f, 1.f);
 		for(Shader.MVPShader mvp : Shader.MVPs)
 			mvp.setProjection(proj);
 		proj = new Matrix4f().ortho(0, WIDTH, HEIGHT, 0, -1.f, 1.f);
 		for(Shader.ScreenShader screen : Shader.Screens)
-			screen.setScreen(proj);
-		camera.transform();
+			screen.setScreen(proj); */
+		// camera.transform();
 
 		// Don't transform hudContext
 		
 		// Draw!
 		level.render();
-		hud.render();
+		// hud.render();
 
 		// Swap buffers
 		glfwSwapBuffers(window);

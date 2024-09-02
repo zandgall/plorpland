@@ -151,9 +151,8 @@ public class Level {
 
 		// Cropping and shader info
 		FbSingle f = new FbSingle();
-		Shader.Image.reset().setModel(0, 0, 1, 1, 0);
-		Shader.Image.setView(new Matrix4f());
-		Shader.Image.setProjection(new Matrix4f().ortho(0, 1, 0, 1, -1, 1));
+		Shader.Image.use().push().setModel(0, 0, 1, 1, 0);
+		Shader.Image.use().setView(new Matrix4f()).setProjection(new Matrix4f().ortho(0, 1, 0, 1, -1, 1));
 		glViewport(0, 0, CHUNK_SIZE, CHUNK_SIZE);
 
 		// Get crop value
@@ -163,32 +162,33 @@ public class Level {
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
 				f.drawToThis();
 				glClear(GL_COLOR_BUFFER_BIT);
-				Shader.Image.image(l0).crop(w * i, h * j, w, h).use();
+				Shader.Image.use().image(l0).crop(w * i, h * j, w, h);
 				G.drawSquare();
 				images_0[i][j] = new Image(f.getTexture());
 				
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
 				f.drawToThis();
 				glClear(GL_COLOR_BUFFER_BIT);
-				Shader.Image.image(l1).crop(w*i, h*j, w, h);
+				Shader.Image.use().image(l1).crop(w*i, h*j, w, h);
 				G.drawSquare();
 				images_1[i][j] = new Image(f.getTexture());
 				
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
 				f.drawToThis();
 				glClear(GL_COLOR_BUFFER_BIT);
-				Shader.Image.image(s0).crop(w*i, h*j, w, h);
+				Shader.Image.use().image(s0).crop(w*i, h*j, w, h);
 				G.drawSquare();
 				shadow_0[i][j] = new Image(f.getTexture());
 				
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
 				f.drawToThis();
 				glClear(GL_COLOR_BUFFER_BIT);
-				Shader.Image.image(s1).crop(w*i, h*j, w, h);
+				Shader.Image.use().image(s1).crop(w*i, h*j, w, h);
 				G.drawSquare();
 				shadow_1[i][j] = new Image(f.getTexture());
 			}
 		}
+		Shader.Image.use().pop();
 		FbSingle.drawToScreen();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -235,6 +235,7 @@ public class Level {
 		int yMin = (int) screen.getBounds().y;
 		int yMax = (int) (screen.getBounds().y + screen.getBounds().h);
 
+		Shader.Image.use().drawToWorld().setModel(new Matrix4f().identity());
 		for(SpecialImage i : specialImages.get(0))
 			if(screen.intersects(i.getRenderBox()))
 				i.render();
@@ -251,6 +252,7 @@ public class Level {
 		yMin = Math.max((int)((yMin - bounds.y - 0.5) / (CHUNK_SIZE / 16.0)), 0);
 		xMax = (int)((xMax - bounds.x) / (CHUNK_SIZE / 16.0));
 		yMax = (int)((yMax - bounds.y) / (CHUNK_SIZE / 16.0));
+		Shader.Image.use().drawToWorld().setModel(new Matrix4f().identity());
 		for (int x = xMin; x <= xMax && x < images_0.length; x++) {
 			for (int y = yMin; y <= yMax && y < images_0[x].length; y++) {
 				// System.out.printf("Drawing %d %d%n", x, y);

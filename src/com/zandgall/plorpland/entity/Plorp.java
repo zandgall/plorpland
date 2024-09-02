@@ -313,11 +313,11 @@ public class Plorp extends Entity {
 
 	@Override
 	public void render() {
-
+		Shader.Image.use().push();
 		// Half transparent if hit recently
 		if (state != State.DEAD && System.currentTimeMillis() - lastHit < 100
 				&& (System.currentTimeMillis() / 50) % 2 == 0)
-			Shader.Image.alpha(0.5);
+			Shader.Image.use().alpha(0.5);
 
 		float fX = 8 - horizontalFlip * 8;
 		float fW = 16 * horizontalFlip;
@@ -367,6 +367,8 @@ public class Plorp extends Entity {
 			g2.setFill(Color.GREEN);
 			g2.fillRect(getX() - 0.5, getY() - 1.0, health / 5.0, 0.25);
 		} */
+
+		Shader.Image.use().pop();
 	}
 
 	public Hitbox getRenderBounds() {

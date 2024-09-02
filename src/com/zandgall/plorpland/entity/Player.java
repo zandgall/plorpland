@@ -16,6 +16,8 @@ package com.zandgall.plorpland.entity;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import org.joml.Matrix4f;
+
 import com.zandgall.plorpland.Camera;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
@@ -284,17 +286,25 @@ public class Player extends Entity {
 	public void render() {
 		// If player was hit recently, or a special move was used recently, draw
 		// transparent
-		Shader.Color.reset().at(getX(), getY()).scale(0.5).color(1, 0, 0).layer(G.LAYER_1).use();
+		Shader.Color.use().push().drawToWorld().move(getX(), getY()).scale(0.5).color(1, 0, 0).layer(G.LAYER_1);
 		if (System.currentTimeMillis() - lastHit < 1000)
 			if ((System.currentTimeMillis() / 100) % 2 == 0) // Every other frame on damage
-				Shader.Color.alpha(0.5);
+				Shader.Color.use().alpha(0.5);
 		if (previousMove != Special.NONE)
-			Shader.Color.alpha(0.5);
+			Shader.Color.use().alpha(0.5);
 		G.drawSquare();
+
+		Shader.Color.use().pop();
 
 		// Sword drawing
 		if (hasSword) {
-			Shader.Image.reset().layer(G.LAYER_1).at(getX(), getY()).rotate(swordTargetDirection).scale(1.5).alpha(dashTimer*2).image(indicator).use();
+			Shader.Image.use().push().drawToWorld().setModel(new Matrix4f().identity())
+				.move(getX(), getY())
+				.rotate(swordTargetDirection)
+				.scale(1.5)
+				.layer(G.LAYER_1)
+				.alpha(dashTimer*2)
+				.image(indicator);	
 			G.drawSquare();
 
 			/* if (specialMove == Special.NONE) {
@@ -304,37 +314,46 @@ public class Player extends Entity {
 				g.strokeArc(-1.7, -1.7, 3.4, 3.4, 90, -360 * (5 - specialTimer) / 5, ArcType.OPEN);
 			} */
 
+			Shader.Image.use().pop();
+
 			// Draw fully opaque only when sword is swinging fast enough to do damage
+			Shader.Image.use().push().drawToWorld().setModel(new Matrix4f().identity())
+				.move(getX(), getY())
+				.rotate(swordDirection)
+				.move(1, 0)
+				.scale(1, 0.5)
+				.layer(G.LAYER_1)
+				.image(sword);
 			if (Math.abs(swordRotationalVelocity) > 2.0 || specialMove != Special.NONE)
-				Shader.Image.alpha(1.0);
+				Shader.Image.use().alpha(1.0);
 			else
-				Shader.Image.alpha(0.5);
-			Shader.Image.reset().at(getX(), getY()).rotate(swordDirection).at(1, 0).scale(1, 0.5).layer(G.LAYER_1).image(sword).use();
+				Shader.Image.use().alpha(0.5);
 			G.drawSquare();
 
 			// Draw special move related sprites, or fade outs
 			if (specialMove == Special.STAB) {
-				Shader.Image.at(0.25, 0).scale(1.125, 1).image(stab).use().reset();
+				Shader.Image.use().move(0.125, 0).scale(1.125, 1).image(stab);
 				G.drawSquare();
 			} else if (specialMove == Special.SLASH) {
 				if (Util.signedAngularDistance(swordDirection, swordTargetDirection) > 0)
-					Shader.Image.at(0, 1).scale(1, 2).image(slash).use().reset();
+					Shader.Image.use().move(0, 1).scale(1, 2).image(slash);
 				else
-					Shader.Image.at(0, -1).scale(1, -2).image(slash).use().reset();
+					Shader.Image.use().move(0, -1).scale(1, -2).image(slash);
 				G.drawSquare();
 			} else if (previousMove == Special.STAB) {
-				Shader.Image.at(0.25, 0).alpha(specialTimer - 4).scale(1.125, 1).image(stab).use().reset();
-				Shader.Image.setTexture(stab.getTexture());
+				Shader.Image.use().move(0.125, 0).alpha(specialTimer - 4).scale(1.125, 1).image(stab);
+				G.drawSquare();
 			} else if (previousMove == Special.SLASH) {
 				if (Util.signedAngularDistance(swordDirection, swordTargetDirection) > 0)
-					Shader.Image.at(0, 1).scale(1, 2).image(slash).alpha(specialTimer - 4).use().reset();
+					Shader.Image.use().move(0, 1).scale(1, 2).image(slash).alpha(specialTimer - 4);
 				else
-					Shader.Image.at(0, -1).scale(1, -2).image(slash).alpha(specialTimer-4).use().reset();
+					Shader.Image.use().move(0, -1).scale(1, -2).image(slash).alpha(specialTimer-4);
 				G.drawSquare();
 			} else if (Math.abs(swordRotationalVelocity) > 15.0 && specialTimer <= 0) {
-				Shader.Image.at(0.25, 0).scale(1.25, 1).image(charged).use().reset();
+				Shader.Image.use().move(0.25, 0).scale(1.25, 1).image(charged);
 				G.drawSquare();
 			}
+			Shader.Image.use().pop();
 		}
 	}
 
@@ -430,10 +449,12 @@ public class Player extends Entity {
 		}
 
 		public void render() {
+			Shader.Image.use().push();
 			if(timer < 0.5)
-				Shader.Image.alpha((float)timer * 2);
-			Shader.Image.reset().at(getX(), getY()).rotate(direction).scale(0.8125, 1.5).image(texture).layer(G.LAYER_1).use();
+				Shader.Image.use().alpha((float)timer * 2);
+			Shader.Image.use().move(getX(), getY()).rotate(direction).scale(0.8125, 1.5).image(texture).layer(G.LAYER_1);
 			G.drawSquare();
+			Shader.Image.use().pop();
 		}
 
 		public Hitbox getRenderBounds() {
@@ -483,8 +504,9 @@ public class Player extends Entity {
 		}
 
 		public void render() {
-			Shader.Image.reset().at(getX(), getY()).rotate(direction).scale(0.375, 0.75).image(texture).use();
+			Shader.Image.use().push().drawToWorld().move(getX(), getY()).rotate(direction).scale(0.375, 0.75).image(texture);
 			G.drawSquare();
+			Shader.Image.use().pop();
 		}
 
 		public Hitbox getRenderBounds() {

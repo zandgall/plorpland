@@ -48,7 +48,7 @@ public class ThrownSword extends Entity {
 	}
 
 	public void render() {
-		Shader.Image.reset().at(getX(), getY()).rotate(rotation).scale(1, 0.5).layer(G.LAYER_1).image(image).use();
+		Shader.Image.use().push().drawToWorld().move(getX(), getY()).rotate(rotation).scale(1, 0.5).layer(G.LAYER_1).image(image);
 		G.drawSquare();
 		plaque.draw(target.x-1, target.y-1.8, 2, 2, G.LAYER_1);
 	}

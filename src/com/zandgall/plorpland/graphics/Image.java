@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -65,9 +66,15 @@ public class Image {
 
 	public void draw(double cX, double cY, double cW, double cH, double x, double y, double w, double h, double depth) {
 		ping();
-		Shader.Image.reset().at(x+w*0.5, y+h*0.5).scale(w*0.5,h*0.5).texture(texture).layer(depth).use().crop(cX / width, cY / height, cW / width, cH / height);	
+		Shader.push();
+		Shader.Properties
+			.move(x+w*0.5, y+h*0.5)
+			.scale(w*0.5, h*0.5)
+			.texture(texture)
+			.layer(depth)
+			.crop(cX / width, cY / height, cW / width, cH / height);
 		G.drawSquare();
-		Shader.Image.crop(0, 0, 1, 1);
+		Shader.pop();
 	}
 
 	public void draw(double x, double y, double w, double h, double depth) {

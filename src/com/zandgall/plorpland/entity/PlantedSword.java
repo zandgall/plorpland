@@ -11,6 +11,7 @@ import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
 import com.zandgall.plorpland.util.Hitrect;
@@ -49,6 +50,7 @@ public class PlantedSword extends Entity {
 
 	@Override
 	public void render() {
+		Shader.Image.use();
 		texture.draw(position.x - 1, position.y - 1.8, 2, 2, G.LAYER_1);
 	}
 

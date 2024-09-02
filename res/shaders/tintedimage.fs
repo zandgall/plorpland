@@ -4,8 +4,8 @@ in vec2 uv;
 
 uniform sampler2D text;
 
-uniform vec4 crop;
-uniform vec3 tint;
+uniform vec4 crop = vec4(0, 0, 1, 1);
+uniform vec3 tint = vec3(1, 1, 1);
 uniform float alpha = 1;
 
 out vec4 out_color;

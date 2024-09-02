@@ -52,14 +52,16 @@ public class Tree extends Entity {
 		else
 			peekTransparency = peekTransparency * 0.95 + 1.0 * 0.05;
 
+		Shader.Image.use().push().drawToWorld();
+
 		// Tree texture is 3 x 4 tiles in dimensions. offset by -1.5, -3.5
 		trunk.draw(getX() - 1.5, getY() - 3.5, 3, 4, G.LAYER_1);
 		// Shadow is 1 tile lower
 		shadow.draw(getX() - 1.5, getY() - 2.5, 3, 4, G.LAYER_2_SHADOW);
 
-		Shader.Image.alpha(peekTransparency);
+		Shader.Image.use().alpha(peekTransparency);
 		leaves.draw(getX() - 1.5, getY() - 3.5, 3, 4, G.LAYER_2);
-		Shader.Image.alpha(1.0);
+		Shader.Image.use().pop();
 	}
 
 	public Hitbox getRenderBounds() {

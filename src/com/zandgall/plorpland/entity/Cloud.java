@@ -10,6 +10,7 @@ package com.zandgall.plorpland.entity;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitrect;
 
@@ -57,6 +58,7 @@ public class Cloud {
 	}
 
 	public void render() {
+		Shader.Image.use();
 		textures[type].draw(x, y, 16, 16, G.LAYER_2_SHADOW);
 	}
 

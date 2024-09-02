@@ -11,6 +11,7 @@ import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
 import com.zandgall.plorpland.util.Hitrect;
@@ -42,6 +43,7 @@ public class HealthFlower extends Entity {
 
 	public void render() {
 		int frame = (int) Math.max((timer * 8) % 8 - 4, 0);
+		Shader.Image.use();
 		texture.draw(0, frame * 16, 16, 16, position.x - 0.5, position.y - 0.5, 1, 1, G.LAYER_1);
 	}
 
