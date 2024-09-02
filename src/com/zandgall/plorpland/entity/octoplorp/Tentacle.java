@@ -52,7 +52,7 @@ public class Tentacle extends Entity {
 	};
 
 	// Double attributes - health, an internal timer, the speed of the tentacle, and how much damage it does to player
-	public double health = 100.0, timer = 0, speed = 1, damage = 5;
+	public double health = 10.0, timer = 0, speed = 1, damage = 2;
 
 	// Corpse Data
 	private double corpseRotation = 1.5 * Math.PI, corpseRotationVel = 1;
@@ -71,6 +71,8 @@ public class Tentacle extends Entity {
 	private Hitboxes hitbox = new Hitboxes();
 
 	public ThrownSword thrownSword = null;
+
+	private long lastHit = System.currentTimeMillis();
 
 	/* 0 = right, 1 = down, 2 = left, 3 = up */
 	private int orientation = 3;
@@ -101,7 +103,9 @@ public class Tentacle extends Entity {
 				return;
 			// When player is grabbed, deal damage
 			case GRABBED:
-				Main.getPlayer().dealEnemyDamage(damage);
+				timer += Main.TIMESTEP;
+				if(timer > 1.0)
+					Main.getPlayer().dealEnemyDamage(damage);
 			// If grabbed OR grabbing, tend towards 'home'
 			case GRABBING:
 				// Follow rest of path
@@ -132,6 +136,8 @@ public class Tentacle extends Entity {
 				} else {
 					if(home != null)
 						position.y = position.y * 0.99 + home.y * 0.01;
+					if(state != State.GRABBED)
+						timer = 0;
 					state = State.GRABBED;
 				}
 
@@ -472,14 +478,14 @@ public class Tentacle extends Entity {
 			sheet.draw(64, 32, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1, G.LAYER_1);
 		Shader.Image.use().pop();
 
-		if (health < 100 && (state == State.GRABBING || state == State.GRABBED)) {
+		if (health < 10 && (state == State.GRABBING || state == State.GRABBED)) {
 			// TODO: Tentacle health bar
 			double w = 71.0 / 16.0, h = 7.0 / 16.0, 
 				x = getX() - (orientation == 1 ? 1.5 : 0.5)*w,
 				y = getY() - (orientation == 3 ? 1.5 : 0.5)*w;
 			healthOutline.draw(x, y, w, h, G.LAYER_2);
 			healthRed.draw(x, y, w, h, G.LAYER_2);
-			healthGreen.draw(0, 0, 71 * health / 100.0, 7.0, x, y, w*health/100.0, h, G.LAYER_2);
+			healthGreen.draw(0, 0, 71 * health / 10.0, 7.0, x, y, w*health/10.0, h, G.LAYER_2);
 		}
 
 	}
@@ -509,6 +515,9 @@ public class Tentacle extends Entity {
 	}
 
 	public void dealPlayerDamage(double damage) {
+		if(System.currentTimeMillis() - lastHit < 250)
+			return;
+		lastHit = System.currentTimeMillis();
 		health -= damage;
 		if (health <= 0 && (state == State.GRABBING || state == State.GRABBED || state == State.CHASING)) {
 			timer = 0;
