@@ -19,7 +19,6 @@ import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL30.*;
 
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -182,7 +181,7 @@ public class Main {
 		
 		// Draw!
 		level.render();
-		// hud.render();
+		hud.render();
 
 		// Swap buffers
 		glfwSwapBuffers(window);

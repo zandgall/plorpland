@@ -21,6 +21,7 @@ public class Hud {
 	private static final Image healthRed = new Image("/health_red.png"), healthGreen = new Image("/health_green.png"), healthShadow = new Image("/health_shadow.png");
 
 	private double healthOpacity = 0, deathOpacity = 0, respawnOpacity = 0, closeOpacity = 0;
+	private double pPlayerHealth = 20;
 	private boolean respawning = false, closing = false;
 
 	// Collectable flags
@@ -33,8 +34,12 @@ public class Hud {
 	public void tick() {
 		if (Main.getPlayer().getHealth() == 20)
 			healthOpacity = healthOpacity * 0.99;
-		else
-			healthOpacity = healthOpacity * 0.9 + 0.1;
+		else if(Main.getPlayer().getHealth() != pPlayerHealth) {
+			pPlayerHealth = Main.getPlayer().getHealth();
+			healthOpacity = 1;
+		} else {
+			healthOpacity = healthOpacity * 0.99 + 0.005;
+		}
 
 		// Player is dead
 		if(!Main.getLevel().getEntities().contains(Main.getPlayer())) {
@@ -78,13 +83,27 @@ public class Hud {
 	}
 
 	public void render() {
-		/*Shader.TintedImage.alpha(healthOpacity);
-		Shader.TintedImage.reset().crop(0, 0, 1, 1).image(healthShadow).at(4, 4).scale(healthShadow.getWidth()*4, healthShadow.getHeight()*4).tint(1, 1, 1).use();
+		Shader.TintedImage.use().push().drawToScreen()
+			.alpha(healthOpacity)
+			.crop(0, 0, 1, 1)
+			.image(healthShadow)
+			.move(4, 4)
+			.scale(healthShadow.getWidth()*4, healthShadow.getHeight()*4)
+			.tint(1, 1, 1);
 		G.draw01Square();
-		Shader.TintedImage.image(healthRed).reset().at(4, 4).scale(healthRed.getWidth()*4, healthRed.getHeight()*4).use();
+		Shader.TintedImage.use().pop().push().drawToScreen()
+			.alpha(healthOpacity)
+			.image(healthRed)
+			.move(4, 4)
+			.scale(healthRed.getWidth()*4, healthRed.getHeight()*4);
 		G.draw01Square();
-		Shader.TintedImage.crop(0, 0, Main.getPlayer().getHealth() / 20.0, 1).scale(Main.getPlayer().getHealth()/20.0, 1).image(healthGreen).use();
-		G.draw01Square();*/
+		Shader.TintedImage.use()
+			.alpha(healthOpacity)
+			.crop(0, 0, Main.getPlayer().getHealth() / 20.0, 1)
+			.scale(Main.getPlayer().getHealth()/20.0, 1)
+			.image(healthGreen);
+		G.draw01Square();
+		Shader.TintedImage.use().pop();
 
 		// Shader.Image.reset().image(healthBar).at(0, 0).layer(G.LAYER_2).scale(4, 1).use();
 		// G.drawSquare();
