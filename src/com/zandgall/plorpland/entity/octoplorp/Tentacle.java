@@ -33,7 +33,10 @@ import com.zandgall.plorpland.util.Util;
 import com.zandgall.plorpland.util.Vector;
 
 public class Tentacle extends Entity {
-	protected static final Image sheet = new Image("/entity/octoplorp/tentacles.png");
+	protected static final Image sheet = new Image("/entity/octoplorp/tentacles.png"),
+		healthOutline = new Image("/entity/health/outline10.png"),
+		healthRed = new Image("/entity/health/red10.png"),
+		healthGreen = new Image("/entity/health/green10.png");
 
 	public static final boolean TENTACLE_DEBUG = false;
 
@@ -427,20 +430,6 @@ public class Tentacle extends Entity {
 						segtypes.get(p) == SegType.STRAIGHT ? 0 : segtypes.get(p) == SegType.TURN_LEFT ? 16 : 32,
 						16, 16, p.x, p.y, 1, 1, G.LAYER_1);
 		}
-	
-		if (health < 100 && (state == State.GRABBING || state == State.GRABBED)) {
-			// TODO: Tentacle health bar
-			/*
-			g.setLineWidth(0.05);
-			g.setStroke(Color.BLACK);
-			g.setFill(Color.RED);
-			g.strokeRect(getX() - (orientation == 1 ? 1.75 : 0.75), getY() - (orientation == 3 ? 1.75 : 0.75), 1.5, 0.2);
-			g.fillRect(getX() - (orientation == 1 ? 1.75 : 0.75), getY() - (orientation == 3 ? 1.75 : 0.75), 1.5, 0.2);
-			g.setFill(Color.GREEN);
-			g.fillRect(getX() - (orientation == 1 ? 1.75 : 0.75), getY() - (orientation == 3 ? 1.75 : 0.75),
-					health * 0.015, 0.2);
-			*/
-		}
 
 		Shader.Image.use().move(getX(), getY()).rotate(Math.PI * 0.5 * orientation);
 
@@ -482,6 +471,17 @@ public class Tentacle extends Entity {
 		else
 			sheet.draw(64, 32, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1, G.LAYER_1);
 		Shader.Image.use().pop();
+
+		if (health < 100 && (state == State.GRABBING || state == State.GRABBED)) {
+			// TODO: Tentacle health bar
+			double w = 71.0 / 16.0, h = 7.0 / 16.0, 
+				x = getX() - (orientation == 1 ? 1.5 : 0.5)*w,
+				y = getY() - (orientation == 3 ? 1.5 : 0.5)*w;
+			healthOutline.draw(x, y, w, h, G.LAYER_2);
+			healthRed.draw(x, y, w, h, G.LAYER_2);
+			healthGreen.draw(0, 0, 71 * health / 100.0, 7.0, x, y, w*health/100.0, h, G.LAYER_2);
+		}
+
 	}
 
 	public Hitbox getRenderBounds() {
