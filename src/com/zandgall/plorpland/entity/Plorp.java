@@ -21,7 +21,10 @@ import com.zandgall.plorpland.util.Path;
 import com.zandgall.plorpland.util.Vector;
 
 public class Plorp extends Entity {
-	private static Image sheet = new Image("/entity/little_guy.png");
+	private static Image sheet = new Image("/entity/little_guy.png"),
+		healthOutline = new Image("/entity/health/outline.png"),
+		healthGreen = new Image("/entity/health/green.png"),
+		healthRed = new Image("/entity/health/red.png");
 
 	// State handling
 	static enum State {
@@ -360,14 +363,12 @@ public class Plorp extends Entity {
 		}
 
 		// Draw a health bar if applicable
-		// TODO: Do health bar
-		/* if (state != State.DEAD && health < 5) {
-			g2.setFill(Color.RED);
-			g2.fillRect(getX() - 0.5, getY() - 1.0, 1.0, 0.25);
-			g2.setFill(Color.GREEN);
-			g2.fillRect(getX() - 0.5, getY() - 1.0, health / 5.0, 0.25);
-		} */
-
+		if(state != State.DEAD && health < 5) {
+			double w = 36.0 / 16.0, h = 7.0 / 16.0;
+			healthOutline.draw(getX()-0.5*w, getY() - 1.0, w, h, G.LAYER_2);
+			healthRed.draw(getX() - 0.5*w, getY() - 1.0, w, h, G.LAYER_2);
+			healthGreen.draw(0, 0, 36*health/5.0, 7.0, getX() - 0.5*w, getY() - 1.0, w*health/5.0, h, G.LAYER_2);
+		}
 		Shader.Image.use().pop();
 	}
 
