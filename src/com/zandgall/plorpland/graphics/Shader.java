@@ -336,8 +336,8 @@ public class Shader {
 			return new Matrix4d(CurrentStates.get(ActiveProgram).matrix4s.get("model"));
 		}
 
-		public ShaderProperties setModel(double x, double y, double w, double h, double layer) {
-			return setModel(getModeld().translate((float)(x + w * 0.5f), (float)(y + h * 0.5f), (float)layer).scale((float)w*0.5f, (float)h*0.5f, 1));
+		public ShaderProperties setModel(double x, double y, double w, double h) {
+			return setModel(getModeld().translate((float)(x + w * 0.5f), (float)(y + h * 0.5f), 0).scale((float)w*0.5f, (float)h*0.5f, 1));
 		}
 
 		/**
@@ -366,11 +366,6 @@ public class Shader {
 
 		public ShaderProperties move(double x, double y) {
 			setModel(getModeld().translate(x, y, 0));
-			return this;
-		}
-
-		public ShaderProperties layer(double l) {
-			setModel(getModeld().translate(0, 0, l));
 			return this;
 		}
 

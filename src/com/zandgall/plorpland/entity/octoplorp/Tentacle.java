@@ -21,6 +21,7 @@ import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.staging.Cutscene;
 import com.zandgall.plorpland.util.Hitbox;
@@ -427,14 +428,15 @@ public class Tentacle extends Entity {
 	}
 
 	public void render() {
+		Layer.ENTITY_BASE.use();
 		Shader.Image.use().push().drawToWorld().setModel(new Matrix4f().identity());
 		// Draw dirt mound
-		sheet.draw(48, 32, 48, 16, start.x - 1.5, start.y - 0.5, 3, 1, G.LAYER_1);
+		sheet.draw(48, 32, 48, 16, start.x - 1.5, start.y - 0.5, 3, 1);
 
 		for (Point p : traveled) {
 			sheet.draw(96 + segments.get(p)*16, 
 						segtypes.get(p) == SegType.STRAIGHT ? 0 : segtypes.get(p) == SegType.TURN_LEFT ? 16 : 32,
-						16, 16, p.x, p.y, 1, 1, G.LAYER_1);
+						16, 16, p.x, p.y, 1, 1);
 		}
 
 		Shader.Image.use().move(getX(), getY()).rotate(Math.PI * 0.5 * orientation);
@@ -466,16 +468,16 @@ public class Tentacle extends Entity {
 
 		if(state == State.DEAD || state == State.DYING || state == State.RETRACTING || state == State.SWINGING) {
 			Shader.Image.use().push();
-			Shader.Image.use().setModel(new Matrix4f().identity()).move(corpse.x, corpse.y).rotate(corpseRotation).move(0.9 + (state == State.SWINGING ? 0 : -0.9), 0).layer(G.LAYER_1).scale(1, 0.5).crop(64.f / sheet.getWidth(), 16.f / sheet.getHeight(), 32.f / sheet.getWidth(), 16.f / sheet.getHeight());
+			Shader.Image.use().setModel(new Matrix4f().identity()).move(corpse.x, corpse.y).rotate(corpseRotation).move(0.9 + (state == State.SWINGING ? 0 : -0.9), 0).scale(1, 0.5).crop(64.f / sheet.getWidth(), 16.f / sheet.getHeight(), 32.f / sheet.getWidth(), 16.f / sheet.getHeight());
 			G.drawSquare();
 			Shader.Image.use().pop();
 		}
 
 		// Draw dirt mound cover
 		if(state == State.DEAD || state == State.DYING)
-			sheet.draw(48, 16, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1, G.LAYER_1);
+			sheet.draw(48, 16, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1);
 		else
-			sheet.draw(64, 32, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1, G.LAYER_1);
+			sheet.draw(64, 32, 16, 16, start.x - 0.5, start.y - 0.5, 1, 1);
 		Shader.Image.use().pop();
 
 		if (health < 10 && (state == State.GRABBING || state == State.GRABBED)) {
@@ -483,9 +485,10 @@ public class Tentacle extends Entity {
 			double w = 71.0 / 16.0, h = 7.0 / 16.0, 
 				x = getX() - (orientation == 1 ? 1.5 : 0.5)*w,
 				y = getY() - (orientation == 3 ? 1.5 : 0.5)*w;
-			healthOutline.draw(x, y, w, h, G.LAYER_2);
-			healthRed.draw(x, y, w, h, G.LAYER_2);
-			healthGreen.draw(0, 0, 71 * health / 10.0, 7.0, x, y, w*health/10.0, h, G.LAYER_2);
+			Layer.WORLD_INDICATORS.use();
+			healthOutline.draw(x, y, w, h);
+			healthRed.draw(x, y, w, h);
+			healthGreen.draw(0, 0, 71 * health / 10.0, 7.0, x, y, w*health/10.0, h);
 		}
 
 	}

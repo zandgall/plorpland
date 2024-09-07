@@ -11,6 +11,7 @@ import com.zandgall.plorpland.entity.EntityRegistry;
 import com.zandgall.plorpland.graphics.FbSingle;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.Cloud;
@@ -151,7 +152,7 @@ public class Level {
 
 		// Cropping and shader info
 		FbSingle f = new FbSingle();
-		Shader.Image.use().push().setModel(0, 0, 1, 1, 0);
+		Shader.Image.use().push().setModel(0, 0, 1, 1);
 		Shader.Image.use().setView(new Matrix4f()).setProjection(new Matrix4f().ortho(0, 1, 0, 1, -1, 1));
 		glViewport(0, 0, CHUNK_SIZE, CHUNK_SIZE);
 
@@ -256,10 +257,12 @@ public class Level {
 		for (int x = xMin; x <= xMax && x < images_0.length; x++) {
 			for (int y = yMin; y <= yMax && y < images_0[x].length; y++) {
 				// System.out.printf("Drawing %d %d%n", x, y);
-				images_0[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0, G.LAYER_0);
-				images_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0, G.LAYER_1);
-				shadow_0[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0, G.LAYER_1_SHADOW);
-				shadow_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0, G.LAYER_2_SHADOW);
+				Layer.LEVEL_BASE.use();
+				images_0[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
+				shadow_0[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
+				Layer.LEVEL_FOREGROUND.use();
+				images_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
+				shadow_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
 			}
 		}
 		// }

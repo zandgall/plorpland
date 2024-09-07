@@ -13,6 +13,7 @@ import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitnull;
@@ -316,6 +317,7 @@ public class Plorp extends Entity {
 
 	@Override
 	public void render() {
+		Layer.ENTITY_BASE.use();
 		Shader.Image.use().push();
 		// Half transparent if hit recently
 		if (state != State.DEAD && System.currentTimeMillis() - lastHit < 100
@@ -326,37 +328,37 @@ public class Plorp extends Entity {
 		float fW = 16 * horizontalFlip;
 		switch (state) {
 			case SLEEPING:
-				sheet.draw(fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
+				sheet.draw(fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1);
 				// TODO: "zzz" particles
 				break;
 			case FALLING_ASLEEP:
-				sheet.draw(frame * 16 + fX, 32, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
+				sheet.draw(frame * 16 + fX, 32, fW, 16, getX()-0.5, getY()-0.5, 1, 1);
 				break;
 			case RESTING:
 				if ((int) (timer * 10) % 20 == 0) { // 1 out of 20 frames are a blink
 					if (frame >= 2) // Looking back
-						sheet.draw(16+fX, 48, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
+						sheet.draw(16+fX, 48, fW, 16, getX()-0.5, getY()-0.5, 1, 1);
 					else
-						sheet.draw(fX, 48, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
+						sheet.draw(fX, 48, fW, 16, getX()-0.5, getY()-0.5, 1, 1);
 				} else {
 					int xoff[] = { 0, 16, 0, 16 }, yoff[] = { 0, 0, 16, 16 };
-					sheet.draw(xoff[frame]+fX, yoff[frame], fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
+					sheet.draw(xoff[frame]+fX, yoff[frame], fW, 16, getX()-0.5, getY()-0.5, 1, 1);
 				}
 				break;
 			case STANDING:
-				sheet.draw(32 + 16 * frame+fX, 0, 16, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
+				sheet.draw(32 + 16 * frame+fX, 0, 16, 16, getX()-0.5, getY()-0.5, 1, 1);
 				break;
 			case WALKING:
 			case WALKING_HOME:
 			case CHASING:
 				int up = (target.y < getY()) ? 16 : 0;
-				sheet.draw(32 + up + fX, frame * 16, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
+				sheet.draw(32 + up + fX, frame * 16, fW, 16, getX()-0.5, getY()-0.5, 1, 1);
 				break;
 			case SURPRISED:
-				sheet.draw(16 + fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
+				sheet.draw(16 + fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1);
 				break;
 			case DEAD:
-				sheet.draw(32 + frame * 16 + fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1, G.LAYER_1);
+				sheet.draw(32 + frame * 16 + fX, 64, fW, 16, getX()-0.5, getY()-0.5, 1, 1);
 				break;
 			default:
 				break;
@@ -364,10 +366,11 @@ public class Plorp extends Entity {
 
 		// Draw a health bar if applicable
 		if(state != State.DEAD && health < 5) {
+			Layer.WORLD_INDICATORS.use();
 			double w = 36.0 / 16.0, h = 7.0 / 16.0;
-			healthOutline.draw(getX()-0.5*w, getY() - 1.0, w, h, G.LAYER_2);
-			healthRed.draw(getX() - 0.5*w, getY() - 1.0, w, h, G.LAYER_2);
-			healthGreen.draw(0, 0, 36*health/5.0, 7.0, getX() - 0.5*w, getY() - 1.0, w*health/5.0, h, G.LAYER_2);
+			healthOutline.draw(getX()-0.5*w, getY() - 1.0, w, h);
+			healthRed.draw(getX() - 0.5*w, getY() - 1.0, w, h);
+			healthGreen.draw(0, 0, 36*health/5.0, 7.0, getX() - 0.5*w, getY() - 1.0, w*health/5.0, h);
 		}
 		Shader.Image.use().pop();
 	}

@@ -27,6 +27,7 @@ import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.EntityRegistry;
 import com.zandgall.plorpland.entity.Player;
 import com.zandgall.plorpland.graphics.G;
+import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.staging.Cutscene;
 import com.zandgall.plorpland.level.Level;
@@ -167,6 +168,8 @@ public class Main {
 		// glClearColor(0.55f, 0.8f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		Layer.prepareFrame();
+
 		// Save all context states
 		// Transform all (except hud) with camera
 		/* Matrix4f proj = new Matrix4f().ortho(-WIDTH * 0.5f, WIDTH * 0.5f, HEIGHT * 0.5f, -HEIGHT * 0.5f, -1.f, 1.f);
@@ -182,6 +185,9 @@ public class Main {
 		// Draw!
 		level.render();
 		hud.render();
+
+		// Flush layer content to screen
+		Layer.flushToScreen();
 
 		// Swap buffers
 		glfwSwapBuffers(window);

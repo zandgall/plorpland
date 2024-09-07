@@ -21,6 +21,7 @@ import com.zandgall.plorpland.entity.Entity;
 import com.zandgall.plorpland.entity.Player;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.staging.Cutscene;
 import com.zandgall.plorpland.util.*;
@@ -258,11 +259,12 @@ public class Octoplorp extends Entity{
 	// Draw the body and eye with given frame and position
 	public void render() {
 		Shader.Image.use();
-		body.draw(getX() - 3, getY() - 3, 6, 6, G.LAYER_1);
+		Layer.ENTITY_BASE.use();
+		body.draw(getX() - 3, getY() - 3, 6, 6);
 		if(eyeFrame.x == -1)
-			eye.draw(256, 32, 64, 64, getX() - 2 + eyePos.x, getY() - 4 + eyePos.y, 4, 4, G.LAYER_1);
+			eye.draw(256, 32, 64, 64, getX() - 2 + eyePos.x, getY() - 4 + eyePos.y, 4, 4);
 		else
-			eye.draw(eyeFrame.x * 64, eyeFrame.y * 32, 64, 32, getX() - 2 + eyePos.x, getY() - 2 + eyePos.y, 4, 2, G.LAYER_1);
+			eye.draw(eyeFrame.x * 64, eyeFrame.y * 32, 64, 32, getX() - 2 + eyePos.x, getY() - 2 + eyePos.y, 4, 2);
 	}
 
 	public Hitbox getRenderBounds() {	

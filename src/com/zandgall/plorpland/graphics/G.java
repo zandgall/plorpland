@@ -3,9 +3,6 @@ package com.zandgall.plorpland.graphics;
 import static org.lwjgl.opengl.GL30.*;
 
 public class G {
-
-	public static final double LAYER_0 = 0.8, LAYER_1_SHADOW = 0.6, LAYER_1 = 0.4, LAYER_2_SHADOW = 0.2, LAYER_2 = 0.0, LAYER_3_SHADOW = -0.2, LAYER_3 = -0.4;
-
 	// Square VAO, VBO, EBO
 	private static int sqVAO, sq01VAO;
 

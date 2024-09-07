@@ -64,21 +64,20 @@ public class Image {
 		pong = true;
 	}
 
-	public void draw(double cX, double cY, double cW, double cH, double x, double y, double w, double h, double depth) {
+	public void draw(double cX, double cY, double cW, double cH, double x, double y, double w, double h) {
 		ping();
 		Shader.push();
 		Shader.Properties
 			.move(x+w*0.5, y+h*0.5)
 			.scale(w*0.5, h*0.5)
-			.texture(texture)
-			.layer(depth)
+			.texture(texture)	
 			.crop(cX / width, cY / height, cW / width, cH / height);
 		G.drawSquare();
 		Shader.pop();
 	}
 
-	public void draw(double x, double y, double w, double h, double depth) {
-		draw(0, 0, width, height, x, y, w, h, depth);
+	public void draw(double x, double y, double w, double h) {
+		draw(0, 0, width, height, x, y, w, h);
 	}
 
 	public int getWidth() {

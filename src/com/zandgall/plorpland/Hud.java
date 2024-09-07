@@ -12,6 +12,7 @@ import java.io.IOException;
 import com.zandgall.plorpland.entity.collectables.Collectable;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
 
 public class Hud {
@@ -83,8 +84,10 @@ public class Hud {
 	}
 
 	public void render() {
+		Layer.HUD.use();
 		Shader.TintedImage.use().push().drawToScreen()
-			.alpha(healthOpacity)
+			// .alpha(healthOpacity)
+			.alpha(1.0)
 			.crop(0, 0, 1, 1)
 			.image(healthShadow)
 			.move(4, 4)
@@ -92,13 +95,15 @@ public class Hud {
 			.tint(1, 1, 1);
 		G.draw01Square();
 		Shader.TintedImage.use().pop().push().drawToScreen()
-			.alpha(healthOpacity)
+			// .alpha(healthOpacity)
+			.alpha(1.0)
 			.image(healthRed)
 			.move(4, 4)
 			.scale(healthRed.getWidth()*4, healthRed.getHeight()*4);
 		G.draw01Square();
 		Shader.TintedImage.use()
-			.alpha(healthOpacity)
+			// .alpha(healthOpacity)
+			.alpha(1.0)
 			.crop(0, 0, Main.getPlayer().getHealth() / 20.0, 1)
 			.scale(Main.getPlayer().getHealth()/20.0, 1)
 			.image(healthGreen);

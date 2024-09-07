@@ -3,8 +3,6 @@ package com.zandgall.plorpland.graphics;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.nio.ByteBuffer;
-
 public class FbSingle {
 	public int framebuffer = 0, texture = 0, renderbuffer = 0;
 

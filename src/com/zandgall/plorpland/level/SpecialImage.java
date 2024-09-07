@@ -10,6 +10,7 @@ package com.zandgall.plorpland.level;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.util.Rect;
 
 public class SpecialImage {
@@ -32,7 +33,9 @@ public class SpecialImage {
 
 		// Reminder that each unit is a 16x16 tile
 		// So scale image down by 1/16 to match
-		image.draw(x, y, w, h, G.LAYER_1);
+		// TODO: Might want customization on this
+		Layer.LEVEL_BACKGROUND.use();
+		image.draw(x, y, w, h);
 	}
 
 	public Rect getRenderBox() {

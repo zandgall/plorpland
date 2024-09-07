@@ -23,6 +23,7 @@ import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
+import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitboxes;
@@ -286,7 +287,8 @@ public class Player extends Entity {
 	public void render() {
 		// If player was hit recently, or a special move was used recently, draw
 		// transparent
-		Shader.Color.use().push().drawToWorld().move(getX(), getY()).scale(0.5).color(1, 0, 0).layer(G.LAYER_1);
+		Layer.ENTITY_BASE.use();
+		Shader.Color.use().push().drawToWorld().move(getX(), getY()).scale(0.5).color(1, 0, 0);
 		if (System.currentTimeMillis() - lastHit < 1000)
 			if ((System.currentTimeMillis() / 100) % 2 == 0) // Every other frame on damage
 				Shader.Color.use().alpha(0.5);
@@ -298,20 +300,20 @@ public class Player extends Entity {
 
 		// Sword drawing
 		if (hasSword) {
+			Layer.WORLD_INDICATORS.use();
 			Shader.Image.use().push().drawToWorld().setModel(new Matrix4f().identity())
 				.move(getX(), getY())
 				.rotate(swordTargetDirection)
 				.scale(1.5)
-				.layer(G.LAYER_1)
 				.alpha(dashTimer*2)
-				.image(indicator);	
+				.image(indicator);
 			G.drawSquare();
+			Layer.ENTITY_BASE.use();
 
 			if (specialMove == Special.NONE) {
 				Shader.Circle.use().push().drawToWorld().setModel(new Matrix4f().identity())
 					.move(getX(), getY())
 					.scale(1.7, 1.7)
-					.layer(G.LAYER_1)
 					.alpha(1.0)
 					.radius(1.0)
 					.innerRadius(0.9)
@@ -331,7 +333,6 @@ public class Player extends Entity {
 				.rotate(swordDirection)
 				.move(1, 0)
 				.scale(1, 0.5)
-				.layer(G.LAYER_1)
 				.image(sword);
 			if (Math.abs(swordRotationalVelocity) > 2.0 || specialMove != Special.NONE)
 				Shader.Image.use().alpha(1.0);
@@ -458,10 +459,11 @@ public class Player extends Entity {
 		}
 
 		public void render() {
+			Layer.ENTITY_BASE.use();
 			Shader.Image.use().push();
 			if(timer < 0.5)
 				Shader.Image.use().alpha((float)timer * 2);
-			Shader.Image.use().move(getX(), getY()).rotate(direction).scale(0.8125, 1.5).image(texture).layer(G.LAYER_1);
+			Shader.Image.use().move(getX(), getY()).rotate(direction).scale(0.8125, 1.5).image(texture);
 			G.drawSquare();
 			Shader.Image.use().pop();
 		}
@@ -513,6 +515,7 @@ public class Player extends Entity {
 		}
 
 		public void render() {
+			Layer.ENTITY_BASE.use();
 			Shader.Image.use().push().drawToWorld().move(getX(), getY()).rotate(direction).scale(0.375, 0.75).image(texture);
 			G.drawSquare();
 			Shader.Image.use().pop();
