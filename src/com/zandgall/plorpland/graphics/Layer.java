@@ -21,7 +21,9 @@ public class Layer {
 
 	public static final Layer
 		LEVEL_BASE = new Layer(0.0),
+		SHADOW_BASE = new Layer(0.1),
 		LEVEL_FOREGROUND = new Layer(3.0),
+		SHADOW_FOREGROUND = new Layer(3.1),
 		LEVEL_BACKGROUND = new Layer(-3.0),
 		TREE_LEAVES = new Layer(2.0),
 		TREE_SHADOW = new Layer(1.5),
@@ -60,6 +62,7 @@ public class Layer {
 	public static void flushToScreen() {
 		FbSingle.drawToScreen();
 		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
 		glViewport(0, 0, Main.WIDTH, Main.HEIGHT);
 		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -70,5 +73,6 @@ public class Layer {
 			G.drawSquare();
 		}
 		Shader.Post.use().pop();
+		glDisable(GL_BLEND);
 	}
 }

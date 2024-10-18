@@ -14,4 +14,6 @@ void main() {
 	out_color = texture(text, uv * crop.zw + crop.xy);
 	out_color.xyz *= tint;
 	out_color.w *= alpha;
+	if(out_color.w == 0)
+		discard;
 }

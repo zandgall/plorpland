@@ -155,9 +155,9 @@ public class Level {
 		Shader.Image.use().push().setModel(0, 0, 1, 1);
 		Shader.Image.use().setView(new Matrix4f()).setProjection(new Matrix4f().ortho(0, 1, 0, 1, -1, 1));
 		glViewport(0, 0, CHUNK_SIZE, CHUNK_SIZE);
-
 		// Get crop value
 		float w = (float)CHUNK_SIZE / l0.getWidth(), h = (float)CHUNK_SIZE / l0.getHeight();
+		glDisable(GL_BLEND);
 		for(int i = 0; i < l0.getWidth() / CHUNK_SIZE; i++) {
 			for(int j = 0; j < l0.getHeight() / CHUNK_SIZE; j++) {
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
@@ -189,6 +189,7 @@ public class Level {
 				shadow_1[i][j] = new Image(f.getTexture());
 			}
 		}
+
 		Shader.Image.use().pop();
 		FbSingle.drawToScreen();
 
@@ -259,9 +260,11 @@ public class Level {
 				// System.out.printf("Drawing %d %d%n", x, y);
 				Layer.LEVEL_BASE.use();
 				images_0[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
+				Layer.SHADOW_BASE.use();
 				shadow_0[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
 				Layer.LEVEL_FOREGROUND.use();
 				images_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
+				Layer.SHADOW_FOREGROUND.use();
 				shadow_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
 			}
 		}
