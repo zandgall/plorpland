@@ -23,10 +23,10 @@ public class Layer {
 		LEVEL_BASE = new Layer(0.0),
 		LEVEL_FOREGROUND = new Layer(3.0),
 		LEVEL_BACKGROUND = new Layer(-3.0),
-		ENTITY_BASE = new Layer(1.0),
-		ENTITY_SHADOW = new Layer(0.5),
 		TREE_LEAVES = new Layer(2.0),
 		TREE_SHADOW = new Layer(1.5),
+		ENTITY_BASE = new Layer(1.0),
+		ENTITY_SHADOW = new Layer(0.5),
 		CLOUD_SHADOW = new Layer(3.5),
 		WORLD_INDICATORS = new Layer(4.5),
 		HUD = new Layer(5.0);
@@ -51,12 +51,18 @@ public class Layer {
 		for(Layer l : LAYER_BY_DEPTH) {
 			l.content.deleteTexture();
 			l.content.newTexture(Main.WIDTH, Main.HEIGHT);
+			l.use();
+			glClearColor(0, 0, 0, 0);
+			glClear(GL_COLOR_BUFFER_BIT);
 		}
 	}
 
 	public static void flushToScreen() {
 		FbSingle.drawToScreen();
 		glDisable(GL_DEPTH_TEST);
+		glViewport(0, 0, Main.WIDTH, Main.HEIGHT);
+		glClearColor(0, 0, 0, 0);
+		glClear(GL_COLOR_BUFFER_BIT);
 		// Remember that framebuffers vertically flip everything!
 		Shader.Image.use().push().drawToScreen().setModel(0, Main.HEIGHT, Main.WIDTH, -Main.HEIGHT);
 		for(Layer l : LAYER_BY_DEPTH) {
