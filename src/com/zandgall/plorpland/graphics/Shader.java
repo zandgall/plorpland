@@ -30,7 +30,7 @@ public class Shader {
 	private static HashMap<Integer, ArrayList<ShaderState>> States = new HashMap<>();
 	private static HashMap<Integer, ShaderState> CurrentStates = new HashMap<>();
 
-	public static Shader Image, Color, TintedImage, Circle;
+	public static Shader Image, Color, TintedImage, Circle, Post;
 	
 	public static ShaderProperties Properties = new ShaderProperties();
 
@@ -166,43 +166,36 @@ public class Shader {
 		InitialStates.put(program, new ShaderState(CurrentStates.get(program)));
 	}
 
+	private static Shader setupShader(String vs, String fs, String name) {
+		try {
+			Shader shader = new Shader(vs, fs);
+			ProgramNames.put(shader.program, name);
+			return shader;
+		} catch (IOException e) {
+			System.err.printf("Could not initialize \"%s\" (\"%s\" - \"%s\") shader", name, vs, fs);
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public static void init() {
-		try {
-			Image = new Shader("/shaders/mvp.vs", "/shaders/image.fs");
-			ProgramNames.put(Image.program, "Image");
-			Image.use().drawToWorld().setModel(new Matrix4f().identity());
-			Image.setAsInitialState();
-		} catch (IOException e) {
-			System.err.println("Could not initialize image shader");
-			e.printStackTrace();
-		}
-		try {
-			Color = new Shader("/shaders/mvp.vs", "/shaders/color.fs");
-			ProgramNames.put(Color.program, "Color");
-			Color.use().drawToWorld().setModel(new Matrix4f().identity());
-			Color.setAsInitialState();
-		} catch (IOException e) {
-			System.err.println("Could not initialize color shader");
-			e.printStackTrace();
-		}
-		try {
-			TintedImage = new Shader("/shaders/mvp.vs", "/shaders/tintedimage.fs");
-			ProgramNames.put(TintedImage.program, "TintedImage");
-			TintedImage.use().drawToWorld().setModel(new Matrix4f().identity());
-			TintedImage.setAsInitialState();
-		} catch (IOException e) {
-			System.err.println("Could not initialize tinted image shader");
-			e.printStackTrace();
-		}
-		try {
-			Circle = new Shader("/shaders/mvp.vs", "/shaders/circle.fs");
-			ProgramNames.put(Circle.program, "Circle");
-			Circle.use().drawToWorld().setModel(new Matrix4f().identity());
-			Circle.setAsInitialState();
-		} catch (IOException e) {
-			System.err.println("Could not initialize circle shader");
-			e.printStackTrace();
-		}
+		Image = setupShader("/shaders/mvp.vs", "/shaders/image.fs", "Image");
+		Image.use().drawToWorld().setModel(new Matrix4f().identity());
+		Image.setAsInitialState();
+
+		Color = setupShader("/shaders/mvp.vs", "/shaders/color.fs", "Color");
+		Color.use().drawToWorld().setModel(new Matrix4f().identity());
+		Color.setAsInitialState();
+
+		TintedImage = setupShader("/shaders/mvp.vs", "/shaders/tintedimage.fs", "TintedImage");
+		TintedImage.use().drawToWorld().setModel(new Matrix4f().identity());
+		TintedImage.setAsInitialState();
+
+		Circle = setupShader("/shaders/mvp.vs", "/shaders/circle.fs", "Circle");
+		Circle.use().drawToWorld().setModel(new Matrix4f().identity());
+		Circle.setAsInitialState();
+
+		Post = setupShader("/shaders/passthrough.vs", "/shaders/post.fs", "Post");
 	}
 
 	public static class ShaderState {

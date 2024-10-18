@@ -64,11 +64,11 @@ public class Layer {
 		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 		// Remember that framebuffers vertically flip everything!
-		Shader.Image.use().push().drawToScreen().setModel(0, Main.HEIGHT, Main.WIDTH, -Main.HEIGHT);
+		Shader.Post.use().push();//.drawToScreen().setModel(0, Main.HEIGHT, Main.WIDTH, -Main.HEIGHT);
 		for(Layer l : LAYER_BY_DEPTH) {
-			Shader.Image.use().texture(l.content.getTexture());
+			Shader.Post.use().texture(l.content.getTexture());
 			G.drawSquare();
 		}
-		Shader.Image.use().pop();
+		Shader.Post.use().pop();
 	}
 }
