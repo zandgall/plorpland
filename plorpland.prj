@@ -1,0 +1,30 @@
+@Priority(none, low, medium, high, critical) {#ffffff, #cccc66, #ddaa55, ub#ee8844, b#ff5500}
+@Progress(none, wip, postponed, done, alt) {#ffffff, if#ffee44, u#ddcc88, bu#00ff00, uf#dd44dd}
+@Size(structural, major, minor, patch) {ub#ee77dd, b#cc66ee, f#7755bb, f#bdb3ce}
+$Version(0.1.1) {#99aaff}
+$Target(meta, core, graphics, content) {#ffcc99, #ffff99, #ccff99, #99ccff}
+$Type(bug, new, change) {#ff0000, #0000ff, #00ff00}
+
+LWJGL Implementation #high #wip #structural #0.1.1 #core #new
+Tree Shadows #medium #none #patch #0.1.1 #graphics #bug
+Bring back UI #medium #none #patch #0.1.1 #graphics #bug
+Cloud Shadows #medium #none #patch #0.1.1 #graphics #bug
+Default LastKey to GLFW_LAST_KEY-1 #low #none #patch #0.1.1 #core #bug
+Text Rendering #high #none #structural #0.1.1 #graphics #bug
+Invalid Key Codes Input #low #none #patch #core #bug
+Image Draw with Rotation #low #alt #major #graphics #new
+Alpha Blending Fix #high #postponed #structural #0.1.1 #graphics #bug
+Broken Layering #critical #done #structural #0.1.1 #graphics #bug
+Health Bar #high #done #minor #0.1.1 #graphics #bug
+Graphics Class Clean Interface #high #done #structural #0.1.1 #graphics #change
+Make Shader interface via Shader.Properties #medium #done #structural #0.1.1 #graphics #change
+Fix Plorp Rendering #medium #done #minor #0.1.1 #graphics #bug
+Fix Tentacle Rendering #medium #done #minor #0.1.1 #graphics #bug
+Fix Bar UI Retexture #low #done #minor #0.1.1 #content #change
+Shader Properties Stack #low #done #major #0.1.1 #graphics #new
+Special Bar #low #done #minor #0.1.1 #graphics #bug
+Queue Semi-Transparent draw calls #medium #none #structural #0.1.1 #graphics #new
+Controls Overhaul - More Intuitive #critical #wip #structural #content #change
+Decide on Release/Build system #medium #wip #structural #meta #change
+Moderate TODOS #low #wip #patch #meta
+Logging System #low #none #structural #core #new
