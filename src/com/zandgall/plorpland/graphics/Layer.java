@@ -1,5 +1,6 @@
 package com.zandgall.plorpland.graphics;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.TreeSet;
@@ -19,6 +20,7 @@ public class Layer {
 		}
 	});
 
+
 	public static final Layer
 		LEVEL_BASE = new Layer(0.0),
 		SHADOW_BASE = new Layer(0.1),
@@ -32,47 +34,41 @@ public class Layer {
 		CLOUD_SHADOW = new Layer(3.5),
 		WORLD_INDICATORS = new Layer(4.5),
 		HUD = new Layer(5.0);
-
-	private FbSingle content;
+	public static Layer CURRENT = LEVEL_BASE;
+	
+	protected ArrayList<RenderCall> calls;
 	protected double depth;
 
 	public Layer(double depth) {
-		content = new FbSingle();
-		content.newTexture(Main.WIDTH, Main.HEIGHT);
+		calls = new ArrayList<>();
 		this.depth = depth;
 
 		LAYER_BY_DEPTH.add(this);
 	}
 
 	public void use() {
-		glViewport(0, 0, Main.WIDTH, Main.HEIGHT);
-		content.drawToThis();
+		CURRENT = this;
 	}
 
-	public static void prepareFrame() {
-		for(Layer l : LAYER_BY_DEPTH) {
-			l.content.deleteTexture();
-			l.content.newTexture(Main.WIDTH, Main.HEIGHT);
-			l.use();
-			glClearColor(0, 0, 0, 0);
-			glClear(GL_COLOR_BUFFER_BIT);
-		}
+	public void addCall(RenderCall call) {
+		calls.add(call);
 	}
 
 	public static void flushToScreen() {
 		FbSingle.drawToScreen();
-		glDisable(GL_DEPTH_TEST);
+		// glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glViewport(0, 0, Main.WIDTH, Main.HEIGHT);
-		glClearColor(0, 0, 0, 0);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(0.55f, 0.8f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Remember that framebuffers vertically flip everything!
-		Shader.Post.use().push();//.drawToScreen().setModel(0, Main.HEIGHT, Main.WIDTH, -Main.HEIGHT);
+		// Shader.Post.use().push();
 		for(Layer l : LAYER_BY_DEPTH) {
-			Shader.Post.use().texture(l.content.getTexture());
-			G.drawSquare();
+			for(RenderCall c : l.calls)
+				c.call();
+			l.calls.clear();
 		}
-		Shader.Post.use().pop();
-		glDisable(GL_BLEND);
+		// Shader.Post.use().pop();
+		// glDisable(GL_BLEND);
 	}
 }

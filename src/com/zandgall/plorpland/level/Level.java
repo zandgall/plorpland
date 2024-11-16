@@ -164,28 +164,28 @@ public class Level {
 				f.drawToThis();
 				glClear(GL_COLOR_BUFFER_BIT);
 				Shader.Image.use().image(l0).crop(w * i, h * j, w, h);
-				G.drawSquare();
+				G.rawDrawSquare();
 				images_0[i][j] = new Image(f.getTexture());
 				
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
 				f.drawToThis();
 				glClear(GL_COLOR_BUFFER_BIT);
 				Shader.Image.use().image(l1).crop(w*i, h*j, w, h);
-				G.drawSquare();
+				G.rawDrawSquare();
 				images_1[i][j] = new Image(f.getTexture());
 				
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
 				f.drawToThis();
 				glClear(GL_COLOR_BUFFER_BIT);
 				Shader.Image.use().image(s0).crop(w*i, h*j, w, h);
-				G.drawSquare();
+				G.rawDrawSquare();
 				shadow_0[i][j] = new Image(f.getTexture());
 				
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
 				f.drawToThis();
 				glClear(GL_COLOR_BUFFER_BIT);
 				Shader.Image.use().image(s1).crop(w*i, h*j, w, h);
-				G.drawSquare();
+				G.rawDrawSquare();
 				shadow_1[i][j] = new Image(f.getTexture());
 			}
 		}

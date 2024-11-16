@@ -2,13 +2,15 @@ package com.zandgall.plorpland.graphics;
 
 import static org.lwjgl.opengl.GL30.*;
 
+import com.zandgall.plorpland.graphics.RenderCall.VAO;
+
 public class G {
 	// Square VAO, VBO, EBO
-	private static int sqVAO, sq01VAO;
+	private static VAO sqVAO, sq01VAO;
 
 	public static void init() {
-		sqVAO = glGenVertexArrays();
-		glBindVertexArray(sqVAO);
+		int sq = glGenVertexArrays();
+		glBindVertexArray(sq);
 		int sqVBO = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, sqVBO);
 		glBufferData(GL_ARRAY_BUFFER, new float[] {
@@ -26,10 +28,12 @@ public class G {
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, false, 6 * Float.BYTES, 4 * Float.BYTES);
 
+		sqVAO = new VAO(sq, GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 		glBindVertexArray(0);
 		
-		sq01VAO = glGenVertexArrays();
-		glBindVertexArray(sq01VAO);
+		int sq01 = glGenVertexArrays();
+		glBindVertexArray(sq01);
 		int sq01VBO = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, sq01VBO);
 		glBufferData(GL_ARRAY_BUFFER, new float[] {
@@ -49,16 +53,24 @@ public class G {
 
 		glBindVertexArray(0);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		sq01VAO = new VAO(sq01, GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
 	public static void drawSquare() {
-		glBindVertexArray(sqVAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		Layer.CURRENT.addCall(new RenderCall(Shader.Active, Shader.Active.getState(), sqVAO));
+	}
+
+	public static void rawDrawSquare() {
+		new RenderCall(Shader.Active, Shader.Active.getState(), sqVAO).call();
 	}
 
 	public static void draw01Square() {
-		glBindVertexArray(sq01VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		Layer.CURRENT.addCall(new RenderCall(Shader.Active, Shader.Active.getState(), sq01VAO));
+	}
+
+	public static void rawDraw01Square() {
+		new RenderCall(Shader.Active, Shader.Active.getState(), sq01VAO).call();
 	}
 
 }

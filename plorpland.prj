@@ -10,10 +10,11 @@ Tree Shadows #medium #none #patch #0.1.1 #graphics #bug
 Bring back UI #medium #none #patch #0.1.1 #graphics #bug
 Cloud Shadows #medium #none #patch #0.1.1 #graphics #bug
 Default LastKey to GLFW_LAST_KEY-1 #low #none #patch #0.1.1 #core #bug
-Text Rendering #high #none #structural #0.1.1 #graphics #bug
+Remove Unnecessary Collectables #low #none #minor #content #change
+Text Rendering #high #postponed #structural #0.1.1 #graphics #bug
 Invalid Key Codes Input #low #none #patch #core #bug
 Image Draw with Rotation #low #alt #major #graphics #new
-Alpha Blending Fix #high #postponed #structural #0.1.1 #graphics #bug
+Alpha Blending Fix #high #done #structural #0.1.1 #graphics #bug
 Broken Layering #critical #done #structural #0.1.1 #graphics #bug
 Health Bar #high #done #minor #0.1.1 #graphics #bug
 Graphics Class Clean Interface #high #done #structural #0.1.1 #graphics #change
@@ -23,7 +24,8 @@ Fix Tentacle Rendering #medium #done #minor #0.1.1 #graphics #bug
 Fix Bar UI Retexture #low #done #minor #0.1.1 #content #change
 Shader Properties Stack #low #done #major #0.1.1 #graphics #new
 Special Bar #low #done #minor #0.1.1 #graphics #bug
-Queue Semi-Transparent draw calls #medium #none #structural #0.1.1 #graphics #new
+Queue Semi-Transparent draw calls #medium #alt #structural #0.1.1 #graphics #new
+Queue all Draw Calls #high #done #structural #0.1.1 #graphics #change
 Controls Overhaul - More Intuitive #critical #wip #structural #content #change
 Decide on Release/Build system #medium #wip #structural #meta #change
 Moderate TODOS #low #wip #patch #meta

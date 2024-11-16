@@ -168,7 +168,7 @@ public class Main {
 		// glClearColor(0.55f, 0.8f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Layer.prepareFrame();
+		// Layer.prepareFrame();
 
 		// Save all context states
 		// Transform all (except hud) with camera
