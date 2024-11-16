@@ -25,12 +25,17 @@ public class Shader {
 	
 	private int v, f, program;
 	
+	// Details for all programs
+	// TODO: Take HashMap<Integer> and give the data to the Shader class
 	public static HashMap<Integer, String> ProgramNames = new HashMap<>();
 	private static HashMap<Integer, ShaderState> InitialStates = new HashMap<>();
 	private static HashMap<Integer, ArrayList<ShaderState>> States = new HashMap<>();
 	private static HashMap<Integer, ShaderState> CurrentStates = new HashMap<>();
 
+	// All predefined Shader objects
 	public static Shader Image, Color, TintedImage, Circle, Post;
+	// The active Shader object
+	public static Shader Active;
 	
 	public static ShaderProperties Properties = new ShaderProperties();
 
@@ -132,20 +137,20 @@ public class Shader {
 
 	public ShaderProperties use() {
 		glUseProgram(program);
+		Active = this;
 		ActiveProgram = program;
 		return Properties;
+	}
+
+	public ShaderState getState() {
+		return new ShaderState(CurrentStates.get(program));
 	}
 
 	public static void push() {
 		States.get(ActiveProgram).add(new ShaderState(CurrentStates.get(ActiveProgram)));
 	}
 
-	public static void pop() {
-		if(States.get(ActiveProgram).isEmpty())
-			CurrentStates.put(ActiveProgram, InitialStates.get(ActiveProgram));
-		else
-			CurrentStates.put(ActiveProgram, States.get(ActiveProgram).removeLast());
-		ShaderState s = CurrentStates.get(ActiveProgram);
+	public static void set(ShaderState s) {
 		for(Entry<String, Matrix4f> a : s.matrix4s.entrySet()) {
 			try(MemoryStack stack = MemoryStack.stackPush()) {
 				FloatBuffer buffer = a.getValue().get(stack.mallocFloat(16));
@@ -160,6 +165,19 @@ public class Shader {
 			glUniform1f(glGetUniformLocation(ActiveProgram, a.getKey()), a.getValue());
 		for(Entry<String, Integer> a : s.ints.entrySet())
 			glUniform1i(glGetUniformLocation(ActiveProgram, a.getKey()), a.getValue());
+		for(int i = 0; i < s.textures.size(); i++) {
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, s.textures.get(i));
+		}
+	}
+
+	public static void pop() {
+		if(States.get(ActiveProgram).isEmpty())
+			CurrentStates.put(ActiveProgram, InitialStates.get(ActiveProgram));
+		else
+			CurrentStates.put(ActiveProgram, States.get(ActiveProgram).removeLast());
+		ShaderState s = CurrentStates.get(ActiveProgram);
+		set(s);
 	}
 
 	public void setAsInitialState() {
@@ -204,8 +222,12 @@ public class Shader {
 		public HashMap<String, Vector3f> vector3s = new HashMap<>();
 		public HashMap<String, Integer> ints = new HashMap<>();
 		public HashMap<String, Float> floats = new HashMap<>();
+		public ArrayList<Integer> textures = new ArrayList<>();
 
-		public ShaderState() {}
+		public ShaderState() {
+			for(int i = 0; i < 32; i++)
+				textures.add(0);
+		}
 
 		public ShaderState(ShaderState source) {
 			for(String a : source.matrix4s.keySet())
@@ -218,6 +240,7 @@ public class Shader {
 				floats.put(a, source.floats.get(a));
 			for(String a : source.ints.keySet())
 				ints.put(a, source.ints.get(a));
+			textures.addAll(source.textures);
 		}
 	}
 
@@ -388,6 +411,7 @@ public class Shader {
 		public ShaderProperties texture(int texture) {
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture);
+			CurrentStates.get(ActiveProgram).textures.set(0, texture);
 			return this;
 		}
 
