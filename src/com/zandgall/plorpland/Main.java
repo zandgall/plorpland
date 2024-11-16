@@ -45,7 +45,7 @@ public class Main {
 	private static long window;
 
 	public static boolean[] keys = new boolean[GLFW_KEY_LAST], pKeys = new boolean[GLFW_KEY_LAST];
-	public static int lastKey = GLFW_KEY_LAST;
+	public static int lastKey = GLFW_KEY_LAST - 1;
 
 	private static ArrayList<Runnable> postGLFW = new ArrayList<>();
 
