@@ -60,7 +60,9 @@ public class Tree extends Entity {
 		trunk.draw(getX() - 1.5, getY() - 3.5, 3, 4);
 		// Shadow is 1 tile lower
 		Layer.TREE_SHADOW.use();
-		shadow.draw(getX() - 1.5, getY() - 2.5, 3, 4);
+		Shader.TintedImage.use().push().drawToWorld().tint(0.2, 0.2, 0.23).alpha(0.4);
+		shadow.draw(getX() - 2.5, getY() - 2.5, 5, 5);
+		Shader.TintedImage.use().pop();
 
 		Layer.TREE_LEAVES.use();
 		Shader.Image.use().alpha(peekTransparency);

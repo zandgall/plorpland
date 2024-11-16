@@ -283,10 +283,10 @@ public class Level {
 			// System.out.println(e);
 			e.render();
 		}
-		/* for (Cloud cl : clouds) {
+		for (Cloud cl : clouds) {
 			if (cl.getRenderBounds().intersects(screen))
 				cl.render();
-		} */
+		}
 	}
 
 	// Used by LevelEditor to write a reference image

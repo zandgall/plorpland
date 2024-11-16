@@ -59,9 +59,10 @@ public class Cloud {
 	}
 
 	public void render() {
-		Shader.Image.use();
 		Layer.CLOUD_SHADOW.use();
-		textures[type].draw(x, y, 16, 16);
+		Shader.TintedImage.use().push().drawToWorld().alpha(0.3).tint(0.2, 0.2, 0.23);
+		textures[type].draw(x, y, textures[type].getWidth()/16, textures[type].getHeight()/16);
+		Shader.TintedImage.use().pop();
 	}
 
 	public Hitbox getRenderBounds() {
