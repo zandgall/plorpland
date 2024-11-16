@@ -88,6 +88,8 @@ public class Main {
 
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			keys[key] = action != GLFW_RELEASE;
+			if(keys[key])
+				lastKey = key;
 		});
 
 		glfwMakeContextCurrent(window);

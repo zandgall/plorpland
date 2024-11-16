@@ -85,45 +85,40 @@ public class Hud {
 
 	public void render() {
 		Layer.HUD.use();
-		Shader.TintedImage.use().push().drawToScreen()
-			// .alpha(healthOpacity)
-			.alpha(1.0)
+		Shader.Image.use().push().drawToScreen()
+			.alpha(healthOpacity)
 			.crop(0, 0, 1, 1)
 			.image(healthShadow)
 			.move(4, 4)
-			.scale(healthShadow.getWidth()*4, healthShadow.getHeight()*4)
-			.tint(1, 1, 1);
+			.scale(healthShadow.getWidth()*4, healthShadow.getHeight()*4);
 		G.draw01Square();
-		Shader.TintedImage.use().pop().push().drawToScreen()
-			// .alpha(healthOpacity)
-			.alpha(1.0)
+		Shader.Image.use().pop().push().drawToScreen()
+			.alpha(healthOpacity)
 			.image(healthRed)
 			.move(4, 4)
 			.scale(healthRed.getWidth()*4, healthRed.getHeight()*4);
 		G.draw01Square();
-		Shader.TintedImage.use()
-			// .alpha(healthOpacity)
-			.alpha(1.0)
+		Shader.Image.use()
+			.alpha(healthOpacity)
 			.crop(0, 0, Main.getPlayer().getHealth() / 20.0, 1)
 			.scale(Main.getPlayer().getHealth()/20.0, 1)
 			.image(healthGreen);
 		G.draw01Square();
-		Shader.TintedImage.use().pop();
+		Shader.Image.use().pop();
 
-		// Shader.Image.reset().image(healthBar).at(0, 0).layer(G.LAYER_2).scale(4, 1).use();
-		// G.drawSquare();
+		Shader.Color.use().push().drawToScreen()
+			.setModel(0, 0, Main.WIDTH, Main.HEIGHT)
+			.color(1, 0, 0)
+			.alpha(deathOpacity);
+		G.drawSquare();
+		Shader.Color.use().color(1, 1, 1).alpha(respawnOpacity);
+		G.drawSquare();
+		Shader.Color.use().alpha(closeOpacity);
+		G.drawSquare();
+		Shader.Color.use().pop();
 
 		// TODO: HUD + Text
 		/*
-		g.setGlobalAlpha(healthOpacity);
-		g.setFill(Color.RED);
-		g.fillRect(20, 20, 200, 20);
-		g.setFill(Color.GREEN);
-		g.fillRect(20, 20, Main.getPlayer().getHealth() * 10, 20);
-		g.setStroke(Color.BLACK);
-		g.setLineWidth(2.0);
-		g.strokeRect(20, 20, 200, 20);
-
 		g.setGlobalAlpha(deathOpacity);
 		g.setFill(Color.RED);
 		g.fillRect(0, 0, Main.stage.getWidth(), Main.stage.getHeight());
