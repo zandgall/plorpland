@@ -56,6 +56,7 @@ public class EntityRegistry {
 			Constructor<?> posC = clazz.getConstructor(double.class, double.class);
 			return (Entity) posC.newInstance(x, y);
 		} catch (Exception ignored) {
+			ignored.printStackTrace();
 		}
 
 		System.err.println("Could not construct instance of " + clazz.getCanonicalName());

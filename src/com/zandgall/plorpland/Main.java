@@ -107,22 +107,18 @@ public class Main {
 		G.init();
 
 		player = new Player();
-		level = new Level();
-
 		hud = new Hud();
+		level = new Level("/level/0");
 		try {
-			level.load("/level.bin");
-
-			level.addEntity(player);
-			// 'addEntity' operates on a queue, flush it to put all entities in the main list
-			level.flushEntityQueues();
-			// Make default quicksave
+			level.load();
+			level.setPlayer(player);
 			quicksave();
-		} catch (Exception e) {
+		} catch(IOException e) {
 			e.printStackTrace();
-			return; // Can't play without level!
+			System.err.println("Can't play without level!");
+			return;
 		}
-
+	
 		Sound.init();
 
 		// The main loop. As this scene animation plays, the game is updated and

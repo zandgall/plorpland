@@ -8,6 +8,7 @@
 package com.zandgall.plorpland.level;
 
 import com.zandgall.plorpland.entity.EntityRegistry;
+import com.zandgall.plorpland.entity.Player;
 import com.zandgall.plorpland.graphics.FbSingle;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Image;
@@ -28,7 +29,6 @@ import java.util.Scanner;
 
 import org.joml.Matrix4f;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.io.ObjectInputStream;
 import java.io.IOException;
@@ -38,10 +38,11 @@ public class Level {
 	private HashMap<Integer, HashMap<Integer, Tile>> level = new HashMap<>();
 
 	private static final int CHUNK_SIZE = 128;
-	private static final boolean USE_TILES = false;
+
+	public String leveldir;
+	public Player playerRef = null;
 
 	// Level graphics
-	// TODO: Pick.. better names
 	private Image[][] images_0, images_1, shadow_0, shadow_1;
 
 	// A set of special background images, only 1 layer (0) is used right now
@@ -52,24 +53,35 @@ public class Level {
 			addQueue = new ArrayList<>();
 	private ArrayList<Cloud> clouds = new ArrayList<>();
 
-	public Level() {
+	public Level(String leveldir) {
+		this.leveldir = leveldir;
+	}
+
+	public void load() throws IOException {
 		// Load special background images
-		Scanner s = new Scanner(Level.class.getResourceAsStream("/special.txt"));
+		Scanner s = new Scanner(Level.class.getResourceAsStream(leveldir + "/special.txt"));
 		specialImages.add(new ArrayList<>());
 		while(s.hasNextLine()) {
 			String line = s.nextLine();
 			Scanner p = new Scanner(line);
-			specialImages.get(p.nextInt()).add(new SpecialImage(p.next(), p.nextDouble(), p.nextDouble(), p.nextDouble(), p.nextDouble(), p.nextDouble()));
+			specialImages.get(p.nextInt()).add(new SpecialImage(leveldir + p.next(), p.nextDouble(), p.nextDouble(), p.nextDouble(), p.nextDouble(), p.nextDouble()));
 			p.close();
 		}
 		s.close();
 
 		// Load level graphics
-		if(!USE_TILES)
-			loadGraphics();
+		loadGraphics();
+		loadTileData(leveldir + "/tiledata.bin");
 	}
 
-	public void load(String path) throws IOException {
+	public void setPlayer(Player p) {
+		if(playerRef != null)
+			entities.remove(playerRef);
+		entities.add(p);
+		playerRef = p;
+	}
+
+	private void loadTileData(String path) throws IOException {
 
 		// Clear level data
 		level.clear();
@@ -141,10 +153,10 @@ public class Level {
 	// TODO: Do level graphics again
 	public void loadGraphics() {
 		// Load images and create output array
-		Image l0 = new Image("/level_0.png");
-		Image l1 = new Image("/level_1.png");
-		Image s0 = new Image("/shadow_0.png");
-		Image s1 = new Image("/shadow_1.png");
+		Image l0 = new Image(leveldir + "/level_0.png");
+		Image l1 = new Image(leveldir + "/level_1.png");
+		Image s0 = new Image(leveldir + "/shadow_0.png");
+		Image s1 = new Image(leveldir + "/shadow_1.png");
 		images_0 = new Image[(int)Math.ceil(l0.getWidth()/CHUNK_SIZE)][(int)Math.ceil(l0.getHeight()/CHUNK_SIZE)];
 		images_1 = new Image[(int)Math.ceil(l0.getWidth()/CHUNK_SIZE)][(int)Math.ceil(l0.getHeight()/CHUNK_SIZE)];
 		shadow_0 = new Image[(int)Math.ceil(l0.getWidth()/CHUNK_SIZE)][(int)Math.ceil(l0.getHeight()/CHUNK_SIZE)];
@@ -291,19 +303,7 @@ public class Level {
 
 	// Used by LevelEditor to write a reference image
 	public void writeImage() {
-		/* Canvas c = new Canvas(bounds.w * 16, bounds.h * 16);
-		GraphicsContext g = c.getGraphicsContext2D();
-		for(Map.Entry<Integer, HashMap<Integer, Tile>> xT : level.entrySet())
-			for(Map.Entry<Integer, Tile> yT : xT.getValue().entrySet()) {
-				g.setTransform(16, 0, 0, 16, xT.getKey()*16-bounds.x*16, yT.getKey()*16-bounds.y*16);
-				yT.getValue().render(g);
-			}
-		try {
-			ImageIO.write(SwingFXUtils.fromFXImage(c.snapshot(null, null), null), "png", new File("res/level.png"));
-		} catch (IOException io) {
-			System.err.println("Couldn't write level image");
-			io.printStackTrace();
-		} */
+		
 	}
 
 	public void put(int x, int y, Tile tile) {

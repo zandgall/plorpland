@@ -16,7 +16,7 @@ import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
 
 public class Hud {
-	private static final Image healthRed = new Image("/health_red.png"), healthGreen = new Image("/health_green.png"), healthShadow = new Image("/health_shadow.png");
+	private static final Image healthRed = new Image("/hud/health_red.png"), healthGreen = new Image("/hud/health_green.png"), healthShadow = new Image("/hud/health_shadow.png");
 
 	private double healthOpacity = 0, deathOpacity = 0, respawnOpacity = 0, closeOpacity = 0;
 	private double pPlayerHealth = 20;

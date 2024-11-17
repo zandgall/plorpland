@@ -27,7 +27,7 @@ Special Bar #low #done #minor #0.1.1 #graphics #bug
 Queue Semi-Transparent draw calls #medium #alt #structural #0.1.1 #graphics #new
 Queue all Draw Calls #high #done #structural #0.1.1 #graphics #change
 Controls Overhaul - More Intuitive #critical #wip #structural #content #change
-Decide on Release/Build system #medium #wip #structural #meta #change
+Decide on Release/Build system #medium #done #structural #meta #change
 Moderate TODOS #low #wip #patch #meta
 Logging System #low #none #structural #core #new
 Play with Octoplorp #low #none #minor #graphics #change
