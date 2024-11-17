@@ -27,7 +27,7 @@ public class Layer {
 		LEVEL_FOREGROUND = new Layer(3.0),
 		SHADOW_FOREGROUND = new Layer(3.1),
 		LEVEL_BACKGROUND = new Layer(-3.0),
-		TREE_LEAVES = new Layer(2.0),
+		TREE_LEAVES = new Layer(3.05),
 		TREE_SHADOW = new Layer(1.5),
 		ENTITY_BASE = new Layer(1.0),
 		ENTITY_SHADOW = new Layer(0.5),
