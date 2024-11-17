@@ -84,6 +84,16 @@ jar {
 	}
 }
 
+task release(type: Copy) {
+	dependsOn('linux-release:jar')
+	dependsOn('macos-release:jar')
+	dependsOn('windows-release:jar')
+	from ("./linux-release/build/libs/linux-release.jar")
+	from ("./macos-release/build/libs/macos-release.jar")
+	from ("./windows-release/build/libs/windows-release.jar")
+	into("release")
+}
+
 application {
 	mainClass = 'com.zandgall.plorpland.Main'
 }

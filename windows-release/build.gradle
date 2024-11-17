@@ -1,0 +1,69 @@
+plugins {
+	id 'application'
+}
+
+repositories {
+	mavenCentral()
+	maven {
+		url "https://plugins.gradle.org/m2/"
+		url "https://jogamp.org/deployment/maven"
+	}
+}
+
+project.ext.lwjglVersion = "3.3.4"
+project.ext.jomlVersion = "1.10.8"
+project.ext.lwjglNatives = ""
+
+dependencies {
+	implementation "org.joml:joml:$jomlVersion"
+
+	implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+	implementation "org.lwjgl:lwjgl"
+	implementation "org.lwjgl:lwjgl-glfw"
+	implementation "org.lwjgl:lwjgl-opengl"
+	implementation "org.lwjgl:lwjgl-openal"
+	implementation "org.lwjgl:lwjgl-stb"
+	runtimeOnly "org.lwjgl:lwjgl::natives-windows"
+	runtimeOnly "org.lwjgl:lwjgl::natives-windows-x86"
+	runtimeOnly "org.lwjgl:lwjgl::natives-windows-arm64"
+	runtimeOnly "org.lwjgl:lwjgl-glfw::natives-windows"
+	runtimeOnly "org.lwjgl:lwjgl-glfw::natives-windows-x86"
+	runtimeOnly "org.lwjgl:lwjgl-glfw::natives-windows-arm64"
+	runtimeOnly "org.lwjgl:lwjgl-openal::natives-windows"
+	runtimeOnly "org.lwjgl:lwjgl-openal::natives-windows-x86"
+	runtimeOnly "org.lwjgl:lwjgl-openal::natives-windows-arm64"
+	runtimeOnly "org.lwjgl:lwjgl-opengl::natives-windows"
+	runtimeOnly "org.lwjgl:lwjgl-opengl::natives-windows-x86"
+	runtimeOnly "org.lwjgl:lwjgl-opengl::natives-windows-arm64"
+	runtimeOnly "org.lwjgl:lwjgl-stb::natives-windows"
+	runtimeOnly "org.lwjgl:lwjgl-stb::natives-windows-x86"
+	runtimeOnly "org.lwjgl:lwjgl-stb::natives-windows-arm64"
+}
+
+sourceSets {
+	main {
+		java {
+			srcDir '../src'
+		}
+		resources {
+			srcDir '../res'
+		}
+	}
+}
+
+jar {
+	manifest {
+		attributes 'Main-Class': 'com.zandgall.plorpland.Main'
+	}
+	
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE;
+
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}
+
+application {
+	mainClass = 'com.zandgall.plorpland.Main'
+}

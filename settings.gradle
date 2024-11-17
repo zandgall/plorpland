@@ -6,3 +6,6 @@ rootProject.name = 'finalproj'
 
 include 'leveleditor'
 include 'game'
+include 'windows-release'
+include 'linux-release'
+include 'macos-release'

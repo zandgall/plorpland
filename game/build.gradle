@@ -10,12 +10,6 @@ repositories {
 	}
 }
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
-}
-
 import org.gradle.internal.os.OperatingSystem
 
 project.ext.lwjglVersion = "3.3.4"
