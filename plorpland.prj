@@ -5,8 +5,6 @@ $Version(0.1.1) {#99aaff}
 $Target(meta, core, graphics, content) {#ffcc99, #ffff99, #ccff99, #99ccff}
 $Type(bug, new, change) {#ff0000, #0000ff, #00ff00}
 
-Play with Octoplorp tentacles #low #none #minor #graphics #change
-Mask Shadows to Ground #low #none #minor #graphics
 LWJGL Implementation #high #wip #structural #0.1.1 #core #new
 Tree Shadows #medium #done #patch #0.1.1 #graphics #bug
 Bring back UI #medium #done #patch #0.1.1 #graphics #bug
@@ -32,3 +30,5 @@ Controls Overhaul - More Intuitive #critical #wip #structural #content #change
 Decide on Release/Build system #medium #wip #structural #meta #change
 Moderate TODOS #low #wip #patch #meta
 Logging System #low #none #structural #core #new
+Play with Octoplorp #low #none #minor #graphics #change
+Mask Shadows to Ground #low #none #minor #graphics #change
