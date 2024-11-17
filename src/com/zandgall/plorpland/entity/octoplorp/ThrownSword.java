@@ -53,6 +53,7 @@ public class ThrownSword extends Entity {
 		Shader.Image.use().push().drawToWorld().move(getX(), getY()).rotate(rotation).scale(1, 0.5).image(image);
 		G.drawSquare();
 		plaque.draw(target.x-1, target.y-1.8, 2, 2);
+		Shader.Image.use().pop();
 	}
 
 	@Override
