@@ -16,9 +16,6 @@ import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
 
 public class Hud {
-	// private static final Image popup = new Image("/popup.png");
-	// private static final Font FONT32 = Font.font(32), FONT16 = Font.font(16);
-
 	private static final Image healthRed = new Image("/health_red.png"), healthGreen = new Image("/health_green.png"), healthShadow = new Image("/health_shadow.png");
 
 	private double healthOpacity = 0, deathOpacity = 0, respawnOpacity = 0, closeOpacity = 0;
@@ -26,13 +23,13 @@ public class Hud {
 	private boolean respawning = false, closing = false;
 
 	// Collectable flags
-	private int numCollected = 0;
 	private Collectable collected = null;
 	private double collectableTimer = 0.0, collectablesOpacity = 0;
 
 	public Hud() {}
 
 	public void tick() {
+		// Change health bar opacity depending on player health/health change
 		if (Main.getPlayer().getHealth() == 20)
 			healthOpacity = healthOpacity * 0.99;
 		else if(Main.getPlayer().getHealth() != pPlayerHealth) {
@@ -52,7 +49,6 @@ public class Hud {
 			respawnOpacity = respawnOpacity * 0.95 + 0.05;
 		} else
 			respawnOpacity = respawnOpacity * 0.95;
-
 
 		if(!respawning && deathOpacity > 0.05 && respawnOpacity < 0.001 && Main.keys[Main.lastKey]) {
 			respawning = true;
@@ -118,39 +114,6 @@ public class Hud {
 		Shader.Color.use().pop();
 
 		// TODO: HUD + Text
-		/*
-		g.setGlobalAlpha(deathOpacity);
-		g.setFill(Color.RED);
-		g.fillRect(0, 0, Main.stage.getWidth(), Main.stage.getHeight());
-
-		g.setGlobalAlpha(respawnOpacity);
-		g.setFill(Color.WHITE);
-		g.fillRect(0, 0, Main.stage.getWidth(), Main.stage.getHeight());
-
-		g.setGlobalAlpha(closeOpacity);
-		g.setFill(Color.WHITE);
-		g.fillRect(0, 0, Main.stage.getWidth(), Main.stage.getHeight());
-
-		g.setGlobalAlpha(collectablesOpacity);
-		g.setFill(Color.WHITE);
-		g.setFont(Font.font(32));
-		g.setTextAlign(TextAlignment.RIGHT);
-		g.fillText(numCollected + " / 5", Main.scene.getWidth() - 8, 32);
-
-		if(collected != null) {
-			g.setGlobalAlpha(1.0);
-			g.setTextAlign(TextAlignment.LEFT);
-			g.drawImage(popup, 0, 0, 16, 48, 0, Main.scene.getHeight() - 96, 32, 96);
-			g.drawImage(popup, 16, 0, 16, 48, 32, Main.scene.getHeight() - 96, Main.scene.getWidth() - 64, 96);
-			g.drawImage(popup, 32, 0, 16, 48, Main.scene.getWidth() - 32, Main.scene.getHeight() - 96, 32, 96);
-			g.drawImage(collected.getTexture(), 16, Main.scene.getHeight()-80, 64, 64);
-			g.setFont(FONT32);
-			g.setFill(new Color(0.05, 0.05, 0.1, 1));
-			g.fillText(collected.getTitle(), 96, Main.scene.getHeight() - 48, Main.scene.getWidth() - 192);
-			g.setFont(FONT16);
-			g.fillText(collected.getDescription(), 96, Main.scene.getHeight() - 16, Main.scene.getWidth() - 192);
-		}
-		*/
 	}
 
 	public void closeOut() {
@@ -160,6 +123,5 @@ public class Hud {
 	public void collect(Collectable c) {
 		collected = c;
 		collectableTimer = 0;
-		numCollected++;
 	}
 }

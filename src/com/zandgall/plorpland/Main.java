@@ -47,6 +47,7 @@ public class Main {
 	public static boolean[] keys = new boolean[GLFW_KEY_LAST], pKeys = new boolean[GLFW_KEY_LAST];
 	public static int lastKey = GLFW_KEY_LAST - 1;
 
+	// Functions to run after GLFW closes
 	private static ArrayList<Runnable> postGLFW = new ArrayList<>();
 
 	// Instances of elements included in the game
@@ -165,30 +166,11 @@ public class Main {
 	}
 
 	public static void render() {
-		// Clear all canvases
-		glViewport(0, 0, WIDTH, HEIGHT);
-		// glClearColor(0.55f, 0.8f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Layer.prepareFrame();
-
-		// Save all context states
-		// Transform all (except hud) with camera
-		/* Matrix4f proj = new Matrix4f().ortho(-WIDTH * 0.5f, WIDTH * 0.5f, HEIGHT * 0.5f, -HEIGHT * 0.5f, -1.f, 1.f);
-		for(Shader.MVPShader mvp : Shader.MVPs)
-			mvp.setProjection(proj);
-		proj = new Matrix4f().ortho(0, WIDTH, HEIGHT, 0, -1.f, 1.f);
-		for(Shader.ScreenShader screen : Shader.Screens)
-			screen.setScreen(proj); */
-		// camera.transform();
-
-		// Don't transform hudContext
-		
 		// Draw!
 		level.render();
 		hud.render();
 
-		// Flush layer content to screen
+		// Flush content to screen
 		Layer.flushToScreen();
 
 		// Swap buffers
@@ -286,7 +268,6 @@ public class Main {
 		glfwDestroyWindow(window);
 
 		glfwTerminate();
-		glfwSetErrorCallback(null).free();
 	}
 
 	public static void doAfterGLFW(Runnable r) {
