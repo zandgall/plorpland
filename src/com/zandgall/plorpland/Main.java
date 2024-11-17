@@ -42,13 +42,13 @@ public class Main {
 	public static Main instance = null;
 
 	public static int WIDTH = 1280, HEIGHT = 720;
-	private static long window;
+	protected static long window;
 
-	public static boolean[] keys = new boolean[GLFW_KEY_LAST], pKeys = new boolean[GLFW_KEY_LAST];
+	public static boolean[] keys = new boolean[GLFW_KEY_LAST], pKeys = new boolean[GLFW_KEY_LAST], keyEv = new boolean[GLFW_KEY_LAST];
 	public static int lastKey = GLFW_KEY_LAST - 1;
 
 	// Functions to run after GLFW closes
-	private static ArrayList<Runnable> postGLFW = new ArrayList<>();
+	protected static ArrayList<Runnable> postGLFW = new ArrayList<>();
 
 	// Instances of elements included in the game
 	protected static Player player;
@@ -85,10 +85,12 @@ public class Main {
 		for(int i = 0; i < GLFW_KEY_LAST; i++) {
 			keys[i] = false;
 			pKeys[i] = false;
+			keyEv[i] = false;
 		}
 
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			keys[key] = action != GLFW_RELEASE;
+			keyEv[key] = action != GLFW_RELEASE;
 			if(keys[key])
 				lastKey = key;
 		});
@@ -157,8 +159,10 @@ public class Main {
 		}
 		hud.tick();
 		Sound.update();
-		for(int i = 0; i < GLFW_KEY_LAST; i++)
+		for(int i = 0; i < GLFW_KEY_LAST; i++) {
 			pKeys[i] = keys[i];
+			keyEv[i] = false;
+		}
 	}
 
 	public static void render() {
