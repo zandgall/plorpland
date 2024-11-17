@@ -5,13 +5,15 @@ $Version(0.1.1) {#99aaff}
 $Target(meta, core, graphics, content) {#ffcc99, #ffff99, #ccff99, #99ccff}
 $Type(bug, new, change) {#ff0000, #0000ff, #00ff00}
 
+Play with Octoplorp tentacles #low #none #minor #graphics #change
+Mask Shadows to Ground #low #none #minor #graphics
 LWJGL Implementation #high #wip #structural #0.1.1 #core #new
 Tree Shadows #medium #done #patch #0.1.1 #graphics #bug
-Bring back UI #medium #none #patch #0.1.1 #graphics #bug
+Bring back UI #medium #done #patch #0.1.1 #graphics #bug
 Cloud Shadows #medium #done #patch #0.1.1 #graphics #bug
-Default LastKey to GLFW_LAST_KEY-1 #low #none #patch #0.1.1 #core #bug
+Default LastKey to GLFW_LAST_KEY-1 #low #done #patch #0.1.1 #core #bug
 Remove Unnecessary Collectables #low #none #minor #content #change
-Text Rendering #high #postponed #structural #0.1.1 #graphics #bug
+Text Rendering #high #postponed #structural #graphics #bug
 Invalid Key Codes Input #low #none #patch #core #bug
 Image Draw with Rotation #low #alt #major #graphics #new
 Alpha Blending Fix #high #done #structural #0.1.1 #graphics #bug
