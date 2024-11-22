@@ -29,14 +29,14 @@ import com.zandgall.plorpland.util.Rect;
 public class Level {
 	public Rect bounds = new Rect();
 	public HashMap<Integer, HashMap<Integer, Tile>> tiles = new HashMap<>();
-	private static final int CHUNK_SIZE = 128;
+	protected static final int CHUNK_SIZE = 128;
 
 	// Level graphics
-	private Image[][] images_0 = new Image[0][0], images_1 = new Image[0][0], shadow_0 = new Image[0][0], shadow_1 = new Image[0][0];
+	protected Image[][] images_0 = new Image[0][0], images_1 = new Image[0][0], shadow_0 = new Image[0][0], shadow_1 = new Image[0][0];
 
-	private ArrayList<ArrayList<SpecialImage>> specialImages = new ArrayList<>();
+	protected ArrayList<ArrayList<SpecialImage>> specialImages = new ArrayList<>();
 
-	private ArrayList<Entity> entities = new ArrayList<>();
+	protected ArrayList<Entity> entities = new ArrayList<>();
 
 	public Level() {
 		specialImages.add(new ArrayList<>());
@@ -256,10 +256,11 @@ public class Level {
 			c.getY() - 0.5 * Main.HEIGHT / c.getZoom(), Main.WIDTH / c.getZoom(),
 			Main.HEIGHT / c.getZoom());
 
-		Shader.Image.use().drawToWorld().setModel(new Matrix4f().identity());
+		Shader.Image.use().push().drawToWorld().setModel(new Matrix4f().identity());
 		for(SpecialImage i : specialImages.get(0))
 			if(screen.intersects(i.getRenderBox()))
 				i.render();
+		Shader.Image.use().pop();
 
 	}
 

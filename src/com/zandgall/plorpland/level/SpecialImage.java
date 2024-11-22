@@ -28,8 +28,8 @@ public class SpecialImage {
 	public void render() {
 		double w = image.getWidth() / 16;
 		double h = image.getHeight() / 16;
-		double x = this.x * (1 - damping) + Main.getCamera().getX() * damping - xOff;
-		double y = this.y * (1 - damping) + Main.getCamera().getY() * damping - yOff;
+		double x = this.x * (1 - damping) + (Main.getCamera().getX() - xOff) * damping - w * 0.5;
+		double y = this.y * (1 - damping) + (Main.getCamera().getY() - yOff) * damping - h * 0.5;
 
 		// Reminder that each unit is a 16x16 tile
 		// So scale image down by 1/16 to match
@@ -45,4 +45,18 @@ public class SpecialImage {
 		double y = this.y - (h / 2);
 		return new Rect(x, y, w, h);
 	}
+
+	public double getX() { return x; }
+	public double getY() { return y; }
+	public double getXOff() { return xOff; }
+	public double getYOff() { return yOff; }
+	public double getDamping() { return damping; }
+	public Image getImage() { return image; }
+
+	public void setX(double x) { this.x = x; }
+	public void setY(double y) { this.y = y; }
+	public void setXOff(double x) { this.xOff = x; }
+	public void setYOff(double y) { this.yOff = y; }
+	public void setDamping(double damping) { this.damping = damping; }
+	public void setImage(Image image) { this.image = image; }
 }

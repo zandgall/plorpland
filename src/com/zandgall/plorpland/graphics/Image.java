@@ -2,6 +2,7 @@ package com.zandgall.plorpland.graphics;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.joml.Matrix4f;
@@ -62,6 +63,29 @@ public class Image {
 			e.printStackTrace();
 		}
 		pong = true;
+	}
+
+	public static int textureFrom(InputStream in) throws IOException {
+		BufferedInputStream fileByteInput = new BufferedInputStream(in);
+		byte[] fileBytes = fileByteInput.readAllBytes();
+		ByteBuffer fileBuffer = BufferUtils.createByteBuffer(fileBytes.length);
+		fileBuffer.put(fileBytes);
+		fileBuffer.flip();
+		fileBuffer.rewind();
+		int[] x = {0}, y = {0}, c = {0};
+		ByteBuffer imageBuffer = STBImage.stbi_load_from_memory(fileBuffer, x, y, c, STBImage.STBI_rgb_alpha);
+		
+		int texture = glGenTextures();
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x[0], y[0], 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		STBImage.stbi_image_free(imageBuffer);
+		return texture;
 	}
 
 	public void draw(double cX, double cY, double cW, double cH, double x, double y, double w, double h) {

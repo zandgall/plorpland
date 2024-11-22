@@ -40,7 +40,7 @@ public class TileEditor {
 			lvl.put(tileX, tileY, Tile.get(3));
 		if(Main.keys[GLFW_KEY_5])
 			lvl.put(tileX, tileY, Tile.get(4));
-		if(Main.keys[GLFW_KEY_5])
+		if(Main.keys[GLFW_KEY_6])
 			lvl.put(tileX, tileY, Tile.get(5));
 		Main.getCamera().target(tileX+0.5, tileY+0.5);
 		Main.getCamera().tick();
@@ -71,5 +71,10 @@ public class TileEditor {
 			.setModel(tileX, tileY, 1.0, 1.0);
 		G.drawSquare();
 		Shader.Color.use().pop();
+	}
+
+	public void switchTo() {
+		tileX = (int)Math.floor(Main.getCamera().getX());
+		tileY = (int)Math.floor(Main.getCamera().getY());
 	}
 }

@@ -3,6 +3,11 @@ package com.zandgall.plorpland.editor;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import java.io.File;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL30.*;
@@ -24,6 +29,7 @@ public class LevelEditor extends Main {
 	private static Level lvl;
 
 	private static TileEditor tileeditor = new TileEditor();
+	private static SpecialImageEditor specialimageeditor = new SpecialImageEditor();
 
 	public static void main(String[] args) {
 		GLFWErrorCallback.createPrint(System.err).set();
@@ -106,6 +112,16 @@ public class LevelEditor extends Main {
 	public static void tick() {
 		switch(state) {
 		case 0 -> tileeditor.tick(lvl);
+		case 1 -> specialimageeditor.tick(lvl);
+		}
+
+		if(keys[GLFW_KEY_T]) {
+			tileeditor.switchTo();
+			state = 0;
+		}
+		if(keys[GLFW_KEY_S]) {
+			specialimageeditor.switchTo();
+			state = 1;
 		}
 		
 		for(int i = 0; i < GLFW_KEY_LAST; i++) {
@@ -117,8 +133,31 @@ public class LevelEditor extends Main {
 	public static void render() {
 		switch(state) {
 		case 0 -> tileeditor.render(lvl);
+		case 1 -> specialimageeditor.render(lvl);
 		}
 		Layer.flushToScreen();
 		glfwSwapBuffers(window);
+	}
+
+	public static File openFileDialog(String prompt) {
+		// Using swing just to use file dialogs
+		JFrame frame = new JFrame();
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+		chooser.setDialogTitle(prompt);
+		int selection = chooser.showOpenDialog(frame);
+		if (selection != JFileChooser.APPROVE_OPTION)
+			return null;
+		return chooser.getSelectedFile();
+	}
+
+	public static File saveFileDialog(String prompt) {
+		// Using swing just to use file dialogs
+		JFrame frame = new JFrame();
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+		chooser.setDialogTitle(prompt);
+		int selection = chooser.showSaveDialog(frame);
+		if (selection != JFileChooser.APPROVE_OPTION)
+			return null;
+		return chooser.getSelectedFile();
 	}
 }
