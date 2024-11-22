@@ -27,6 +27,7 @@ import com.zandgall.plorpland.util.Hitrect;
 import com.zandgall.plorpland.util.Rect;
 
 public class Level {
+	private Image tile = new Image("/tiles/5tiles.png");
 	public Rect bounds = new Rect();
 	public HashMap<Integer, HashMap<Integer, Tile>> tiles = new HashMap<>();
 	protected static final int CHUNK_SIZE = 128;
@@ -292,6 +293,24 @@ public class Level {
 				shadow_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
 			}
 		}
+	}
+
+	public void renderTiles() {
+		Camera c = Main.getCamera();
+		Hitbox screen = new Hitrect(c.getX() - 0.5 * Main.WIDTH / c.getZoom(),
+			c.getY() - 0.5 * Main.HEIGHT / c.getZoom(), Main.WIDTH / c.getZoom(),
+			Main.HEIGHT / c.getZoom());
+		int xMin = (int) screen.getBounds().x;
+		int xMax = (int) (screen.getBounds().x + screen.getBounds().w);
+		int yMin = (int) screen.getBounds().y;
+		int yMax = (int) (screen.getBounds().y + screen.getBounds().h);
+
+		for (int x = xMin; x <= xMax; x++)
+			for (int y = yMin; y <= yMax; y++) {
+				if (get(x, y) == null || get(x,y).getID() == 0)
+					continue;
+				tile.draw(16*(get(x,y).getID()-1), 0, 16, 16, x, y, 1, 1);
+			}
 	}
 
 	public void renderEntities() {

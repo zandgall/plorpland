@@ -11,9 +11,7 @@ import com.zandgall.plorpland.level.Tile;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitrect;
 
-public class TileEditor {
-
-	Image tile = new Image("/tiles/5tiles.png");
+public class TileEditor {	
 
 	int tileX = 0, tileY = 0;
 
@@ -42,7 +40,7 @@ public class TileEditor {
 			lvl.put(tileX, tileY, Tile.get(4));
 		if(Main.keys[GLFW_KEY_6])
 			lvl.put(tileX, tileY, Tile.get(5));
-		Main.getCamera().target(tileX+0.5, tileY+0.5);
+		Main.getCamera().target(tileX+0.5, tileY+0.5, LevelEditor.ZOOM);
 		Main.getCamera().tick();
 	}
 
@@ -50,22 +48,8 @@ public class TileEditor {
 		lvl.renderSpecialImages();
 		lvl.renderGraphics();
 		lvl.renderEntities();
-
-		Camera c = Main.getCamera();
-		Hitbox screen = new Hitrect(c.getX() - 0.5 * Main.WIDTH / c.getZoom(),
-			c.getY() - 0.5 * Main.HEIGHT / c.getZoom(), Main.WIDTH / c.getZoom(),
-			Main.HEIGHT / c.getZoom());
-		int xMin = (int) screen.getBounds().x;
-		int xMax = (int) (screen.getBounds().x + screen.getBounds().w);
-		int yMin = (int) screen.getBounds().y;
-		int yMax = (int) (screen.getBounds().y + screen.getBounds().h);
-
-		for (int x = xMin; x <= xMax; x++)
-			for (int y = yMin; y <= yMax; y++) {
-				if (lvl.get(x, y) == null || lvl.get(x,y).getID() == 0)
-					continue;
-				tile.draw(16*(lvl.get(x,y).getID()-1), 0, 16, 16, x, y, 1, 1);
-			}
+		lvl.renderTiles();
+		
 		Shader.Color.use().push().drawToWorld()
 			.color(1, 1, 1).alpha(0.1)
 			.setModel(tileX, tileY, 1.0, 1.0);

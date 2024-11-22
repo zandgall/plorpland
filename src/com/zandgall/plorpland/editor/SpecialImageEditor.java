@@ -29,13 +29,13 @@ public class SpecialImageEditor {
 
 	public void tick(Level lvl) {
 		if(Main.keys[GLFW_KEY_LEFT])
-			x -= 0.1 * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
+			x -= 6.0 / LevelEditor.ZOOM * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
 		if(Main.keys[GLFW_KEY_RIGHT])
-			x += 0.1 * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
+			x += 6.0 / LevelEditor.ZOOM * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
 		if(Main.keys[GLFW_KEY_UP])
-			y -= 0.1 * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
+			y -= 6.0 / LevelEditor.ZOOM * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
 		if(Main.keys[GLFW_KEY_DOWN])
-			y += 0.1 * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
+			y += 6.0 / LevelEditor.ZOOM * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
 
 		if(Main.keyEv[GLFW_KEY_A]) {
 			File newSpecialImage = LevelEditor.openFileDialog("Add special image");
@@ -66,13 +66,16 @@ public class SpecialImageEditor {
 			}
 		}
 	
-		Main.getCamera().target(x, y);
+		Main.getCamera().target(x, y, LevelEditor.ZOOM);
 		Main.getCamera().tick();
 	}
 
 	public void render(Level lvl) {
 		lvl.renderGraphics();
 		lvl.renderEntities();
+		Shader.Image.use().push().alpha(0.1);
+		lvl.renderTiles();
+		Shader.Image.use().pop();
 		lvl.renderSpecialImages();
 		for(SpecialImage i : lvl.specialImages.get(0)) {
 			Shader.Image.use().push().drawToWorld().setModel(new Matrix4f().identity());
@@ -83,25 +86,25 @@ public class SpecialImageEditor {
 			// System.out.printf("Drawing box at %.1f, %.1f, %.1f, %.1f%n", r.x, r.y, r.w, r.h);
 			Shader.Color.use().push().drawToWorld().setModel(new Matrix4f().identity())
 				.color(0, 0, 0).alpha(0.2)
-				.setModel(r.x, r.y + r.h, r.w, 0.1);
+				.setModel(r.x, r.y + r.h, r.w, 3.0 / LevelEditor.ZOOM);
 			G.drawSquare();
 			Shader.Color.use().setModel(new Matrix4f().identity())
-				.setModel(r.x, r.y, r.w, 0.1);
+				.setModel(r.x, r.y, r.w, 3.0 / LevelEditor.ZOOM);
 			G.drawSquare();
 			Shader.Color.use().setModel(new Matrix4f().identity())
-				.setModel(r.x, r.y, 0.1, r.h);
+				.setModel(r.x, r.y, 3.0 / LevelEditor.ZOOM, r.h);
 			G.drawSquare();
 			Shader.Color.use().setModel(new Matrix4f().identity())
-				.setModel(r.x + r.w, r.y, 0.1, r.h);
+				.setModel(r.x + r.w, r.y, 3.0 / LevelEditor.ZOOM, r.h);
 			G.drawSquare();
 
 			Shader.Color.use().setModel(new Matrix4f().identity())
 				.color(1, 0, 0).alpha(1.0)
-				.setModel(i.getX()-0.05, i.getY()-0.05, 0.1, 0.1);
+				.setModel(i.getX()-(1.5 / LevelEditor.ZOOM), i.getY()-(1.5 / LevelEditor.ZOOM), 3.0 / LevelEditor.ZOOM, 3.0 / LevelEditor.ZOOM);
 			G.drawSquare();
 
 			double xO = i.getXOff(), yO = i.getYOff();
-			double len = Math.sqrt(xO*xO+yO*yO)*10;
+			double len = Math.sqrt(xO*xO+yO*yO) / (3.0 / LevelEditor.ZOOM);
 			Shader.Color.use().setModel(new Matrix4d(
 				// i.getYOff()/len, i.getXOff()/len, 0, 0,
 				-yO / len, xO / len, 0, 0,
@@ -113,11 +116,11 @@ public class SpecialImageEditor {
 
 			Shader.Color.use().setModel(new Matrix4f().identity())
 				.color(0, 1, 0).alpha(1.0)
-				.setModel(i.getX()+i.getXOff()-0.1, i.getY()+i.getYOff()-0.1, 0.2, 0.2);
+				.setModel(i.getX()+i.getXOff()-(3.0 / LevelEditor.ZOOM), i.getY()+i.getYOff()-(3.0 / LevelEditor.ZOOM), 6.0 / LevelEditor.ZOOM, 6.0 / LevelEditor.ZOOM);
 			G.drawSquare();
 
 			Shader.Color.use().setModel(new Matrix4d(
-					0.05, 0, 0, 0,
+					6.0 / LevelEditor.ZOOM, 0, 0, 0,
 					0, i.getDamping(), 0, 0,
 					0, 0, 1, 0,
 					i.getX(), i.getY(), 0, 1
@@ -129,7 +132,7 @@ public class SpecialImageEditor {
 		}
 		Shader.Color.use().push().drawToWorld()
 			.color(1, 0, 0).alpha(0.5)
-			.setModel(x-0.1, y-0.1, 0.2, 0.2);
+			.setModel(x-(3.0 / LevelEditor.ZOOM), y-(3.0 / LevelEditor.ZOOM), 6.0 / LevelEditor.ZOOM, 6.0 / LevelEditor.ZOOM);
 		G.drawSquare();
 		Shader.Color.use().pop();
 	}

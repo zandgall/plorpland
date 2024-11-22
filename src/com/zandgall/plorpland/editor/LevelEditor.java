@@ -69,6 +69,10 @@ public class LevelEditor extends Main {
 				lastKey = key;
 		});
 
+		glfwSetScrollCallback(window, (window, deltaX, deltaY) -> {
+			ZOOM += ZOOM * 0.1 * deltaY;
+		});
+
 		glfwMakeContextCurrent(window);
 
 		// TODO: VSYNC option?
