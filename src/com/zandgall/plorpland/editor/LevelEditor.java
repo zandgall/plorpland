@@ -30,6 +30,7 @@ public class LevelEditor extends Main {
 
 	private static TileEditor tileeditor = new TileEditor();
 	private static SpecialImageEditor specialimageeditor = new SpecialImageEditor();
+	private static GraphicsEditor graphicseditor = new GraphicsEditor();
 
 	public static void main(String[] args) {
 		GLFWErrorCallback.createPrint(System.err).set();
@@ -117,6 +118,7 @@ public class LevelEditor extends Main {
 		switch(state) {
 		case 0 -> tileeditor.tick(lvl);
 		case 1 -> specialimageeditor.tick(lvl);
+		case 2 -> graphicseditor.tick(lvl);
 		}
 
 		if(keys[GLFW_KEY_T]) {
@@ -126,6 +128,10 @@ public class LevelEditor extends Main {
 		if(keys[GLFW_KEY_S]) {
 			specialimageeditor.switchTo();
 			state = 1;
+		}
+		if(keys[GLFW_KEY_G]) {
+			graphicseditor.switchTo();
+			state = 2;
 		}
 		
 		for(int i = 0; i < GLFW_KEY_LAST; i++) {
@@ -138,6 +144,7 @@ public class LevelEditor extends Main {
 		switch(state) {
 		case 0 -> tileeditor.render(lvl);
 		case 1 -> specialimageeditor.render(lvl);
+		case 2 -> graphicseditor.render(lvl);
 		}
 		Layer.flushToScreen();
 		glfwSwapBuffers(window);
