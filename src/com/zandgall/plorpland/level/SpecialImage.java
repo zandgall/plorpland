@@ -16,7 +16,7 @@ import com.zandgall.plorpland.util.Rect;
 public class SpecialImage {
 	private Image image;
 	private double x, y, xOff, yOff, damping;
-	public SpecialImage(String path, double xOff, double yOff, double x, double y, double damping) {
+	public SpecialImage(String path, double x, double y, double xOff, double yOff, double damping) {
 		image = new Image(path);
 		this.xOff = xOff;
 		this.yOff = yOff;

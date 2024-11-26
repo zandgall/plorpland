@@ -41,7 +41,7 @@ public class SpecialImageEditor {
 			File newSpecialImage = LevelEditor.openFileDialog("Add special image");
 			if(newSpecialImage != null && newSpecialImage.isFile() && newSpecialImage.exists() && newSpecialImage.getName().endsWith(".png")) {
 				try {
-					selected = new SpecialImage("", 0, 0, x, y, 0.1);
+					selected = new SpecialImage("", x, y, 0, 0, 0.1);
 					selected.setImage(new Image(Image.textureFrom(new FileInputStream(newSpecialImage))));
 					lvl.specialImages.get(0).add(selected);
 					System.out.printf("Added special image : %.1f %.1f, %.1f %.1f, %.1f [%.1f, %.1f, %.1f, %.1f]%n", selected.getX(), selected.getY(), selected.getXOff(), selected.getYOff(), selected.getDamping(), selected.getRenderBox().x, selected.getRenderBox().y, selected.getRenderBox().w, selected.getRenderBox().h);
@@ -52,6 +52,17 @@ public class SpecialImageEditor {
 				}
 			} else
 				System.err.println("Needs to be an existing .png file!");
+		}
+
+		if(Main.keyEv[GLFW_KEY_SPACE]) {
+			for(SpecialImage s : lvl.specialImages.get(0)) {
+				if(s.getRenderBox().intersects(x-0.05, y-0.05, 0.1, 0.1)) {
+					lvl.specialImages.get(0).remove(s);
+					lvl.specialImages.get(0).add(s);
+					selected = s;
+					break;
+				}
+			}
 		}
 
 		if(selected!=null) {
@@ -134,6 +145,12 @@ public class SpecialImageEditor {
 			.color(1, 0, 0).alpha(0.5)
 			.setModel(x-(3.0 / LevelEditor.ZOOM), y-(3.0 / LevelEditor.ZOOM), 6.0 / LevelEditor.ZOOM, 6.0 / LevelEditor.ZOOM);
 		G.drawSquare();
+		if(selected!=null) {
+			Shader.Color.use().setModel(new Matrix4f().identity())
+				.setModel(selected.getRenderBox().x, selected.getRenderBox().y, selected.getRenderBox().w, selected.getRenderBox().h)
+				.alpha(0.1).color(0, 1, 0);
+			G.drawSquare();
+		}
 		Shader.Color.use().pop();
 	}
 

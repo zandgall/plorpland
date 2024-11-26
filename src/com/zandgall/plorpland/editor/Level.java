@@ -2,8 +2,10 @@ package com.zandgall.plorpland.editor;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -44,24 +46,134 @@ public class Level {
 		specialImages.add(new ArrayList<>());
 	}
 
-	public void load(String leveldir) throws IOException {
-		Scanner s = new Scanner(new File(leveldir + "/imageobjects"));	
-		while(s.hasNextLine()) {
-			String line = s.nextLine();
-			Scanner p = new Scanner(line);
-			specialImages.get(p.nextInt()).add(new SpecialImage(leveldir + p.next(), p.nextDouble(), p.nextDouble(), p.nextDouble(), p.nextDouble(), p.nextDouble()));
-			p.close();
+	public void write(File leveldir) throws IOException {
+		if(!leveldir.exists())
+			leveldir.mkdirs();
+		File specialdir = new File(leveldir + "/bgdecor/");
+		if(!specialdir.exists())
+			specialdir.mkdirs();
+		for(int i = 0; i < specialImages.get(0).size(); i++) {
+			specialImages.get(0).get(i).getImage().writeTo(leveldir + "/bgdecor/" + i + ".png");
+			ObjectOutputStream spiOS = new ObjectOutputStream(new FileOutputStream(leveldir + "/" + i));
+			spiOS.writeDouble(specialImages.get(0).get(i).getX());
+			spiOS.writeDouble(specialImages.get(0).get(i).getY());
+			spiOS.writeDouble(specialImages.get(0).get(i).getXOff());
+			spiOS.writeDouble(specialImages.get(0).get(i).getYOff());
+			spiOS.writeDouble(specialImages.get(0).get(i).getDamping());
+			spiOS.close();
 		}
-		s.close();
+		layer0.writeTo(leveldir + "/0.png");
+		layer1.writeTo(leveldir + "/1.png");
+		shadow0.writeTo(leveldir + "/0s.png");
+		shadow1.writeTo(leveldir + "/1s.png");
+		ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(leveldir + "/graphicsoffset.bin"));
+		os.writeDouble(graphicsX);
+		os.writeDouble(graphicsY);
+		os.close();
+		writeTileData(leveldir + "/tiles.bin");
+		writeEntityData(leveldir + "/entities.bin");
+	}
+
+	public void writeTileData(String path) throws IOException {
+		ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(path));
+
+		// Version number
+		os.writeByte(2);
+		os.writeByte(0);
+
+		Rect r = new Rect();
+		for(int x : tiles.keySet())
+			for(int y : tiles.get(x).keySet())
+				if(tiles.get(x).get(y).getID() != 0)
+					r.add(x, y);
+
+		os.writeInt((int)r.y);
+		os.writeInt((int)r.h);
+		for(int y = (int)r.y; y <= r.y + r.h; y++) {
+			boolean writing = false, lineEnd = false;
+			for(int x = (int)r.x; x <= r.x + r.w && !lineEnd; x++) {
+				if(get(x, y) == null || get(x, y).getID() == 0) {
+					if(!writing)
+						continue; // Havent started writing yet, wait for tile
+					
+					// write one 0 and figure out what to do next
+					os.writeInt(0);
+
+					// we wrote tiles and hit an empty tile, check if this is the end of
+					// this line of tiles
+					lineEnd = true;
+					for(int i = x; i <= r.w; i++) {
+						if(get(i, y) != null && get(i, y).getID() != 0) {
+							lineEnd = false;
+							os.writeInt(i - x); // write number of empty tiles in this line
+							// System.out.printf("%d: 0s space from %x to %x%n", y, x, i);
+							x = i - 1;
+							break;
+						}
+					}
+					if(lineEnd) {
+						os.writeInt(0);
+						// System.out.printf("%d: eol at %d%n", y, x);
+					}
+				} else {
+					// First tile being written, note x position
+					if(!writing) {
+						os.writeInt(x);
+						writing = true;
+					}
+					os.writeInt(get(x, y).getID());
+				}
+			}
+
+			// if we didn't write anything, add blank line "0 0 0"
+			// (equiv of x = 0, newline)
+			if(!writing) {
+				os.writeInt(0);
+				// System.out.printf("%d: blank line%n", y);
+			}
+			if(!lineEnd) {
+				os.writeInt(0);
+				os.writeInt(0);
+				// System.out.printf("%d: premature new line%n", y);
+			}
+		}
+
+		os.close();
+	}
+
+	public void writeEntityData(String path) throws IOException {
+		ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(path));
+		os.writeByte(2);
+		os.writeByte(0);
+		os.writeInt(0);
+		os.close();
+	}
+
+	public void load(File leveldir) throws IOException {
+		ObjectInputStream is = new ObjectInputStream(new FileInputStream(leveldir + "/bgdecor/index"));
+		int numbgdecor = is.readInt();
+		is.close();
+		specialImages.get(0).clear();
+		for(int i = 0; i < numbgdecor; i++) {
+			is = new ObjectInputStream(new FileInputStream(leveldir + "/bgdecor/" + i));
+			specialImages.get(0).add(new SpecialImage("", is.readDouble(), is.readDouble(), is.readDouble(), is.readDouble(), is.readDouble()));
+			specialImages.get(0).get(i).setImage(new Image(Image.textureFrom(new FileInputStream(leveldir + "/bgdecor/" + i + ".png"))));
+			is.close();
+		}
 
 		// Load level graphics
 		// loadGraphics(leveldir);
-		layer0 = new Image(leveldir + "/layer0.png");
-		layer1 = new Image(leveldir + "/layer1.png");
-		shadow0 = new Image(leveldir + "/shadow0.png");
-		shadow1 = new Image(leveldir + "/shadow1.png");
+		is = new ObjectInputStream(new FileInputStream(leveldir + "/graphicsoffset.bin"));
+		graphicsX = is.readDouble();
+		graphicsY = is.readDouble();
+		is.close();
+
+		layer0 = new Image(Image.textureFrom(new FileInputStream(leveldir + "/0.png")));
+		layer1 = new Image(Image.textureFrom(new FileInputStream(leveldir + "/1.png")));
+		shadow0 = new Image(Image.textureFrom(new FileInputStream(leveldir + "/0s.png")));
+		shadow1 = new Image(Image.textureFrom(new FileInputStream(leveldir + "/1s.png")));
 		loadTileData(leveldir + "/tiles.bin");
-		loadTileData(leveldir + "/entities.bin");
+		loadEntityData(leveldir + "/entities.bin");
 	}
 
 	private void loadTileData(String path) throws IOException {
@@ -71,7 +183,7 @@ public class Level {
 		entities.clear();
 
 		// Load resource
-		ObjectInputStream s = new ObjectInputStream(Level.class.getResourceAsStream(path));
+		ObjectInputStream s = new ObjectInputStream(new FileInputStream(path));
 
 		// Check version number
 		byte major = s.readByte();

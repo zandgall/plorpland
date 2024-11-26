@@ -4,6 +4,9 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -133,6 +136,22 @@ public class LevelEditor extends Main {
 			graphicseditor.switchTo();
 			state = 2;
 		}
+		if(keyEv[GLFW_KEY_W]) {
+			try {
+				lvl.write(saveFolderDialog("Save level"));
+			} catch(IOException e) {
+				e.printStackTrace();
+				System.err.println("Failed to write level");
+			}
+		}
+		if(keyEv[GLFW_KEY_O]) {
+			try {
+				lvl.load(openFolderDialog("Open level"));
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.err.println("Failed to load level");
+			}
+		}
 		
 		for(int i = 0; i < GLFW_KEY_LAST; i++) {
 			pKeys[i] = keys[i];
@@ -150,6 +169,18 @@ public class LevelEditor extends Main {
 		glfwSwapBuffers(window);
 	}
 
+	public static File openFolderDialog(String prompt) {
+		// Using swing just to use file dialogs
+		JFrame frame = new JFrame();
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setDialogTitle(prompt);
+		int selection = chooser.showOpenDialog(frame);
+		if (selection != JFileChooser.APPROVE_OPTION)
+			return null;
+		return chooser.getSelectedFile();
+	}
+
 	public static File openFileDialog(String prompt) {
 		// Using swing just to use file dialogs
 		JFrame frame = new JFrame();
@@ -161,6 +192,7 @@ public class LevelEditor extends Main {
 		return chooser.getSelectedFile();
 	}
 
+
 	public static File saveFileDialog(String prompt) {
 		// Using swing just to use file dialogs
 		JFrame frame = new JFrame();
@@ -171,4 +203,17 @@ public class LevelEditor extends Main {
 			return null;
 		return chooser.getSelectedFile();
 	}
+
+	public static File saveFolderDialog(String prompt) {
+		// Using swing just to use file dialogs
+		JFrame frame = new JFrame();
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setDialogTitle(prompt);
+		int selection = chooser.showSaveDialog(frame);
+		if (selection != JFileChooser.APPROVE_OPTION)
+			return null;
+		return chooser.getSelectedFile();
+	}
+
 }

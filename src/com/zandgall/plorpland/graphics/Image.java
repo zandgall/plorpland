@@ -1,8 +1,10 @@
 package com.zandgall.plorpland.graphics;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import org.joml.Matrix4f;
@@ -10,6 +12,7 @@ import org.lwjgl.BufferUtils;
 
 import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.stb.STBImage;
+import org.lwjgl.stb.STBImageWrite;
 
 public class Image {
 	private int texture, width, height;
@@ -63,6 +66,13 @@ public class Image {
 			e.printStackTrace();
 		}
 		pong = true;
+	}
+
+	public void writeTo(String filename) throws IOException {
+		ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+		STBImageWrite.stbi_write_png(filename, width, height, 4, buffer, width * 4);
 	}
 
 	public static int textureFrom(InputStream in) throws IOException {
