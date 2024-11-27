@@ -23,7 +23,7 @@ public class Tree extends Entity {
 	private static Image shadow = new Image("/entity/tree_shadow.png");
 	private double peekTransparency = 1;
 
-	private Hitbox renderBounds, solidBounds;
+	private Hitrect renderBounds, solidBounds;
 
 	public Tree() {
 		super();
@@ -48,7 +48,7 @@ public class Tree extends Entity {
 		Hitbox treebox = new Hitrect(getX() - 1.0, getY() - 2.5, 2, 1.6);
 		// if the player is behind the leaves, slowly shift "peekTransparency" to 0.75
 		// opacity, otherwise shift it to full opacity
-		if (treebox.intersects(Main.getPlayer().getRenderBounds()))
+		if (Main.getPlayer() != null && treebox.intersects(Main.getPlayer().getRenderBounds()))
 			peekTransparency = peekTransparency * 0.95 + 0.75 * 0.05;
 		else
 			peekTransparency = peekTransparency * 0.95 + 1.0 * 0.05;
@@ -68,6 +68,23 @@ public class Tree extends Entity {
 		Shader.Image.use().alpha(peekTransparency);
 		leaves.draw(getX() - 1.5, getY() - 3.5, 3, 4);
 		Shader.Image.use().pop();
+	}
+
+	private void updateBounds() {
+		renderBounds = new Hitrect(getX() - 1.5, getY() - 3.5, 3.0, 5.0);
+		solidBounds = new Hitrect(getX() - 0.3, getY() - 0.3, 0.6, 0.6);
+	}
+
+	@Override
+	public void setX(double x) {
+		super.setX(x);
+		updateBounds();
+	}
+
+	@Override
+	public void setY(double y) {
+		super.setY(y);
+		updateBounds();
 	}
 
 	public Hitbox getRenderBounds() {

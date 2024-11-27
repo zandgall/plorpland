@@ -23,7 +23,7 @@ public class HealthFlower extends Entity {
 
 	private double timer;
 
-	private Hitbox bounds;
+	private Hitrect bounds;
 
 	public HealthFlower(double x, double y) {
 		super(x, y);
@@ -47,6 +47,18 @@ public class HealthFlower extends Entity {
 		Shader.Image.use();
 		Layer.ENTITY_BASE.use();
 		texture.draw(0, frame * 16, 16, 16, position.x - 0.5, position.y - 0.5, 1, 1);
+	}
+
+	@Override
+	public void setX(double x) {
+		super.setX(x);
+		bounds.set(x - 0.5, position.y - 0.5, 1, 1);
+	}
+
+	@Override
+	public void setY(double y) {
+		super.setY(y);
+		bounds.set(position.x - 0.5, y - 0.5, 1, 1);
 	}
 
 	public Hitbox getRenderBounds() {

@@ -47,14 +47,14 @@ public class Level {
 	}
 
 	public void write(File leveldir) throws IOException {
-		if(!leveldir.exists())
-			leveldir.mkdirs();
-		File specialdir = new File(leveldir + "/bgdecor/");
-		if(!specialdir.exists())
-			specialdir.mkdirs();
+		leveldir.mkdirs();
+		new File(leveldir + "/bgdecor/").mkdirs();
+		ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(leveldir + "/bgdecor/index"));
+		os.writeInt(specialImages.get(0).size());
+		os.close();
 		for(int i = 0; i < specialImages.get(0).size(); i++) {
 			specialImages.get(0).get(i).getImage().writeTo(leveldir + "/bgdecor/" + i + ".png");
-			ObjectOutputStream spiOS = new ObjectOutputStream(new FileOutputStream(leveldir + "/" + i));
+			ObjectOutputStream spiOS = new ObjectOutputStream(new FileOutputStream(leveldir + "/bgdecor/" + i));
 			spiOS.writeDouble(specialImages.get(0).get(i).getX());
 			spiOS.writeDouble(specialImages.get(0).get(i).getY());
 			spiOS.writeDouble(specialImages.get(0).get(i).getXOff());
@@ -66,7 +66,7 @@ public class Level {
 		layer1.writeTo(leveldir + "/1.png");
 		shadow0.writeTo(leveldir + "/0s.png");
 		shadow1.writeTo(leveldir + "/1s.png");
-		ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(leveldir + "/graphicsoffset.bin"));
+		os = new ObjectOutputStream(new FileOutputStream(leveldir + "/graphicsoffset.bin"));
 		os.writeDouble(graphicsX);
 		os.writeDouble(graphicsY);
 		os.close();
@@ -145,7 +145,9 @@ public class Level {
 		ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(path));
 		os.writeByte(2);
 		os.writeByte(0);
-		os.writeInt(0);
+		os.writeInt(entities.size());
+		for(Entity e : entities)
+			os.writeObject(e);
 		os.close();
 	}
 

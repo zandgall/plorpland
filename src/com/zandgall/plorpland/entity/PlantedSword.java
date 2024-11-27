@@ -21,7 +21,7 @@ public class PlantedSword extends Entity {
 
 	private static Image texture = new Image("/entity/planted_sword.png");
 
-	private Hitbox swordbox, renderBounds, updateBounds;
+	private Hitrect swordbox, renderBounds, updateBounds;
 
 	public PlantedSword() {
 		super();
@@ -54,6 +54,24 @@ public class PlantedSword extends Entity {
 		Shader.Image.use();
 		Layer.ENTITY_BASE.use();
 		texture.draw(position.x - 1, position.y - 1.8, 2, 2);
+	}
+
+	private void updateBounds() {
+		swordbox.set(position.x - 0.5, position.y - 0.2, 1.0, 0.4);
+		renderBounds.set(position.x - 1, position.y - 1.8, 2, 2);
+		updateBounds.set(position.x - 45, position.y - 45, 90, 90);
+	}
+
+	@Override
+	public void setX(double x) {
+		super.setX(x);
+		updateBounds();
+	}
+
+	@Override
+	public void setY(double y) {
+		super.setY(y);
+		updateBounds();
 	}
 
 	public Hitbox getRenderBounds() {
