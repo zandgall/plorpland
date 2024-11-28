@@ -5,7 +5,10 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.joml.Matrix4f;
 
 import com.zandgall.plorpland.Main;
-import com.zandgall.plorpland.entity.*;
+import com.zandgall.plorpland.entity.Entity;
+import com.zandgall.plorpland.entity.PlantedSword;
+import com.zandgall.plorpland.entity.Tree;
+import com.zandgall.plorpland.entity.misc.combattest.*;
 import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
