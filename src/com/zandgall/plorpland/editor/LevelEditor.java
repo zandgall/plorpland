@@ -36,6 +36,7 @@ public class LevelEditor extends Main {
 	private static SpecialImageEditor specialimageeditor = new SpecialImageEditor();
 	private static GraphicsEditor graphicseditor = new GraphicsEditor();
 	private static EntityEditor entityeditor = new EntityEditor();
+	private static StageEditor stageeditor = new StageEditor();
 
 	public static void main(String[] args) {
 		GLFWErrorCallback.createPrint(System.err).set();
@@ -125,6 +126,7 @@ public class LevelEditor extends Main {
 		case 1 -> specialimageeditor.tick(lvl);
 		case 2 -> graphicseditor.tick(lvl);
 		case 3 -> entityeditor.tick(lvl);
+		case 4 -> stageeditor.tick(lvl);
 		}
 
 		if(keys[GLFW_KEY_T]) {
@@ -142,6 +144,10 @@ public class LevelEditor extends Main {
 		if(keys[GLFW_KEY_E]) {
 			entityeditor.switchTo();
 			state = 3;
+		}
+		if(keys[GLFW_KEY_F]) {
+			stageeditor.switchTo();
+			state = 4;
 		}
 		if(keyEv[GLFW_KEY_W]) {
 			try {
@@ -172,6 +178,7 @@ public class LevelEditor extends Main {
 		case 1 -> specialimageeditor.render(lvl);
 		case 2 -> graphicseditor.render(lvl);
 		case 3 -> entityeditor.render(lvl);
+		case 4 -> stageeditor.render(lvl);
 		}
 		Layer.flushToScreen();
 		glfwSwapBuffers(window);

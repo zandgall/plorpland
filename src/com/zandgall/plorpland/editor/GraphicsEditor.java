@@ -64,11 +64,11 @@ public class GraphicsEditor {
 
 		if(Main.keys[GLFW_KEY_A]) {
 			if(!Main.pKeys[GLFW_KEY_A]) {
-				contentX = x - lvl.graphicsX;
-				contentY = y - lvl.graphicsY;
+				contentX = x - lvl.graphics.x;
+				contentY = y - lvl.graphics.y;
 			}
-			lvl.graphicsX = x - contentX;
-			lvl.graphicsY = y - contentY;
+			lvl.graphics.x = x - contentX;
+			lvl.graphics.y = y - contentY;
 		}
 	
 		Main.getCamera().target(x, y, LevelEditor.ZOOM);

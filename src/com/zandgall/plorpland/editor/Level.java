@@ -27,6 +27,7 @@ import com.zandgall.plorpland.level.Tile;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitrect;
 import com.zandgall.plorpland.util.Rect;
+import com.zandgall.plorpland.util.Vector;
 
 public class Level {
 	private Image tile = new Image("/tiles/5tiles.png");
@@ -34,8 +35,10 @@ public class Level {
 	public HashMap<Integer, HashMap<Integer, Tile>> tiles = new HashMap<>();
 	protected static final int CHUNK_SIZE = 128;
 
+	public Vector spawnpoint = new Vector(0, 0);
+
 	// Level graphics
-	public double graphicsX = 0, graphicsY = 0;
+	public Vector graphics = new Vector(0, 0);
 	public Image layer0 = Image.BLANK, layer1 = Image.BLANK, shadow0 = Image.BLANK, shadow1 = Image.BLANK;
 
 	protected ArrayList<ArrayList<SpecialImage>> specialImages = new ArrayList<>();
@@ -66,9 +69,13 @@ public class Level {
 		layer1.writeTo(leveldir + "/1.png");
 		shadow0.writeTo(leveldir + "/0s.png");
 		shadow1.writeTo(leveldir + "/1s.png");
-		os = new ObjectOutputStream(new FileOutputStream(leveldir + "/graphicsoffset.bin"));
-		os.writeDouble(graphicsX);
-		os.writeDouble(graphicsY);
+		os = new ObjectOutputStream(new FileOutputStream(leveldir + "/levelproperties.bin"));
+		os.writeUTF("graphicsOffset");
+		os.writeDouble(graphics.x);
+		os.writeDouble(graphics.y);
+		os.writeUTF("spawnpoint");
+		os.writeDouble(spawnpoint.x);
+		os.writeDouble(spawnpoint.y);
 		os.close();
 		writeTileData(leveldir + "/tiles.bin");
 		writeEntityData(leveldir + "/entities.bin");
@@ -165,9 +172,14 @@ public class Level {
 
 		// Load level graphics
 		// loadGraphics(leveldir);
-		is = new ObjectInputStream(new FileInputStream(leveldir + "/graphicsoffset.bin"));
-		graphicsX = is.readDouble();
-		graphicsY = is.readDouble();
+		is = new ObjectInputStream(new FileInputStream(leveldir + "/levelproperties.bin"));
+		while(is.available() > 0) {
+			String key = is.readUTF();
+			switch(key) {
+				case "graphicsOffset" -> {graphics.set(is.readDouble(), is.readDouble());}
+				case "spawnpoint" -> {spawnpoint.set(is.readDouble(), is.readDouble());}
+			}
+		}
 		is.close();
 
 		layer0 = new Image(Image.textureFrom(new FileInputStream(leveldir + "/0.png")));
@@ -297,16 +309,16 @@ public class Level {
 		Shader.Image.use().drawToWorld().setModel(new Matrix4f().identity());
 		Layer.LEVEL_BASE.use();
 		if(layer0 != null)
-			layer0.draw(graphicsX - layer0.getWidth() / 32.0, graphicsY - layer0.getHeight() / 32.0, layer0.getWidth() / 16.0, layer0.getHeight() / 16.0);
+			layer0.draw(graphics.x - layer0.getWidth() / 32.0, graphics.y - layer0.getHeight() / 32.0, layer0.getWidth() / 16.0, layer0.getHeight() / 16.0);
 		Layer.SHADOW_BASE.use();
 		if(shadow0 != null)
-			shadow0.draw(graphicsX - shadow0.getWidth() / 32.0, graphicsY - shadow0.getHeight() / 32.0, shadow0.getWidth() / 16.0, shadow0.getHeight() / 16.0);
+			shadow0.draw(graphics.x - shadow0.getWidth() / 32.0, graphics.y - shadow0.getHeight() / 32.0, shadow0.getWidth() / 16.0, shadow0.getHeight() / 16.0);
 		Layer.LEVEL_FOREGROUND.use();
 		if(layer1 != null)
-			layer1.draw(graphicsX - layer1.getWidth() / 32.0, graphicsY - layer1.getHeight() / 32.0, layer1.getWidth() / 16.0, layer1.getHeight() / 16.0);
+			layer1.draw(graphics.x - layer1.getWidth() / 32.0, graphics.y - layer1.getHeight() / 32.0, layer1.getWidth() / 16.0, layer1.getHeight() / 16.0);
 		Layer.SHADOW_FOREGROUND.use();
 		if(shadow1 != null)
-			shadow1.draw(graphicsX - shadow1.getWidth() / 32.0, graphicsY - shadow1.getHeight() / 32.0, shadow1.getWidth() / 16.0, shadow1.getHeight() / 16.0);
+			shadow1.draw(graphics.x - shadow1.getWidth() / 32.0, graphics.y - shadow1.getHeight() / 32.0, shadow1.getWidth() / 16.0, shadow1.getHeight() / 16.0);
 	}
 
 	public void renderTiles() {
@@ -342,6 +354,13 @@ public class Level {
 		});
 		for(Entity e : sorted)
 			e.render();
+	}
 
+	public void renderStaging() {
+		Shader.Color.use().push().drawToWorld()
+			.setModel(new Matrix4f()).setModel(spawnpoint.x - 0.5, spawnpoint.y - 0.5, 1, 1)
+			.color(1, 0, 1);
+		G.drawSquare();
+		Shader.Color.use().pop();
 	}
 }
