@@ -36,7 +36,7 @@ public class Level {
 
 	// Level graphics
 	public double graphicsX = 0, graphicsY = 0;
-	public Image layer0 = null, layer1 = null, shadow0 = null, shadow1 = null;
+	public Image layer0 = Image.BLANK, layer1 = Image.BLANK, shadow0 = Image.BLANK, shadow1 = Image.BLANK;
 
 	protected ArrayList<ArrayList<SpecialImage>> specialImages = new ArrayList<>();
 

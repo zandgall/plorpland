@@ -15,6 +15,9 @@ import org.lwjgl.stb.STBImage;
 import org.lwjgl.stb.STBImageWrite;
 
 public class Image {
+
+	public static final Image BLANK = new Image(0);
+
 	private int texture, width, height;
 	private String path;
 	private boolean pong = false;
@@ -27,10 +30,15 @@ public class Image {
 
 	public Image(int texture) {
 		this.texture = texture;
-		glBindTexture(GL_TEXTURE_2D, texture);
-		this.width = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
-		this.height = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		if(texture == 0) {
+			this.width = 0;
+			this.height = 0;
+		} else {
+			glBindTexture(GL_TEXTURE_2D, texture);
+			this.width = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
+			this.height = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 		this.path = "";
 		this.pong = true;
 	}
@@ -38,28 +46,11 @@ public class Image {
 	private void ping() {
 		if(pong)
 			return;
-		BufferedInputStream fileByteInput = new BufferedInputStream(Image.class.getResourceAsStream(path));
 		try {
-			byte[] fileBytes = fileByteInput.readAllBytes();
-			ByteBuffer fileBuffer = BufferUtils.createByteBuffer(fileBytes.length);
-			fileBuffer.put(fileBytes);
-			fileBuffer.flip();
-			fileBuffer.rewind();
-			int[] x = {0}, y = {0}, c = {0};
-			ByteBuffer imageBuffer = STBImage.stbi_load_from_memory(fileBuffer, x, y, c, STBImage.STBI_rgb_alpha);
-			width = x[0];
-			height = y[0];
-			
-			texture = glGenTextures();
+			this.texture = textureFrom(Image.class.getResourceAsStream(path));
 			glBindTexture(GL_TEXTURE_2D, texture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glGenerateMipmap(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			STBImage.stbi_image_free(imageBuffer);
+			this.width = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
+			this.height = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
 			System.out.printf("Loaded texture \"%s\" %d%n", path, texture);
 		} catch(IOException e) {
 			System.err.println("Could not load image \""+path+"\"");
@@ -87,6 +78,7 @@ public class Image {
 		
 		int texture = glGenTextures();
 		glBindTexture(GL_TEXTURE_2D, texture);
+		// imageBuffer might be null, but it's acceptable to pass null to glTexImage2D
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x[0], y[0], 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -94,7 +86,8 @@ public class Image {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		STBImage.stbi_image_free(imageBuffer);
+		if(imageBuffer != null)	
+			STBImage.stbi_image_free(imageBuffer);
 		return texture;
 	}
 
