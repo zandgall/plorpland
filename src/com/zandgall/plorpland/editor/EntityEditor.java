@@ -2,26 +2,16 @@ package com.zandgall.plorpland.editor;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import org.joml.Matrix4d;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.entity.*;
 import com.zandgall.plorpland.graphics.G;
-import com.zandgall.plorpland.graphics.Image;
 import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
-import com.zandgall.plorpland.level.SpecialImage;
 import com.zandgall.plorpland.util.Rect;
 
-public class EntityEditor {
-
-	double x = 0, y = 0;
+public class EntityEditor extends Editor {
 
 	Entity selected = null;
 
@@ -31,15 +21,13 @@ public class EntityEditor {
 
 	public void tick(Level lvl) {
 		if(Main.keys[GLFW_KEY_LEFT])
-			x -= 6.0 / LevelEditor.ZOOM * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
+			x -= 6.0 / camera.getZoom() * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
 		if(Main.keys[GLFW_KEY_RIGHT])
-			x += 6.0 / LevelEditor.ZOOM * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
+			x += 6.0 / camera.getZoom() * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
 		if(Main.keys[GLFW_KEY_UP])
-			y -= 6.0 / LevelEditor.ZOOM * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
+			y -= 6.0 / camera.getZoom() * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
 		if(Main.keys[GLFW_KEY_DOWN])
-			y += 6.0 / LevelEditor.ZOOM * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
-
-		
+			y += 6.0 / camera.getZoom() * (Main.keys[GLFW_KEY_LEFT_CONTROL] ? 0.1 : 1);
 
 		if(Main.keyEv[GLFW_KEY_SPACE]) {
 			selected = null;
@@ -76,9 +64,6 @@ public class EntityEditor {
 				selected = null;
 			}
 		}
-	
-		Main.getCamera().target(x, y, LevelEditor.ZOOM);
-		Main.getCamera().tick();
 	}
 
 	public void render(Level lvl) {
@@ -94,22 +79,22 @@ public class EntityEditor {
 			// System.out.printf("Drawing box at %.1f, %.1f, %.1f, %.1f%n", r.x, r.y, r.w, r.h);
 			Shader.Color.use().push().drawToWorld().setModel(new Matrix4f().identity())
 				.color(0, 0, 0).alpha(0.2)
-				.setModel(r.x, r.y + r.h, r.w, 3.0 / LevelEditor.ZOOM);
+				.setModel(r.x, r.y + r.h, r.w, 3.0 / camera.getZoom());
 			G.drawSquare();
 			Shader.Color.use().setModel(new Matrix4f().identity())
-				.setModel(r.x, r.y, r.w, 3.0 / LevelEditor.ZOOM);
+				.setModel(r.x, r.y, r.w, 3.0 / camera.getZoom());
 			G.drawSquare();
 			Shader.Color.use().setModel(new Matrix4f().identity())
-				.setModel(r.x, r.y, 3.0 / LevelEditor.ZOOM, r.h);
+				.setModel(r.x, r.y, 3.0 / camera.getZoom(), r.h);
 			G.drawSquare();
 			Shader.Color.use().setModel(new Matrix4f().identity())
-				.setModel(r.x + r.w, r.y, 3.0 / LevelEditor.ZOOM, r.h);
+				.setModel(r.x + r.w, r.y, 3.0 / camera.getZoom(), r.h);
 			G.drawSquare();
 			Shader.Color.use().pop();
 		}
 		Shader.Color.use().push().drawToWorld()
 			.color(1, 0, 0).alpha(0.5)
-			.setModel(x-(3.0 / LevelEditor.ZOOM), y-(3.0 / LevelEditor.ZOOM), 6.0 / LevelEditor.ZOOM, 6.0 / LevelEditor.ZOOM);
+			.setModel(x-(3.0 / camera.getZoom()), y-(3.0 / camera.getZoom()), 6.0 / camera.getZoom(), 6.0 / camera.getZoom());
 		G.drawSquare();
 		if(selected!=null) {
 			Shader.Color.use().setModel(new Matrix4f().identity())
@@ -119,10 +104,5 @@ public class EntityEditor {
 		}
 		Shader.Color.use().pop();
 		Layer.LEVEL_BASE.use();
-	}
-
-	public void switchTo() {
-		x = Main.getCamera().getX();
-		y = Main.getCamera().getY();
 	}
 }

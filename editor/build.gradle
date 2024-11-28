@@ -73,5 +73,5 @@ sourceSets {
 }
 
 application {
-	mainClass = 'com.zandgall.plorpland.editor.LevelEditor'
+	mainClass = 'com.zandgall.plorpland.editor.Editor'
 }

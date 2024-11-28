@@ -4,7 +4,7 @@ plugins {
 
 rootProject.name = 'finalproj'
 
-include 'leveleditor'
+include 'editor'
 include 'game'
 include 'windows-release'
 include 'linux-release'
