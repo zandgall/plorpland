@@ -72,7 +72,7 @@ public class Main {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 		// Set up static elements
-		window = glfwCreateWindow(1280, 720, "Plorpland", NULL, NULL);
+		window = glfwCreateWindow(1280, 720, "Plorpland - Combat Test 1", NULL, NULL);
 		if(window == NULL)
 			throw new RuntimeException("Could not create window");
 
@@ -125,7 +125,7 @@ public class Main {
 
 		player = new Player();
 		hud = new Hud();
-		level = new Level("/level/combattest4");
+		level = new Level("/level/combattest");
 		try {
 			level.load();
 			player.setX(level.getSpawnpoint().x);
