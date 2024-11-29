@@ -30,6 +30,7 @@ import com.zandgall.plorpland.graphics.G;
 import com.zandgall.plorpland.graphics.Layer;
 import com.zandgall.plorpland.graphics.Shader;
 import com.zandgall.plorpland.staging.Cutscene;
+import com.zandgall.plorpland.util.Vector;
 import com.zandgall.plorpland.level.Level;
 
 public class Main {
@@ -46,6 +47,8 @@ public class Main {
 
 	public static boolean[] keys = new boolean[GLFW_KEY_LAST], pKeys = new boolean[GLFW_KEY_LAST], keyEv = new boolean[GLFW_KEY_LAST];
 	public static int lastKey = GLFW_KEY_LAST - 1;
+	public static boolean mouseLeft = false, mouseRight = false, pMouseLeft = false, pMouseRight = false;
+	public static Vector mouse = new Vector(0, 0), mouseVel = new Vector(0, 0);
 
 	// Functions to run after GLFW closes
 	protected static ArrayList<Runnable> postGLFW = new ArrayList<>();
@@ -95,6 +98,18 @@ public class Main {
 				lastKey = key;
 		});
 
+		glfwSetCursorPosCallback(window, (window, x, y) -> {
+			mouseVel.set(x, y).add(-mouse.x, -mouse.y);
+			mouse.set(x, y);
+		});
+
+		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
+			if(button == GLFW_MOUSE_BUTTON_LEFT)
+				mouseLeft = action != GLFW_RELEASE;
+			if(button == GLFW_MOUSE_BUTTON_RIGHT)
+				mouseRight = action != GLFW_RELEASE;
+		});
+
 		glfwMakeContextCurrent(window);
 
 		// TODO: VSYNC option?
@@ -110,9 +125,11 @@ public class Main {
 
 		player = new Player();
 		hud = new Hud();
-		level = new Level("/level/0");
+		level = new Level("/level/combattest4");
 		try {
 			level.load();
+			player.setX(level.getSpawnpoint().x);
+			player.setY(level.getSpawnpoint().y);
 			level.setPlayer(player);
 			quicksave();
 		} catch(IOException e) {
@@ -157,18 +174,23 @@ public class Main {
 		} else if (cutscene.run()) {
 			cutscene = null;
 		}
+		CombatTest.tick();
 		hud.tick();
 		Sound.update();
 		for(int i = 0; i < GLFW_KEY_LAST; i++) {
 			pKeys[i] = keys[i];
 			keyEv[i] = false;
 		}
+		pMouseLeft = mouseLeft;
+		pMouseRight = mouseRight;
+		mouseVel.set(0, 0);
 	}
 
 	public static void render() {
 		// Draw!
 		level.render();
 		hud.render();
+		CombatTest.render();
 
 		// Flush content to screen
 		Layer.flushToScreen();

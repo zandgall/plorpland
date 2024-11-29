@@ -115,6 +115,7 @@ public class Plorp extends Entity {
 			case DEAD:
 				if(timer > 10) {
 					timer = 0;
+					health = 5;
 					state = State.RESTING;
 					position = home.clone();
 				}
@@ -263,7 +264,7 @@ public class Plorp extends Entity {
 			int tileY = (int) Math.floor(box.getBounds().centerY());
 			// if the tile at the center of the box has a hitbox, we'll need to pathfind
 			// around it
-			wall |= Main.getLevel().get(tileX, tileY).solidBounds(tileX, tileY) != null;
+			wall |= (Main.getLevel().get(tileX, tileY) != null && Main.getLevel().get(tileX, tileY).solidBounds(tileX, tileY) != null);
 		}
 
 		// Pathfind if there are obstacles,

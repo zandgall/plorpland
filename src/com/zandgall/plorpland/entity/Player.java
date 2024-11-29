@@ -17,8 +17,10 @@ package com.zandgall.plorpland.entity;
 import static org.lwjgl.glfw.GLFW.*;
 
 import org.joml.Matrix4f;
+import org.joml.Quaterniond;
 
 import com.zandgall.plorpland.Camera;
+import com.zandgall.plorpland.CombatTest;
 import com.zandgall.plorpland.Main;
 import com.zandgall.plorpland.Sound;
 import com.zandgall.plorpland.graphics.G;
@@ -40,7 +42,11 @@ public class Player extends Entity {
 
 	public static Image sword = new Image("/entity/sword.png"), slash = new Image("/entity/sword_slash.png"),
 			stab = new Image("/entity/sword_stab.png"), charged = new Image("/entity/sword_charged.png"),
-			indicator = new Image("/entity/special_indicator.png");
+			indicator = new Image("/entity/special_indicator.png"),
+			indicator_none = new Image("/entity/special_indicator_none.png"),
+			indicator_stab = new Image("/entity/special_indicator_stab.png"),
+			indicator_right_slash = new Image("/entity/special_indicator_right_slash.png"),
+			indicator_left_slash = new Image("/entity/special_indicator_left_slash.png");
 
 	public static enum Special {
 		NONE, SLASH, STAB, CHARGE
@@ -50,6 +56,7 @@ public class Player extends Entity {
 	private boolean hasSword = false;
 	private Hitboxes swordBox;
 	private double swordDirection = 0, swordTargetDirection = 0, swordRotationalVelocity = 0;
+	private Vector swordMovingVelocity = new Vector(0, 0);
 	private double specialTimer = 0;
 	private Special specialMove = Special.NONE, previousMove = Special.NONE;
 
@@ -62,6 +69,7 @@ public class Player extends Entity {
 
 	// Anti broken movement
 	private Vector lastP = new Vector(0, 0), lastV = new Vector(0, 0);
+
 
 	public Player() {
 		super();
@@ -83,18 +91,23 @@ public class Player extends Entity {
 
 		// Arrow keys to move
 		if (specialMove == Special.NONE) {
-			if (Main.keys[GLFW_KEY_RIGHT])
+			if ((CombatTest.INPUT_MODE == 0 && Main.keys[GLFW_KEY_RIGHT])
+				||(CombatTest.INPUT_MODE != 0 && Main.keys[GLFW_KEY_D]))
 				velocity.x += MOVE_SPEED;
-			if (Main.keys[GLFW_KEY_LEFT])
+			if ((CombatTest.INPUT_MODE == 0 && Main.keys[GLFW_KEY_LEFT])
+				||(CombatTest.INPUT_MODE != 0 && Main.keys[GLFW_KEY_A]))
 				velocity.x -= MOVE_SPEED;
-			if (Main.keys[GLFW_KEY_DOWN])
+			if ((CombatTest.INPUT_MODE == 0 && Main.keys[GLFW_KEY_DOWN])
+				||(CombatTest.INPUT_MODE != 0 && Main.keys[GLFW_KEY_S]))
 				velocity.y += MOVE_SPEED;
-			if (Main.keys[GLFW_KEY_UP])
+			if ((CombatTest.INPUT_MODE == 0 && Main.keys[GLFW_KEY_UP])
+				||(CombatTest.INPUT_MODE != 0 && Main.keys[GLFW_KEY_W]))
 				velocity.y -= MOVE_SPEED;
-			swordTargetDirection = Math.atan2(velocity.y, velocity.x);
+			if(CombatTest.INPUT_MODE <= 1)
+				swordTargetDirection = Math.atan2(velocity.y, velocity.x);
 
 			// If player presses Z and ready to dash, dash in direction we're moving
-			if (Main.keys[GLFW_KEY_Z] && dashTimer <= 0) {
+			if (dash() && dashTimer <= 0) {
 				velocity = velocity.unit();
 				velocity.scale(DASH_SPEED);
 
@@ -136,6 +149,25 @@ public class Player extends Entity {
 
 	private void handleSword() {
 		specialTimer -= Main.TIMESTEP;
+
+		if(CombatTest.INPUT_MODE == 2) {
+			if (Main.keys[GLFW_KEY_RIGHT])
+				swordMovingVelocity.x += MOVE_SPEED;
+			if (Main.keys[GLFW_KEY_LEFT])
+				swordMovingVelocity.x -= MOVE_SPEED;
+			if (Main.keys[GLFW_KEY_DOWN])
+				swordMovingVelocity.y += MOVE_SPEED;
+			if (Main.keys[GLFW_KEY_UP])
+				swordMovingVelocity.y -= MOVE_SPEED;
+			swordMovingVelocity.scale(0.9);
+			swordTargetDirection = Math.atan2(swordMovingVelocity.y, swordMovingVelocity.x);
+		} else if(CombatTest.INPUT_MODE == 3) {
+			swordMovingVelocity.add(Main.mouseVel.getScale(MOVE_SPEED*0.2)).scale(0.9);
+			swordTargetDirection = Math.atan2(swordMovingVelocity.y, swordMovingVelocity.x);
+		} else if(CombatTest.INPUT_MODE == 4) {
+			swordTargetDirection = Math.atan2(Main.mouse.y - Main.HEIGHT * 0.5, Main.mouse.x - Main.WIDTH * 0.5);
+		}
+
 		if (specialMove == Special.CHARGE)
 			doCharge();
 		else if (specialMove == Special.SLASH)
@@ -144,22 +176,25 @@ public class Player extends Entity {
 			doStab();
 		// If X and any of the arrow keys are pressed (player is moving), swing sword in
 		// direction player is moving
-		else if (Main.keys[GLFW_KEY_X] && (Main.keys[GLFW_KEY_LEFT] || Main.keys[GLFW_KEY_RIGHT]
-				|| Main.keys[GLFW_KEY_UP] || Main.keys[GLFW_KEY_DOWN])) {
+		else if (moveSword()) {
 
 			// Find out how far (and in which direction) the swordDirection is from the
 			// swordTargetDirection, and swing towards the target
 			double diff = Util.signedAngularDistance(swordDirection, swordTargetDirection);
-
-			swordRotationalVelocity += (diff > 0) ? -0.1 : 0.1;
-			// If the sword is pointed close to the opposite direction, apply a little bit
+			if(CombatTest.INPUT_MODE >= 2 && CombatTest.INPUT_MODE < 4)
+				swordRotationalVelocity += ((diff > 0) ? -0.1 : 0.1) * swordMovingVelocity.length();
+			else
+				swordRotationalVelocity += (diff > 0) ? -0.1 : 0.1;
+			// If the sword is pointed close to the direction, apply a little bit
 			// of friction to reduce
 			// Just holding one directional key and swinging forever
-			if (Math.PI - Math.abs(diff) < 0.3)
+			if (Math.abs(diff) < 0.3)
 				swordRotationalVelocity *= 0.95;
 
 			// If the player is dashing, perform a special move if applicable
-			else if (Main.keys[GLFW_KEY_Z] && dashTimer <= 0 && specialTimer <= 0) {
+			else if (dash() && dashTimer <= 0 && specialTimer <= 0) {
+				// Get diff as distance between current Direction and indicator direction
+				diff = Util.signedAngularDistance(getSwordDirection(), getIndicatorDirection());
 
 				// If swinging sword fast enough, do charged special
 				if (Math.abs(swordRotationalVelocity) > 15) {
@@ -176,13 +211,13 @@ public class Player extends Entity {
 					specialMove = Special.STAB;
 
 					// Add a stab beam going in the same direction
-					Main.getLevel().addEntity(new StabBeam(getX(), getY(), swordDirection));
+					Main.getLevel().addEntity(new StabBeam(getX(), getY(), getSwordDirection()));
 
 					swordRotationalVelocity = 0;
 					specialTimer = 0.2;
 
 					// Dash with x1.5 speed and no friction in direction of sword
-					velocity = Vector.ofAngle(swordDirection);
+					velocity = Vector.ofAngle(getSwordDirection());
 					velocity.scale(1.5 * DASH_SPEED);
 
 					// Next dash in 0.5 seconds
@@ -223,15 +258,51 @@ public class Player extends Entity {
 			swordDirection += Math.TAU;
 
 		// Update sword hitbox
-		swordBox = (Hitboxes)new Hitboxes(-0.5, -0.5, 1.0, 1.0).translate(position).translate(Vector.ofAngle(swordDirection).scale(0.5));
-		swordBox.add(new Hitboxes(-0.5, -0.5, 1.0, 1.0).translate(position).translate(Vector.ofAngle(swordDirection).scale(1.5)));
+		swordBox = (Hitboxes)new Hitboxes(-0.5, -0.5, 1.0, 1.0).translate(position).translate(Vector.ofAngle(getSwordDirection()).scale(0.5));
+		swordBox.add(new Hitboxes(-0.5, -0.5, 1.0, 1.0).translate(position).translate(Vector.ofAngle(getSwordDirection()).scale(1.5)));
+	}
+
+	public boolean dash() {
+		return switch(CombatTest.INPUT_MODE) {
+		case 0 -> Main.keys[GLFW_KEY_Z] && !Main.pKeys[GLFW_KEY_Z];
+		case 1 -> Main.mouseLeft && !Main.pMouseLeft;
+		case 2 -> Main.keys[GLFW_KEY_SPACE] && !Main.pKeys[GLFW_KEY_SPACE];
+		case 3 -> Main.mouseLeft && !Main.pMouseLeft;
+		case 4 -> Main.mouseLeft && !Main.pMouseLeft;
+		default -> false;
+		};
+	}
+
+	public boolean moveSword() {
+		return switch(CombatTest.INPUT_MODE) {
+		case 0 -> Main.keys[GLFW_KEY_X] && (Main.keys[GLFW_KEY_LEFT] || Main.keys[GLFW_KEY_RIGHT] || Main.keys[GLFW_KEY_UP] || Main.keys[GLFW_KEY_DOWN]);
+		case 1 -> Main.mouseRight && (Main.keys[GLFW_KEY_W] || Main.keys[GLFW_KEY_S] || Main.keys[GLFW_KEY_A] || Main.keys[GLFW_KEY_D]);
+		case 2 -> Main.keys[GLFW_KEY_LEFT] || Main.keys[GLFW_KEY_RIGHT] || Main.keys[GLFW_KEY_UP] || Main.keys[GLFW_KEY_DOWN];
+		case 3 -> Main.mouseRight;
+		case 4 -> Main.mouseRight;
+		default -> false;
+		};
+	}
+
+	public double getSwordDirection() {
+		if(CombatTest.CHOPPY)
+			return Math.round(swordDirection * 16.0 / Math.TAU) * Math.TAU / 16.0;
+		return swordDirection;
+	}
+
+	private double getIndicatorDirection() {
+		if(!CombatTest.RELATIVE_SPECIALS)
+			return 0;
+		if(CombatTest.CHOPPY)
+			return Math.round(Math.atan2(velocity.y, velocity.x) * 16.0 / Math.TAU) * Math.TAU / 16.0;
+		return Math.atan2(velocity.y, velocity.x);
 	}
 
 	private void doCharge() {
 		// Every 5 frames, summon a SwordBeam
 		if ((int) (specialTimer * 100) % 5 == 0)
 			Main.getLevel().addEntity(
-					new SwordBeam(getX() + Math.cos(swordDirection), getY() + Math.sin(swordDirection), swordDirection));
+					new SwordBeam(getX() + Math.cos(getSwordDirection()), getY() + Math.sin(getSwordDirection()), getSwordDirection()));
 
 		// when the special runs out, update variables
 		if (specialTimer <= 0) {
@@ -247,7 +318,7 @@ public class Player extends Entity {
 
 		// Check for and damage intersecting entities
 		for (Entity e : Main.getLevel().getEntities())
-			if (e.getHitBounds().intersects(new Hitrect(-1, -1, 2, 2).translate(position).translate(Vector.ofAngle(swordDirection))))
+			if (e.getHitBounds().intersects(new Hitrect(-1, -1, 2, 2).translate(position).translate(Vector.ofAngle(getSwordDirection()))))
 				e.dealPlayerDamage(2);
 
 		// When special runs out, update variables and boost swing speed
@@ -272,7 +343,7 @@ public class Player extends Entity {
 
 		// Check for and damage intersecting entities
 		for (Entity e : Main.getLevel().getEntities())
-			if (e.getHitBounds().intersects(new Hitrect(-1, -1, 2, 2).translate(position).translate(Vector.ofAngle(swordDirection))))
+			if (e.getHitBounds().intersects(new Hitrect(-1, -1, 2, 2).translate(position).translate(Vector.ofAngle(getSwordDirection()))))
 				e.dealPlayerDamage(2);
 
 		// When special runs out, update variables
@@ -296,18 +367,35 @@ public class Player extends Entity {
 			Shader.Color.use().alpha(0.5);
 		G.drawSquare();
 
+		if(CombatTest.INPUT_MODE == 2) {
+			Shader.Color.use().move(swordMovingVelocity.x, swordMovingVelocity.y).scale(0.1).color(0, 1, 0);
+			G.drawSquare();
+		}
 		Shader.Color.use().pop();
 
 		// Sword drawing
 		if (hasSword) {
 			Layer.WORLD_INDICATORS.use();
+			double specialDifference = Util.signedAngularDistance(getSwordDirection(), getIndicatorDirection());
 			Shader.Image.use().push().drawToWorld().setModel(new Matrix4f().identity())
 				.move(getX(), getY())
-				.rotate(swordTargetDirection)
-				.scale(1.5)
-				.alpha(dashTimer*2)
-				.image(indicator);
+				.rotate(getIndicatorDirection())
+				.alpha(Math.max(dashTimer*2, 0) + 0.1);
+			Shader.Image.use().push()
+				.scale(Math.abs(specialDifference) > 0.75*Math.PI ? 1.6 : 1.5)
+				.image(indicator_none);
 			G.drawSquare();
+			Shader.Image.use().pop().push()
+				.scale((specialDifference < -0.25 * Math.PI && specialDifference > -0.75 * Math.PI) ? 1.6 : 1.5).image(indicator_left_slash);
+			G.drawSquare();
+			Shader.Image.use().pop().push()
+				.scale((specialDifference > 0.25 * Math.PI && specialDifference < 0.75 * Math.PI) ? 1.6 : 1.5).image(indicator_right_slash);
+			G.drawSquare();
+			Shader.Image.use().pop().push()
+				.scale(Math.abs(specialDifference) < 0.25*Math.PI ? 1.6 : 1.5)
+				.image(indicator_stab);
+			G.drawSquare();
+			Shader.Image.use().pop();
 			Layer.ENTITY_BASE.use();
 
 			if (specialMove == Special.NONE) {
@@ -330,7 +418,7 @@ public class Player extends Entity {
 			// Draw fully opaque only when sword is swinging fast enough to do damage
 			Shader.Image.use().push().drawToWorld().setModel(new Matrix4f().identity())
 				.move(getX(), getY())
-				.rotate(swordDirection)
+				.rotate(getSwordDirection())
 				.move(1, 0)
 				.scale(1, 0.5)
 				.image(sword);
@@ -417,10 +505,6 @@ public class Player extends Entity {
 		hasSword = false;
 		Sound.EPiano.fadeTo(0.f);
 		Sound.BossEPiano.fadeTo(0.f);
-	}
-
-	public double getSwordRotation() {
-		return swordDirection;
 	}
 
 	// Update sword and dash data for cutscene usage

@@ -9,10 +9,8 @@ package com.zandgall.plorpland;
 
 import org.joml.Matrix4f;
 
-import com.zandgall.plorpland.graphics.Shader;
-
 public class Camera {
-	public static final double DEFAULT_SMOOTHING = 0.01, DEFAULT_ZOOM = 64;
+	public static final double DEFAULT_SMOOTHING = 0.01, DEFAULT_ZOOM = 0.04;
 	private double x, y;
 	private double zoom; // The size a single pixel will be after transform
 
@@ -59,7 +57,7 @@ public class Camera {
 
 	// Create the transformation with the given x, y and zoom
 	public Matrix4f getTransform() {
-		return new Matrix4f().scale((float)zoom, (float)zoom, 1).translate((float)-x, (float)-y, 0);
+		return new Matrix4f().scale((float)(zoom * Main.WIDTH), (float)zoom*Main.WIDTH, 1).translate((float)-x, (float)-y, 0);
 	}
 
 	public double getX() {

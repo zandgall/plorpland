@@ -19,6 +19,7 @@ import com.zandgall.plorpland.entity.Cloud;
 import com.zandgall.plorpland.util.Hitbox;
 import com.zandgall.plorpland.util.Hitrect;
 import com.zandgall.plorpland.util.Rect;
+import com.zandgall.plorpland.util.Vector;
 import com.zandgall.plorpland.Camera;
 import com.zandgall.plorpland.Main;
 
@@ -31,6 +32,7 @@ import org.joml.Matrix4f;
 import static org.lwjgl.opengl.GL30.*;
 
 import java.io.ObjectInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Level {
@@ -43,10 +45,13 @@ public class Level {
 	public Player playerRef = null;
 
 	// Level graphics
+	// TODO: Benchmark performance of straight up drawing full images (with crop) vs in chunks
+	private Vector graphics = new Vector(0, 0), spawnpoint = new Vector(0, 0);
 	private Image[][] images_0, images_1, shadow_0, shadow_1;
+	private Image layer0 = Image.BLANK, layer1 = Image.BLANK, shadow0 = Image.BLANK, shadow1 = Image.BLANK;
 
 	// A set of special background images, only 1 layer (0) is used right now
-	private ArrayList<ArrayList<SpecialImage>> specialImages = new ArrayList<>();
+	private ArrayList<SpecialImage> specialImages = new ArrayList<>();
 
 	// List of entities and two queues for removal and addition
 	private ArrayList<Entity> entities = new ArrayList<>(), removeQueue = new ArrayList<>(),
@@ -59,19 +64,39 @@ public class Level {
 
 	public void load() throws IOException {
 		// Load special background images
-		Scanner s = new Scanner(Level.class.getResourceAsStream(leveldir + "/special.txt"));
-		specialImages.add(new ArrayList<>());
-		while(s.hasNextLine()) {
-			String line = s.nextLine();
-			Scanner p = new Scanner(line);
-			specialImages.get(p.nextInt()).add(new SpecialImage(leveldir + p.next(), p.nextDouble(), p.nextDouble(), p.nextDouble(), p.nextDouble(), p.nextDouble()));
-			p.close();
+		ObjectInputStream is = new ObjectInputStream(Level.class.getResourceAsStream(leveldir + "/bgdecor/index"));
+		int numbgdecor = is.readInt();
+		is.close();
+		for(int i = 0; i < numbgdecor; i++) {
+			is = new ObjectInputStream(Level.class.getResourceAsStream(leveldir + "/bgdecor/" + i));
+			specialImages.add(new SpecialImage(leveldir + "/bgdecor/"+i+".png", is.readDouble(), is.readDouble(), is.readDouble(), is.readDouble(), is.readDouble()));
+			is.close();
 		}
-		s.close();
+
+		is = new ObjectInputStream(Level.class.getResourceAsStream(leveldir + "/levelproperties.bin"));
+		while(is.available() > 0) {
+			String key = is.readUTF();
+			switch(key) {
+				case "graphicsOffset" -> {graphics.set(is.readDouble(), is.readDouble());}
+				case "spawnpoint" -> {spawnpoint.set(is.readDouble(), is.readDouble());}
+			}
+		}
+		is.close();
 
 		// Load level graphics
-		loadGraphics();
-		loadTileData(leveldir + "/tiledata.bin");
+		// loadGraphics();
+		layer0 = new Image(leveldir + "/0.png");
+		layer1 = new Image(leveldir + "/1.png");
+		shadow0 = new Image(leveldir + "/0s.png");
+		shadow1 = new Image(leveldir + "/1s.png");
+		loadTileData(leveldir + "/tiles.bin");
+		loadEntityData(leveldir + "/entities.bin");
+
+		// Populate clouds
+		/*Random r = new Random();
+		for (int i = 0; i < bounds.w * bounds.h / 200; i++)
+			clouds.add(new Cloud(r.nextDouble(bounds.x, bounds.x + bounds.w),
+				r.nextDouble(bounds.y, bounds.y + bounds.h)));*/
 	}
 
 	public void setPlayer(Player p) {
@@ -94,7 +119,7 @@ public class Level {
 		byte major = s.readByte();
 		byte minor = s.readByte();
 
-		if (major != 1 || (minor != 1 && minor != 2)) {
+		if (major != 2 || minor != 0) {
 			System.err.println("Unknown level version!!");
 			return;
 		}
@@ -119,8 +144,6 @@ public class Level {
 					// Functionally the same as adding 'next' number of empty tiles
 					else {
 						x += next;
-						if(major == 1 && minor == 1)
-							x ++; // 1.1 has off by one error
 					}
 				} else {
 					// Place the tile
@@ -129,34 +152,39 @@ public class Level {
 				}
 			}
 		}
+	}
 
-		int numEntities = s.readInt();
-		for (int i = 0; i < numEntities; i++) {
-			// Read data and construct entity
-			String entityName = s.readUTF();
-			double x = s.readDouble(), y = s.readDouble();
+	public void loadEntityData(String path) throws IOException {
+		ObjectInputStream s = new ObjectInputStream(Level.class.getResourceAsStream(path));
+		
+		// Check version number
+		byte major = s.readByte();
+		byte minor = s.readByte();
 
-			Class<?> entityClass = EntityRegistry.nameMap.get(entityName);
-			addEntity(EntityRegistry.construct(entityClass, x, y));
+		if (major != 2 || minor != 0) {
+			System.err.println("Unknown level version!!");
+			s.close();
+			return;
 		}
 
-		// Populate clouds
-		Random r = new Random();
-		for (int i = 0; i < bounds.w * bounds.h / 200; i++)
-			clouds.add(new Cloud(r.nextDouble(bounds.x, bounds.x + bounds.w),
-					r.nextDouble(bounds.y, bounds.y + bounds.h)));
-
+		int numEntities = s.readInt();
+		for (int i = 0; i < numEntities; i++)
+			try {
+				entities.add((Entity)s.readObject());
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+				System.err.println("Could not add entity #" + i);
+			}
 		s.close();
-
 	}
 
 	// TODO: Do level graphics again
 	public void loadGraphics() {
 		// Load images and create output array
-		Image l0 = new Image(leveldir + "/level_0.png");
-		Image l1 = new Image(leveldir + "/level_1.png");
-		Image s0 = new Image(leveldir + "/shadow_0.png");
-		Image s1 = new Image(leveldir + "/shadow_1.png");
+		Image l0 = new Image(leveldir + "/0.png");
+		Image l1 = new Image(leveldir + "/1.png");
+		Image s0 = new Image(leveldir + "/0s.png");
+		Image s1 = new Image(leveldir + "/1s.png");
 		images_0 = new Image[(int)Math.ceil(l0.getWidth()/CHUNK_SIZE)][(int)Math.ceil(l0.getHeight()/CHUNK_SIZE)];
 		images_1 = new Image[(int)Math.ceil(l0.getWidth()/CHUNK_SIZE)][(int)Math.ceil(l0.getHeight()/CHUNK_SIZE)];
 		shadow_0 = new Image[(int)Math.ceil(l0.getWidth()/CHUNK_SIZE)][(int)Math.ceil(l0.getHeight()/CHUNK_SIZE)];
@@ -167,37 +195,50 @@ public class Level {
 		Shader.Image.use().push().setModel(0, 0, 1, 1);
 		Shader.Image.use().setView(new Matrix4f()).setProjection(new Matrix4f().ortho(0, 1, 0, 1, -1, 1));
 		glViewport(0, 0, CHUNK_SIZE, CHUNK_SIZE);
+		glClearColor(0, 0, 0, 0);
 		// Get crop value
 		float w = (float)CHUNK_SIZE / l0.getWidth(), h = (float)CHUNK_SIZE / l0.getHeight();
 		glDisable(GL_BLEND);
 		for(int i = 0; i < l0.getWidth() / CHUNK_SIZE; i++) {
 			for(int j = 0; j < l0.getHeight() / CHUNK_SIZE; j++) {
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
-				f.drawToThis();
-				glClear(GL_COLOR_BUFFER_BIT);
-				Shader.Image.use().image(l0).crop(w * i, h * j, w, h);
-				G.rawDrawSquare();
+				if(l0 != null) {
+					f.drawToThis();
+					glClearColor(0, 0, 0, 0);
+					glClear(GL_COLOR_BUFFER_BIT);
+					Shader.Image.use().image(l0).crop(w * i, h * j, w, h);
+					G.rawDrawSquare();
+				}
 				images_0[i][j] = new Image(f.getTexture());
 				
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
-				f.drawToThis();
-				glClear(GL_COLOR_BUFFER_BIT);
-				Shader.Image.use().image(l1).crop(w*i, h*j, w, h);
-				G.rawDrawSquare();
+				if(l1 != null) {
+					f.drawToThis();
+					glClearColor(0, 0, 0, 0);
+					glClear(GL_COLOR_BUFFER_BIT);
+					Shader.Image.use().image(l1).crop(w*i, h*j, w, h);
+					G.rawDrawSquare();
+				}
 				images_1[i][j] = new Image(f.getTexture());
 				
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
-				f.drawToThis();
-				glClear(GL_COLOR_BUFFER_BIT);
-				Shader.Image.use().image(s0).crop(w*i, h*j, w, h);
-				G.rawDrawSquare();
+				if(s0 != null) {
+					f.drawToThis();
+					glClearColor(0, 0, 0, 0);
+					glClear(GL_COLOR_BUFFER_BIT);
+					Shader.Image.use().image(s0).crop(w*i, h*j, w, h);
+					G.rawDrawSquare();
+				}
 				shadow_0[i][j] = new Image(f.getTexture());
 				
 				f.newTexture(CHUNK_SIZE, CHUNK_SIZE);
-				f.drawToThis();
-				glClear(GL_COLOR_BUFFER_BIT);
-				Shader.Image.use().image(s1).crop(w*i, h*j, w, h);
-				G.rawDrawSquare();
+				if(s1 != null) {
+					f.drawToThis();
+					glClearColor(0, 0, 0, 0);
+					glClear(GL_COLOR_BUFFER_BIT);
+					Shader.Image.use().image(s1).crop(w*i, h*j, w, h);
+					G.rawDrawSquare();
+				}
 				shadow_1[i][j] = new Image(f.getTexture());
 			}
 		}
@@ -206,6 +247,10 @@ public class Level {
 		FbSingle.drawToScreen();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	public Vector getSpawnpoint() {
+		return spawnpoint;
 	}
 
 	public void tick() {
@@ -250,37 +295,36 @@ public class Level {
 		int yMax = (int) (screen.getBounds().y + screen.getBounds().h);
 
 		Shader.Image.use().drawToWorld().setModel(new Matrix4f().identity());
-		for(SpecialImage i : specialImages.get(0))
+		for(SpecialImage i : specialImages)
 			if(screen.intersects(i.getRenderBox()))
 				i.render();
 
-		// if(USE_TILES)
-			/* for (int x = xMin; x <= xMax; x++)
-				for (int y = yMin; y <= yMax; y++) {
-					if (level.get(x) == null || level.get(x).get(y) == null)
-						continue;
-					level.get(x).get(y).render(context_0);
-				} */
-		// else {
-		xMin = Math.max((int)((xMin - bounds.x - 0.5) / (CHUNK_SIZE / 16.0)), 0);
-		yMin = Math.max((int)((yMin - bounds.y - 0.5) / (CHUNK_SIZE / 16.0)), 0);
-		xMax = (int)((xMax - bounds.x) / (CHUNK_SIZE / 16.0));
-		yMax = (int)((yMax - bounds.y) / (CHUNK_SIZE / 16.0));
+		xMin = Math.max((int)((xMin - graphics.x - bounds.x - 0.5) / (CHUNK_SIZE / 16.0)), 0);
+		yMin = Math.max((int)((yMin - graphics.y - bounds.y - 0.5) / (CHUNK_SIZE / 16.0)), 0);
+		xMax = (int)((xMax - graphics.x - bounds.x) / (CHUNK_SIZE / 16.0));
+		yMax = (int)((yMax - graphics.y - bounds.y) / (CHUNK_SIZE / 16.0));
 		Shader.Image.use().drawToWorld().setModel(new Matrix4f().identity());
-		for (int x = xMin; x <= xMax && x < images_0.length; x++) {
+		/*for (int x = xMin; x <= xMax && x < images_0.length; x++) {
 			for (int y = yMin; y <= yMax && y < images_0[x].length; y++) {
 				// System.out.printf("Drawing %d %d%n", x, y);
 				Layer.LEVEL_BASE.use();
-				images_0[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
+				images_0[x][y].draw(x * CHUNK_SIZE / 16.0 + graphics.x + bounds.x, y * CHUNK_SIZE / 16.0 + graphics.y + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
 				Layer.SHADOW_BASE.use();
-				shadow_0[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
+				shadow_0[x][y].draw(x * CHUNK_SIZE / 16.0 + graphics.x + bounds.x, y * CHUNK_SIZE / 16.0 + graphics.y + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
 				Layer.LEVEL_FOREGROUND.use();
-				images_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
+				images_1[x][y].draw(x * CHUNK_SIZE / 16.0 + graphics.x + bounds.x, y * CHUNK_SIZE / 16.0 + graphics.y + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
 				Layer.SHADOW_FOREGROUND.use();
-				shadow_1[x][y].draw(x * CHUNK_SIZE / 16.0 + bounds.x, y * CHUNK_SIZE / 16.0 + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
+				shadow_1[x][y].draw(x * CHUNK_SIZE / 16.0 + graphics.x + bounds.x, y * CHUNK_SIZE / 16.0 + graphics.y + bounds.y, CHUNK_SIZE / 16.0, CHUNK_SIZE / 16.0);
 			}
-		}
-		// }
+		}*/
+		Layer.LEVEL_BASE.use();
+		layer0.draw(graphics.x - layer0.getWidth() / 32.0, graphics.y - layer0.getHeight()/32.0, layer0.getWidth()/16.0, layer0.getHeight()/16.0);
+		Layer.SHADOW_BASE.use();
+		shadow0.draw(graphics.x - shadow0.getWidth() / 32.0, graphics.y - shadow0.getHeight()/32.0, shadow0.getWidth()/16.0, shadow0.getHeight()/16.0);
+		Layer.LEVEL_FOREGROUND.use();
+		layer1.draw(graphics.x - layer1.getWidth() / 32.0, graphics.y - layer1.getHeight()/32.0, layer1.getWidth()/16.0, layer1.getHeight()/16.0);
+		Layer.SHADOW_FOREGROUND.use();
+		shadow1.draw(graphics.x - shadow1.getWidth() / 32.0, graphics.y - shadow1.getHeight()/32.0, shadow1.getWidth()/16.0, shadow1.getHeight()/16.0);
 
 		// Sort and draw all entities and then clouds if they intersect the screen
 		ArrayList<Entity> sorted = new ArrayList<>(entities.size());

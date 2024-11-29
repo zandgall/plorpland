@@ -81,7 +81,7 @@ public class Octoplorp extends Entity{
 
 						@Override
 						protected void tick() {
-							Main.getPlayer().cutsceneSword(Main.getPlayer().getSwordRotation(), 0, 0, Player.Special.NONE);
+							Main.getPlayer().cutsceneSword(Main.getPlayer().getSwordDirection(), 0, 0, Player.Special.NONE);
 
 							eyePos.y *= 0.99; // Move eye up (towards eyePos.y=0)
 
